@@ -74,25 +74,25 @@ app.get("/api/message", (req, res) => {
 
 app.post("/api/message", upload.single("image"), async (req, res) => {
   const message = req.body.message;
-  const file = req.file;
+  const file = req.file.originalname;
   let fileOriginName;
   let imagePath;
   console.log("file=" + file);
   if (file) {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     const fileName = uniqueSuffix + "-" + file.originalname;
-    fileOriginName = file.originalname;
+    fileOriginName = file;
     const params = {
       Bucket: bucketName,
       Key: fileName,
       Body: req.file.buffer,
       ContentType: req.file.mimetype,
     };
-    console.log("params=" + params);
+    console.log("params=" + params.Bucket);
     try {
       const command = new PutObjectCommand(params);
       const response = await s3.send(command);
-      console.log(response);
+
       imagePath = `https://d1g5nr6pevif22.cloudfront.net/${fileName}`;
     } catch (error) {
       return { error: error };
@@ -107,6 +107,7 @@ app.post("/api/message", upload.single("image"), async (req, res) => {
       "insert into messages(content,imageName, imageUrl)values(?,?,?)";
     pool.getConnection((error, connection2) => {
       console.log("DB連線正常");
+      console.log(message, fileOriginName, imagePath);
       if (error) {
         throw { error: error };
       } else {

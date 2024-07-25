@@ -10,8 +10,10 @@
 services:
   backend:
     build:
-      args:
-        - NODE_ENV=development
+      context: .
+      # image: jessicalin1205/my-app:v1.1
+      # args:
+      #   - NODE_ENV=development
     environment:
       - NODE_ENV=development
       - DATABASE_DB=${database}
