@@ -1,0 +1,25 @@
+* {
+  /*padding 跟margin設定全域零距離*/
+  padding: 0;
+  margin: 0 auto;
+  box-sizing: border-box;
+  font-family: "Noto Sans TC", sans-serif;
+  text-align: center;
+}
+
+.separator {
+  width: 100%;
+  height: 0px;
+  border: 1px solid rgba(232, 232, 232, 1);
+  margin: 0 auto;
+  margin: 20px 0;
+}
+.message {
+  font-size: 15px;
+}
+
+.image {
+  height: 100px;
+  width: 80px;
+  object-fit: contain;
+}
