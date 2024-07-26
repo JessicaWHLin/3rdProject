@@ -12,7 +12,7 @@ services:
     # build:
     # context: .
     image:
-      jessicalin1205/my-app:v1.2
+      jessicalin1205/my-app:latest
       # args:
       #   - NODE_ENV=development
     environment:
