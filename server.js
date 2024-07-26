@@ -81,7 +81,7 @@ app.post("/api/message", upload.single("image"), async (req, res) => {
     const file = req.file.originalname;
     console.log("file=" + file);
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const fileName = uniqueSuffix + "-" + file.originalname;
+    const fileName = uniqueSuffix + "-" + file;
     fileOriginName = file;
     const params = {
       Bucket: bucketName,
@@ -89,7 +89,8 @@ app.post("/api/message", upload.single("image"), async (req, res) => {
       Body: req.file.buffer,
       ContentType: req.file.mimetype,
     };
-    console.log("params=" + params.Bucket);
+    console.log("params=" + params.Key);
+
     try {
       const command = new PutObjectCommand(params);
       const response = await s3.send(command);
