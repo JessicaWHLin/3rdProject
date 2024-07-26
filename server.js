@@ -18,7 +18,7 @@ const bucketName = process.env.bucket_name;
 const bucketRegion = process.env.bucket_region;
 const accessKey = process.env.access_key;
 const secretAccessKey = process.env.secret_access_key;
-const s3 = new S3Client({
+const client = new S3Client({
   credentials: {
     accessKeyId: accessKey,
     secretAccessKey: secretAccessKey,
@@ -26,7 +26,11 @@ const s3 = new S3Client({
   region: bucketRegion,
 });
 
-// console.log(host, user, password);
+console.log(
+  "accessKey=" + accessKey,
+  "Region=" + bucketRegion,
+  "secretAccessKey=" + secretAccessKey
+);
 const app = express();
 const port = 3000;
 
@@ -74,13 +78,14 @@ app.get("/api/message", (req, res) => {
 
 app.post("/api/message", upload.single("image"), async (req, res) => {
   const message = req.body.message;
-  const file = req.file.originalname;
   let fileOriginName;
   let imagePath;
-  console.log("file=" + file);
-  if (file) {
+
+  if (req.file) {
+    const file = req.file.originalname;
+    console.log("file=" + file);
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const fileName = uniqueSuffix + "-" + file.originalname;
+    const fileName = uniqueSuffix + "-" + file;
     fileOriginName = file;
     const params = {
       Bucket: bucketName,
@@ -88,12 +93,16 @@ app.post("/api/message", upload.single("image"), async (req, res) => {
       Body: req.file.buffer,
       ContentType: req.file.mimetype,
     };
-    console.log("params=" + params.Bucket);
+    console.log("params key=" + params.Key);
+    console.log("params Bucket=" + params.Bucket);
+
     try {
       const command = new PutObjectCommand(params);
-      const response = await s3.send(command);
-
+      console.log("command=" + command);
+      const response = await client.send(command);
+      console.log("S3 response=" + response);
       imagePath = `https://d1g5nr6pevif22.cloudfront.net/${fileName}`;
+      console.log("try的最後一行執行OK");
     } catch (error) {
       return { error: error };
     }

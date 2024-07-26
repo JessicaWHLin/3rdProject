@@ -9,9 +9,10 @@
 # https://github.com/docker/awesome-compose
 services:
   backend:
-    build:
-      context: .
-      # image: jessicalin1205/my-app:v1.1
+    # build:
+    # context: .
+    image:
+      jessicalin1205/my-app:latest
       # args:
       #   - NODE_ENV=development
     environment:
