@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import mysql from "mysql2";
 import multer from "multer";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+// import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 dotenv.config();
 import { fileURLToPath } from "url";
