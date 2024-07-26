@@ -92,7 +92,7 @@ app.post("/api/message", upload.single("image"), async (req, res) => {
     try {
       const command = new PutObjectCommand(params);
       const response = await s3.send(command);
-
+      console.log("response=" + response);
       imagePath = `https://d1g5nr6pevif22.cloudfront.net/${fileName}`;
     } catch (error) {
       return { error: error };
