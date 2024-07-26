@@ -74,11 +74,12 @@ app.get("/api/message", (req, res) => {
 
 app.post("/api/message", upload.single("image"), async (req, res) => {
   const message = req.body.message;
-  const file = req.file.originalname;
   let fileOriginName;
   let imagePath;
-  console.log("file=" + file);
-  if (file) {
+
+  if (req.file) {
+    const file = req.file.originalname;
+    console.log("file=" + file);
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     const fileName = uniqueSuffix + "-" + file.originalname;
     fileOriginName = file;
