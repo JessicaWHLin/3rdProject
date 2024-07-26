@@ -18,7 +18,7 @@ const bucketName = process.env.bucket_name;
 const bucketRegion = process.env.bucket_region;
 const accessKey = process.env.access_key;
 const secretAccessKey = process.env.secret_access_key;
-const s3 = new S3Client({
+const client = new S3Client({
   credentials: {
     accessKeyId: accessKey,
     secretAccessKey: secretAccessKey,
@@ -93,13 +93,14 @@ app.post("/api/message", upload.single("image"), async (req, res) => {
       Body: req.file.buffer,
       ContentType: req.file.mimetype,
     };
-    console.log("params=" + params.Key);
+    console.log("params key=" + params.Key);
+    console.log("params Bucket=" + params.Bucket);
 
     try {
       const command = new PutObjectCommand(params);
       console.log("command=" + command);
-      const response = await s3.send(command);
-      console.log("response=" + response);
+      const response = await client.send(command);
+      console.log("S3 response=" + response);
       imagePath = `https://d1g5nr6pevif22.cloudfront.net/${fileName}`;
       console.log("try的最後一行執行OK");
     } catch (error) {
