@@ -26,7 +26,11 @@ const s3 = new S3Client({
   region: bucketRegion,
 });
 
-// console.log(host, user, password);
+console.log(
+  "accessKey=" + accessKey,
+  "Region=" + bucketRegion,
+  "secretAccessKey=" + secretAccessKey
+);
 const app = express();
 const port = 3000;
 
@@ -93,9 +97,11 @@ app.post("/api/message", upload.single("image"), async (req, res) => {
 
     try {
       const command = new PutObjectCommand(params);
+      console.log("command=" + command);
       const response = await s3.send(command);
       console.log("response=" + response);
       imagePath = `https://d1g5nr6pevif22.cloudfront.net/${fileName}`;
+      console.log("try的最後一行執行OK");
     } catch (error) {
       return { error: error };
     }
