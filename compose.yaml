@@ -9,12 +9,8 @@
 # https://github.com/docker/awesome-compose
 services:
   backend:
-    # build:
-    # context: .
-    image:
-      jessicalin1205/my-app:latest
-      # args:
-      #   - NODE_ENV=development
+    image: jessicalin1205/my-app:latest
+    container_name: my-app
     environment:
       - NODE_ENV=development
       - DATABASE_DB=${database}
