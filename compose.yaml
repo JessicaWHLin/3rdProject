@@ -10,7 +10,6 @@
 services:
   backend:
     image: jessicalin1205/my-app:latest
-    container_name: my-app
     environment:
       - NODE_ENV=development
       - DATABASE_DB=${database}
