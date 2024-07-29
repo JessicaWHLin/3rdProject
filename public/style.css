@@ -5,6 +5,8 @@
   box-sizing: border-box;
   font-family: "Noto Sans TC", sans-serif;
   text-align: center;
+  background-color: rgb(238, 239, 242);
+  font-size: 16px;
 }
 
 .separator {
@@ -17,9 +19,84 @@
 .message {
   font-size: 15px;
 }
-
 .image {
   height: 100px;
   width: 80px;
   object-fit: contain;
+}
+.navigation {
+  position: relative;
+  background-color: white;
+  width: 100 vw;
+  height: 80px;
+  padding: 10px 0;
+}
+.navi-btn {
+  background-color: #587bb0;
+  border-radius: 15px;
+  border: none;
+  color: white;
+  padding: 5px 15px;
+  cursor: pointer;
+  text-align: center;
+  font-weight: 700;
+}
+.navi-left {
+  position: absolute;
+  left: 30px;
+  top: calc(50% - 30px);
+  background-color: white;
+}
+.navi-right {
+  position: absolute;
+  right: 30px;
+  top: calc(50% - 14px);
+  background-color: white;
+}
+.img {
+  width: 60px;
+  height: 60px;
+  background-color: white;
+}
+.name {
+  position: absolute;
+  width: max-content;
+  background-color: white;
+  font-size: 32px;
+  font-weight: 700;
+  color: rgb(47, 92, 166);
+  top: calc(50% - 18.33px);
+}
+.main {
+  width: 1200px;
+  height: 600px;
+  display: flex;
+  padding: 5px 0;
+}
+.zone-setting {
+  margin: 5px 5px 10px 5px;
+  border-radius: 5px;
+  background-color: white;
+  text-align: center;
+}
+.zone-title {
+  border-radius: 5px 5px 0 0;
+  font-size: 20px;
+  font-weight: 700;
+  background: white;
+  color: rgb(47, 92, 166);
+}
+.left {
+  flex: 1;
+}
+.middle {
+  flex: 3;
+}
+.right {
+  flex: 1;
+}
+.footer {
+  background-color: white;
+  width: 100vw;
+  height: 50px;
 }

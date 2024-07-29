@@ -25,7 +25,7 @@ const client = new S3Client({
   },
   region: bucketRegion,
 });
-
+// 檢查
 // console.log(
 //   "accessKey=" + accessKey,
 //   "Region=" + bucketRegion,
@@ -51,17 +51,19 @@ const upload = multer({
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
+//靜態網頁
 app.use(express.static(path.join(__dirname, "public")));
-
 app.get("/", function (req, res) {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
-
+app.get("/article", function (req, res) {
+  res.sendFile(path.join(__dirname, "public", "article.html"));
+});
 app.get("/messageboard", function (req, res) {
   res.sendFile(path.join(__dirname, "public", "mesage.html"));
 });
 
+//api
 app.get("/api/message", (req, res) => {
   pool.getConnection((error, connection1) => {
     if (error) {
