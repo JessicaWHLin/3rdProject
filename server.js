@@ -26,11 +26,11 @@ const client = new S3Client({
   region: bucketRegion,
 });
 
-console.log(
-  "accessKey=" + accessKey,
-  "Region=" + bucketRegion,
-  "secretAccessKey=" + secretAccessKey
-);
+// console.log(
+//   "accessKey=" + accessKey,
+//   "Region=" + bucketRegion,
+//   "secretAccessKey=" + secretAccessKey
+// );
 const app = express();
 const port = 3000;
 
@@ -56,6 +56,10 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/", function (req, res) {
   res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+app.get("/messageboard", function (req, res) {
+  res.sendFile(path.join(__dirname, "public", "mesage.html"));
 });
 
 app.get("/api/message", (req, res) => {

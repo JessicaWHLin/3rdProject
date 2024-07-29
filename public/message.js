@@ -53,7 +53,7 @@ submitBtn.addEventListener("click", async (event) => {
     };
     let createMessage = await fetchData(url, options);
     console.log(createMessage);
-    location.href = "/";
+    location.href = "/messageboard";
   }
 });
 
