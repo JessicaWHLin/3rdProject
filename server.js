@@ -62,7 +62,7 @@ app.get("/article", function (req, res) {
   res.sendFile(path.join(__dirname, "public", "article.html"));
 });
 app.get("/messageboard", function (req, res) {
-  res.sendFile(path.join(__dirname, "public", "mesage.html"));
+  res.sendFile(path.join(__dirname, "public", "message.html"));
 });
 
 //api
