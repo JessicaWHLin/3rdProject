@@ -64,6 +64,16 @@ app.get("/article", function (req, res) {
 app.get("/messageboard", function (req, res) {
   res.sendFile(path.join(__dirname, "public", "message.html"));
 });
+//loader.io
+app.get("/loaderio-3d25eebd5ba80d681bf17e6486b56acb", function (req, res) {
+  res.sendFile(
+    path.join(
+      __dirname,
+      "public",
+      "loaderio-3d25eebd5ba80d681bf17e6486b56acb.txt"
+    )
+  );
+});
 
 //api
 app.get("/api/message", (req, res) => {
