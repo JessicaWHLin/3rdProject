@@ -33,7 +33,7 @@ const client = new S3Client({
 //   "secretAccessKey=" + secretAccessKey
 // );
 const app = express();
-const port = 80;
+const port = 3000;
 
 const pool = mysql.createPool({
   host: host,
