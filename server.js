@@ -7,6 +7,7 @@ import multer from "multer";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 dotenv.config();
 import { fileURLToPath } from "url";
+import morgan from "morgan";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -32,7 +33,7 @@ const client = new S3Client({
 //   "secretAccessKey=" + secretAccessKey
 // );
 const app = express();
-const port = 3000;
+const port = 80;
 
 const pool = mysql.createPool({
   host: host,
@@ -51,6 +52,7 @@ const upload = multer({
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(morgan("combined"));
 //靜態網頁
 app.use(express.static(path.join(__dirname, "public")));
 app.get("/", function (req, res) {
