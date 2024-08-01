@@ -14,12 +14,11 @@
     <div class="navigation">
       <div class="icon navi-left">
         <img class="img" src="image/simple_plane_travel_around _Pngtree.png" />
-        <span class="name">Trip Pals</span>
+        <span class="name" id="home">Trip Pals</span>
       </div>
       <div class="navi-right">
         <button class="btn">發文</button>
-        <button class="btn">註冊</button>
-        <button class="btn">登入</button>
+        <button class="btn">會員登入</button>
       </div>
     </div>
     <div class="navi-placeholder"></div>
@@ -27,27 +26,27 @@
       <div class="zone-setting" style="height: 200px">
         <div class="zone-title">會員登入</div>
         <div class="input_set">
-          <span class="input_title">會員帳號</span>
-          <input type="text" class="input_frame" id="signinUsername" />
+          <span class="input_title">電子郵件</span>
+          <input type="text" class="input_frame" id="signinEmail" />
         </div>
         <div class="input_set">
-          <span class="input_title">會員密碼</span>
-          <input
-            type="password"
-            class="input_frame"
-            id="signinPassword"
-            placeholder="請輸入5~14英文數字或底線" />
+          <span class="input_title">你的密碼</span>
+          <input type="password" class="input_frame" id="signinPassword" />
         </div>
         <button class="btn">登入</button>
       </div>
       <div class="zone-setting" style="height: 250px">
         <div class="zone-title">會員註冊</div>
         <div class="input_set">
-          <span class="input_title">會員帳號</span>
-          <input type="text" class="input_frame" id="signupUsername" />
+          <span class="input_title">你的名字</span>
+          <input
+            type="text"
+            class="input_frame"
+            id="signupUsername"
+            placeholder="你想被稱呼的名字" />
         </div>
         <div class="input_set">
-          <span class="input_title">會員信箱</span>
+          <span class="input_title">電子郵件</span>
           <input
             type="text"
             class="input_frame"
@@ -55,18 +54,18 @@
             placeholder="example@example.com" />
         </div>
         <div class="input_set">
-          <span class="input_title">會員密碼</span>
+          <span class="input_title">建立密碼</span>
           <input
             type="password"
             class="input_frame"
             id="signupPassword"
-            placeholder="請輸入5~14英文數字或底線" />
+            placeholder="8~16英數字" />
         </div>
         <button class="btn">註冊</button>
       </div>
     </div>
 
-    <div class="footer">圖片來源於pngtree.com/</div>
+    <div class="footer">COPYRIGHT © 2024 TripPals 旅伴</div>
     <script type="module" src="user.js"></script>
   </body>
 </html>
