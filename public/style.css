@@ -24,7 +24,34 @@
   object-fit: contain;
 }
 /* for week1 */
-
+.btn {
+  background-color: rgb(88, 123, 176);
+  border-radius: 15px;
+  border: none;
+  color: white;
+  padding: 5px 15px;
+  cursor: pointer;
+  text-align: center;
+  font-weight: 700;
+}
+.input_set {
+  background-color: white;
+  margin: 10px auto;
+  width: max-content;
+  height: max-content;
+}
+.input_title {
+  background-color: white;
+  text-align: center;
+}
+.input_frame {
+  border: none;
+  border-radius: 5px;
+  height: 30px;
+  padding: 5px 10px;
+  text-align: left;
+  width: 250px;
+}
 .navigation {
   position: fixed;
   background-color: white;
@@ -38,16 +65,7 @@
   height: 80px;
   /* background-color: white; */
 }
-.navi-btn {
-  background-color: rgb(88, 123, 176);
-  border-radius: 15px;
-  border: none;
-  color: white;
-  padding: 5px 15px;
-  cursor: pointer;
-  text-align: center;
-  font-weight: 700;
-}
+
 .navi-left {
   position: absolute;
   left: 30px;
@@ -77,10 +95,11 @@
 }
 .main {
   width: 1200px;
-  height: 600px;
+  height: 100%;
   display: flex;
   padding: 5px 0;
 }
+
 .zone-setting {
   margin: 5px 5px 10px 5px;
   border-radius: 5px;
@@ -93,6 +112,7 @@
   font-weight: 700;
   background: white;
   color: rgb(47, 92, 166);
+  padding: 10px 0;
 }
 .left {
   flex: 1;
