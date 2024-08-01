@@ -24,12 +24,19 @@
   object-fit: contain;
 }
 /* for week1 */
+
 .navigation {
-  position: relative;
+  position: fixed;
   background-color: white;
-  width: 100 vw;
+  width: 100vw;
   height: 80px;
   padding: 10px 0;
+  z-index: 2;
+}
+.navi-placeholder {
+  width: 100vw;
+  height: 80px;
+  /* background-color: white; */
 }
 .navi-btn {
   background-color: rgb(88, 123, 176);

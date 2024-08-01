@@ -61,9 +61,13 @@ app.get("/", function (req, res) {
 app.get("/article", function (req, res) {
   res.sendFile(path.join(__dirname, "public", "article.html"));
 });
+app.get("/user", function (req, res) {
+  res.sendFile(path.join(__dirname, "public", "user.html"));
+});
 app.get("/messageboard", function (req, res) {
   res.sendFile(path.join(__dirname, "public", "message.html"));
 });
+
 //loader.io
 app.get("/loaderio-3d25eebd5ba80d681bf17e6486b56acb", function (req, res) {
   res.sendFile(
@@ -157,6 +161,6 @@ app.post("/api/message", upload.single("image"), async (req, res) => {
 });
 
 const server = app.listen(port, function () {
-  console.log(`Server is running at http://trippals.site:${port}`);
+  console.log("Server is running at https://trippals.site");
 });
 server.setTimeout(10 * 60 * 1000); //10分鐘限制
