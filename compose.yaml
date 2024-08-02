@@ -12,12 +12,13 @@ services:
     build:
       context: .
     image: jessicalin1205/my-app:latest
+    # command: ["./wait-for-it.sh", "db:3306", "--", "npm", "run", "dev"]
     environment:
-      - NODE_ENV=development
-      - DATABASE_DB=${database}
-      - DATABASE_USER=${user}
-      - DATABASE_PASSWORD=${password}
-      - DATABASE_HOST=db
+      - NODE_ENV:development
+      - DATABASE_DB:${database}
+      - DATABASE_USER:${user}
+      - DATABASE_PASSWORD:${password}
+      - DATABASE_HOST:localhost
 
     ports:
       - 3000:3000
@@ -25,16 +26,25 @@ services:
       - .env
     depends_on:
       - db
+    volumes:
+      - .:/usr/src
+      - /usr/src/node_modules
+
   db:
     image: mysql:8.0
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     restart: always
     command: --default-authentication-plugin=caching_sha2_password
     volumes:
       - db-data:/var/lib/mysql
     environment:
-      - MYSQL_DATABASE=${database}
-      - MYSQL_USER=${user}
-      - MYSQL_ROOT_PASSWORD=${password}
+      - DATABASE_DB:${database}
+      - DATABASE_USER:${user}
+      - DATABASE_PASSWORD:${password}
     expose:
       - 3306
 volumes:

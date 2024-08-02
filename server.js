@@ -26,14 +26,9 @@ const client = new S3Client({
   },
   region: bucketRegion,
 });
-// 檢查
-// console.log(
-//   "accessKey=" + accessKey,
-//   "Region=" + bucketRegion,
-//   "secretAccessKey=" + secretAccessKey
-// );
+
 const app = express();
-const port = 3000;
+const port = 4000;
 
 const pool = mysql.createPool({
   host: host,
@@ -78,26 +73,72 @@ app.get("/loaderio-3d25eebd5ba80d681bf17e6486b56acb", function (req, res) {
     )
   );
 });
-
+console.log("--------npm測試-----------");
 //api
-app.get("/api/message", (req, res) => {
+//註冊
+app.post("/api/signup", (req, res) => {
   pool.getConnection((error, connection1) => {
+    if (error) {
+      return res.status(500).json({ error: error.message, message: "1" });
+    } else {
+      console.log("DB連線成功");
+      let { username, email, password } = req.body;
+
+      //檢查有無重複
+      connection1.query(
+        "select * from member where email =?",
+        [email],
+        (error, result) => {
+          if (error) {
+            connection1.release();
+            return res.status(500).json({ error: error.message, message: "2" });
+          }
+
+          if (result.length > 0) {
+            connection1.release();
+            return res.status(400).json({ error: "Existed Email" });
+          } else {
+            //新email
+            const sql = "insert into member(name,email,password)values(?,?,?)";
+            const val = [username, email, password];
+            console.log(
+              `receive req：username=${username}, Email=${email}, password=${password}`
+            );
+            connection1.execute(sql, val, (error, result) => {
+              console.log("executed.");
+              connection1.release();
+              if (error) {
+                return res
+                  .status(500)
+                  .json({ error: error.message, message: "3" });
+              }
+              res.json({ ok: true });
+            });
+          }
+        }
+      );
+    }
+  });
+});
+
+//week1
+app.get("/api/message", (req, res) => {
+  pool.getConnection((error, connection98) => {
     if (error) {
       throw { error: error };
     } else {
       const sql_query =
         "select id, content,imageName,imageUrl from messages order by created_at desc";
-      connection1.query(sql_query, (error, result, fields) => {
+      connection98.query(sql_query, (error, result, fields) => {
         if (error) {
           throw { error: error };
         }
         res.json({ result: result });
-        connection1.release();
+        connection98.release();
       });
     }
   });
 });
-
 app.post("/api/message", upload.single("image"), async (req, res) => {
   const message = req.body.message;
   let fileOriginName;
@@ -115,16 +156,10 @@ app.post("/api/message", upload.single("image"), async (req, res) => {
       Body: req.file.buffer,
       ContentType: req.file.mimetype,
     };
-    console.log("params key=" + params.Key);
-    console.log("params Bucket=" + params.Bucket);
-
     try {
       const command = new PutObjectCommand(params);
-      console.log("command=" + command);
       const response = await client.send(command);
-      console.log("S3 response=" + response);
       imagePath = `https://d1g5nr6pevif22.cloudfront.net/${fileName}`;
-      console.log("try的最後一行執行OK");
     } catch (error) {
       return { error: error };
     }
@@ -136,13 +171,13 @@ app.post("/api/message", upload.single("image"), async (req, res) => {
   try {
     const sql_msg =
       "insert into messages(content,imageName, imageUrl)values(?,?,?)";
-    pool.getConnection((error, connection2) => {
+    pool.getConnection((error, connection99) => {
       console.log("DB連線正常");
       console.log(message, fileOriginName, imagePath);
       if (error) {
         throw { error: error };
       } else {
-        connection2.execute(
+        connection99.execute(
           sql_msg,
           [message, fileOriginName, imagePath],
           (error, result) => {
@@ -152,7 +187,7 @@ app.post("/api/message", upload.single("image"), async (req, res) => {
           }
         );
         res.json({ ok: true });
-        connection2.release();
+        connection99.release();
       }
     });
   } catch (error) {
