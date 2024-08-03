@@ -19,6 +19,7 @@ const bucketName = process.env.bucket_name;
 const bucketRegion = process.env.bucket_region;
 const accessKey = process.env.access_key;
 const secretAccessKey = process.env.secret_access_key;
+const port = process.env.port;
 const client = new S3Client({
   credentials: {
     accessKeyId: accessKey,
@@ -28,7 +29,6 @@ const client = new S3Client({
 });
 
 const app = express();
-const port = 4000;
 
 const pool = mysql.createPool({
   host: host,
