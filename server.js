@@ -81,7 +81,7 @@ app.post("/api/signup", (req, res) => {
     if (error) {
       return res.status(500).json({ error: error.message, message: "1" });
     } else {
-      console.log("DB連線成功");
+      console.log("DB conneciton is ok");
       let { username, email, password } = req.body;
 
       //檢查有無重複
@@ -117,6 +117,17 @@ app.post("/api/signup", (req, res) => {
           }
         }
       );
+    }
+  });
+});
+//登入
+app.get("/api/signin", (req, res) => {
+  pool.getConnection((error, connection2) => {
+    if (error) {
+      return res.status(500).json({ error: error.message, message: "1" });
+    } else {
+      console.log("DB connetion is ok");
+      const { email, password } = req.body;
     }
   });
 });
@@ -197,5 +208,6 @@ app.post("/api/message", upload.single("image"), async (req, res) => {
 
 const server = app.listen(port, function () {
   console.log("Server is running at https://trippals.site");
+  console.log(`Server is running at port: ${port}`);
 });
 server.setTimeout(10 * 60 * 1000); //10分鐘限制

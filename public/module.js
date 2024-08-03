@@ -26,3 +26,18 @@ export function go_signpage() {
       });
   });
 }
+
+export function post_article() {
+  const articlepage = document.querySelector("#articlepage");
+  articlepage.addEventListener("click", () => {
+    const url = "/article";
+    fetch(url)
+      .then((response) => response)
+      .then((data) => {
+        location.href = url;
+      })
+      .catch((error) => {
+        console.log("Error:", error);
+      });
+  });
+}

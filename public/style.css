@@ -3,13 +3,15 @@
   margin: 0 auto;
   box-sizing: border-box;
   font-family: "Noto Sans TC", sans-serif;
-  text-align: center;
   background-color: rgb(238, 239, 242);
   font-size: 16px;
 }
 html,
 body {
   height: 100%;
+}
+.bg_White {
+  background-color: white;
 }
 /* for week1 */
 .separator {
@@ -55,6 +57,7 @@ body {
   padding: 5px 10px;
   text-align: left;
   width: 250px;
+  border: 1px solid rgb(238, 239, 242);
 }
 .navigation {
   position: fixed;
@@ -98,7 +101,7 @@ body {
 }
 .main {
   width: 1200px;
-  height: 100%;
+  /* height: 100%; */
   display: flex;
   padding: 5px 0;
 }
@@ -130,4 +133,39 @@ body {
   width: 100vw;
   height: 50px;
   padding: 15px 0;
+  text-align: center;
+}
+.text {
+  width: max-content;
+  margin: 5px auto;
+  background-color: white;
+}
+
+.tagIndex {
+  width: max-content;
+  height: 30px;
+  margin: 0 5px;
+  padding: 5px 10px;
+}
+.zoneList {
+  border: none;
+  border-radius: 5px;
+  height: 30px;
+  padding: 5px 10px;
+  text-align: left;
+  width: 150px;
+  margin: 0 5px;
+  background-color: white;
+  border: 1px solid rgb(238, 239, 242);
+  border-radius: 5px;
+}
+.textarea {
+  width: 95%;
+  height: calc(100% - 150px);
+  border: 1px solid rgb(238, 239, 242);
+  border-radius: 5px;
+  background-color: white;
+  padding: 5px 5px;
+  text-align: left;
+  margin: 10px 0;
 }

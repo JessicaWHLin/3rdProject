@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap" />
+    <title>發表文章</title>
+  </head>
+  <body>
+    <div class="navigation">
+      <div class="icon navi-left">
+        <img class="img" src="image/simple_plane_travel_around _Pngtree.png" />
+        <span class="name" id="home"> Trip Pals </span>
+      </div>
+      <div class="navi-right">
+        <button class="btn" id="articlepage">發文</button>
+        <button class="btn" id="signpage">會員登入</button>
+      </div>
+    </div>
+    <div class="navi-placeholder"></div>
+    <div class="main" style="display: block; width: 710px">
+      <div class="tagIndex">Trip pals 首頁 > 區域 > 分類</div>
+      <select class="zoneList">
+        <option class="bg_White">(區域)</option>
+        <option class="bg_White">東北亞</option>
+        <option class="bg_White">東南亞</option>
+        <option class="bg_White">台灣</option>
+        <option class="bg_White">南亞</option>
+        <option class="bg_White">亞西</option>
+        <option class="bg_White">中國港澳</option>
+        <option class="bg_White">歐洲</option>
+        <option class="bg_White">紐澳大洋洲</option>
+        <option class="bg_White">非洲</option>
+      </select>
+      <div class="zone-setting" style="height: 400px">
+        <div class="zone-title">發表文章</div>
+        <select class="zoneList" style="width: 100px">
+          <option class="bg_White">(分類)</option>
+          <option class="bg_White">行程</option>
+          <option class="bg_White">交通</option>
+          <option class="bg_White">住宿</option>
+          <option class="bg_White">購物</option>
+          <option class="bg_White">飲食</option>
+          <option class="bg_White">簽證</option>
+          <option class="bg_White">其他</option>
+        </select>
+        <input
+          type="text"
+          class="input_frame bg_White"
+          style="width: 300px"
+          placeholder="標題" />
+        <textarea class="textarea" placeholder="分享是種美好..."></textarea>
+        <button class="btn" id="postArticle">發佈</button>
+      </div>
+    </div>
+    <div class="footer">COPYRIGHT © 2024 TripPals 旅伴</div>
+    <script type="module" src="article.js"></script>
+  </body>
+</html>
