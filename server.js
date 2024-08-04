@@ -53,8 +53,14 @@ app.use(express.static(path.join(__dirname, "public")));
 app.get("/", function (req, res) {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
-app.get("/article", function (req, res) {
-  res.sendFile(path.join(__dirname, "public", "article.html"));
+app.get("/articleWrite", function (req, res) {
+  res.sendFile(path.join(__dirname, "public", "articleWrite.html"));
+});
+app.get("/articleView", function (req, res) {
+  res.sendFile(path.join(__dirname, "public", "articleView.html"));
+});
+app.get("/articleList", function (req, res) {
+  res.sendFile(path.join(__dirname, "public", "articleList.html"));
 });
 app.get("/user", function (req, res) {
   res.sendFile(path.join(__dirname, "public", "user.html"));
@@ -73,7 +79,6 @@ app.get("/loaderio-3d25eebd5ba80d681bf17e6486b56acb", function (req, res) {
     )
   );
 });
-console.log("--------npm測試-----------");
 //api
 //註冊
 app.post("/api/signup", (req, res) => {
@@ -127,7 +132,22 @@ app.get("/api/signin", (req, res) => {
       return res.status(500).json({ error: error.message, message: "1" });
     } else {
       console.log("DB connetion is ok");
-      const { email, password } = req.body;
+      let { email, password } = req.body;
+      connection2.query(
+        "select email, password,name from member where email=?",
+        [email],
+        (error, result) => {
+          if (error) {
+            connection2.release();
+            return res.status(500).json({ error: error.message, message: "2" });
+          }
+          if (result.length > 0) {
+            if (result.password === password) {
+              return res.json({ ok: true, name: result.name });
+            }
+          }
+        }
+      );
     }
   });
 });
@@ -207,6 +227,7 @@ app.post("/api/message", upload.single("image"), async (req, res) => {
 });
 
 const server = app.listen(port, function () {
+  console.log("--------啟動測試-----------");
   console.log("Server is running at https://trippals.site");
   console.log(`Server is running at port: ${port}`);
 });

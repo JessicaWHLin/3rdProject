@@ -30,7 +30,7 @@ export function go_signpage() {
 export function post_article() {
   const articlepage = document.querySelector("#articlepage");
   articlepage.addEventListener("click", () => {
-    const url = "/article";
+    const url = "/articleWrite";
     fetch(url)
       .then((response) => response)
       .then((data) => {
