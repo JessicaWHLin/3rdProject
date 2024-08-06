@@ -2,19 +2,18 @@ import express from "express";
 import path from "path";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
-import mysql from "mysql2";
 import multer from "multer";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 dotenv.config();
 import { fileURLToPath } from "url";
 import morgan from "morgan";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+//Routers
+import authRouter from "./routes/authRouter.js";
 
-const host = process.env.host;
-const user = process.env.user;
-const password = process.env.password;
-const database = process.env.database;
+//環境參數
 const bucketName = process.env.bucket_name;
 const bucketRegion = process.env.bucket_region;
 const accessKey = process.env.access_key;
@@ -30,15 +29,6 @@ const client = new S3Client({
 
 const app = express();
 
-const pool = mysql.createPool({
-  host: host,
-  user: user,
-  password: password,
-  database: database,
-  waitForConnections: true,
-  connectionLimit: 5,
-});
-
 const storage = multer.memoryStorage();
 const upload = multer({
   storage: storage,
@@ -48,6 +38,8 @@ const upload = multer({
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(morgan("combined"));
+app.use("/api/auth", authRouter);
+
 //靜態網頁
 app.use(express.static(path.join(__dirname, "public")));
 app.get("/", function (req, res) {
@@ -78,78 +70,6 @@ app.get("/loaderio-3d25eebd5ba80d681bf17e6486b56acb", function (req, res) {
       "loaderio-3d25eebd5ba80d681bf17e6486b56acb.txt"
     )
   );
-});
-//api
-//註冊
-app.post("/api/signup", (req, res) => {
-  pool.getConnection((error, connection1) => {
-    if (error) {
-      return res.status(500).json({ error: error.message, message: "1" });
-    } else {
-      console.log("DB conneciton is ok");
-      let { username, email, password } = req.body;
-
-      //檢查有無重複
-      connection1.query(
-        "select * from member where email =?",
-        [email],
-        (error, result) => {
-          if (error) {
-            connection1.release();
-            return res.status(500).json({ error: error.message, message: "2" });
-          }
-
-          if (result.length > 0) {
-            connection1.release();
-            return res.status(400).json({ error: "Existed Email" });
-          } else {
-            //新email
-            const sql = "insert into member(name,email,password)values(?,?,?)";
-            const val = [username, email, password];
-            console.log(
-              `receive req：username=${username}, Email=${email}, password=${password}`
-            );
-            connection1.execute(sql, val, (error, result) => {
-              console.log("executed.");
-              connection1.release();
-              if (error) {
-                return res
-                  .status(500)
-                  .json({ error: error.message, message: "3" });
-              }
-              res.json({ ok: true });
-            });
-          }
-        }
-      );
-    }
-  });
-});
-//登入
-app.get("/api/signin", (req, res) => {
-  pool.getConnection((error, connection2) => {
-    if (error) {
-      return res.status(500).json({ error: error.message, message: "1" });
-    } else {
-      console.log("DB connetion is ok");
-      let { email, password } = req.body;
-      connection2.query(
-        "select email, password,name from member where email=?",
-        [email],
-        (error, result) => {
-          if (error) {
-            connection2.release();
-            return res.status(500).json({ error: error.message, message: "2" });
-          }
-          if (result.length > 0) {
-            if (result.password === password) {
-              return res.json({ ok: true, name: result.name });
-            }
-          }
-        }
-      );
-    }
-  });
 });
 
 //week1
@@ -228,7 +148,7 @@ app.post("/api/message", upload.single("image"), async (req, res) => {
 
 const server = app.listen(port, function () {
   console.log("--------啟動測試-----------");
-  console.log("Server is running at https://trippals.site");
+  console.log("Server is running at https://www.trippals.site");
   console.log(`Server is running at port: ${port}`);
 });
 server.setTimeout(10 * 60 * 1000); //10分鐘限制

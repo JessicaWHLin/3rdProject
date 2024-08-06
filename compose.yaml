@@ -14,11 +14,11 @@ services:
     image: jessicalin1205/my-app:latest
     # command: ["./wait-for-it.sh", "db:3306", "--", "npm", "run", "dev"]
     environment:
-      - NODE_ENV:development
-      - DATABASE_DB:${database}
-      - DATABASE_USER:${user}
-      - DATABASE_PASSWORD:${password}
-      - DATABASE_HOST:localhost
+      - NODE_ENV=development
+      - DATABASE_DB=${database}
+      - DATABASE_USER=${user}
+      - DATABASE_PASSWORD=${password}
+      - DATABASE_HOST=db
 
     ports:
       - 3000:3000
@@ -33,7 +33,7 @@ services:
   db:
     image: mysql:8.0
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -42,9 +42,7 @@ services:
     volumes:
       - db-data:/var/lib/mysql
     environment:
-      - DATABASE_DB:${database}
-      - DATABASE_USER:${user}
-      - DATABASE_PASSWORD:${password}
+      - MYSQL_ROOT_PASSWORD:${password}
     expose:
       - 3306
 volumes:

@@ -11,7 +11,7 @@ signupBtn.addEventListener("click", async () => {
   const email = document.querySelector("#signupEmail").value;
   const password = document.querySelector("#signupPassword").value;
   const signupData = { username: username, email: email, password: password };
-  const urlSignup = "/api/signup";
+  const urlSignup = "/api/auth/signup";
   const object = {};
   const options = {
     method: "POST",
@@ -33,21 +33,28 @@ signupBtn.addEventListener("click", async () => {
 });
 //登入
 const signinBtn = document.querySelector("#signinBtn");
+const showName = document.querySelector(".showName");
+const signPageBtn = document.querySelector("#signpage");
 signinBtn.addEventListener("click", async () => {
   const signinEmail = document.querySelector("#signinEmail").value;
-  const signinPassword = document.querySelector("#signunPaasword").value;
+  const signinPassword = document.querySelector("#signinPassword").value;
   const signinData = { email: signinEmail, password: signinPassword };
-  const urlSignin = "/api/signin";
+  const urlSignin = "/api/auth/signin";
   const options = {
-    method: "PUT",
+    method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(signinData),
   };
   const result = await fetchData(urlSignin, options);
+  console.log("result:", result);
   if (result.ok == true) {
-    location.href = "/";
-  }
-  if (result.error == true) {
+    localStorage.setItem("token", result.token);
+    // location.href = "/";
+    console.log("signin success!");
+    signPageBtn.style.display = "none";
+    showName.textContent = `歡迎光臨 ${result.user.name}`;
+  } else {
+    console.log({ error: result.message });
   }
 });
 
