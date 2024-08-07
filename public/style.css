@@ -84,6 +84,7 @@ body {
   right: 30px;
   top: calc(50% - 14px);
   background-color: white;
+  width: max-content;
 }
 .img {
   width: 60px;

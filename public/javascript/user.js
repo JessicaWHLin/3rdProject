@@ -1,7 +1,26 @@
-import { back_Homepage, go_signpage, post_article } from "./module.js";
+import {
+  back_Homepage,
+  go_signpage,
+  post_article,
+  CheckAuth_WithToken,
+  showName,
+  userless,
+} from "./module.js";
 back_Homepage();
 go_signpage();
-post_article();
+
+const token = localStorage.getItem("token");
+if (token) {
+  const authResult = await CheckAuth_WithToken(token);
+  post_article();
+  console.log("authResult:", authResult);
+  if (authResult.user) {
+    showName(authResult.user.name);
+  }
+} else {
+  console.log("status:un-signin");
+  userless();
+}
 
 //註冊
 const signupBtn = document.querySelector("#signupBtn");
@@ -24,17 +43,17 @@ signupBtn.addEventListener("click", async () => {
   if (result.ok == true) {
     document.querySelector(".signupResult").textContent = "註冊成功";
     document.querySelector(".signupResult").style.color = "green";
+    document.querySelector(".signupResult").style.fontSize = "700";
     //TODO:把輸入都清空
   }
   if (result.error == "Existed Email") {
     document.querySelector(".signupResult").textContent = "Email已存在";
     document.querySelector(".signupResult").style.color = "red";
+    document.querySelector(".signupResult").style.fontSize = "700";
   }
 });
 //登入
 const signinBtn = document.querySelector("#signinBtn");
-const showName = document.querySelector(".showName");
-const signPageBtn = document.querySelector("#signpage");
 signinBtn.addEventListener("click", async () => {
   const signinEmail = document.querySelector("#signinEmail").value;
   const signinPassword = document.querySelector("#signinPassword").value;
@@ -49,10 +68,7 @@ signinBtn.addEventListener("click", async () => {
   console.log("result:", result);
   if (result.ok == true) {
     localStorage.setItem("token", result.token);
-    // location.href = "/";
-    console.log("signin success!");
-    signPageBtn.style.display = "none";
-    showName.textContent = `歡迎光臨 ${result.user.name}`;
+    location.href = "/";
   } else {
     console.log({ error: result.message });
   }

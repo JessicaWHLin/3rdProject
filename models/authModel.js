@@ -21,7 +21,6 @@ const pool = mysql.createPool({
 });
 //檢查連線
 pool.getConnection((error, connection0) => {
-  // console.log("DB=", { host, user, password, database });
   if (error) {
     console.log("error:", error.message);
     return;
@@ -56,11 +55,8 @@ class UserModel {
               const sql =
                 "insert into member(name,email,password)values(?,?,?)";
               const val = [username, email, hashPassword];
-              console.log(
-                `receive req：username=${username}, Email=${email}, password=${password}`
-              );
+
               connection1.execute(sql, val, (error, result) => {
-                console.log("executed.");
                 connection1.release();
                 if (error) {
                   return reject({ error: true, message: error.message });
@@ -98,7 +94,7 @@ class UserModel {
                 password,
                 result[0].password
               );
-              console.log("verifyResult:", verifyResult);
+              // console.log("verifyResult:", verifyResult);
               if (verifyResult.ok) {
                 console.log("token:" + createToken(email));
                 resolve({
@@ -119,15 +115,58 @@ class UserModel {
       });
     });
   }
-}
+  //user state
+  static async checkAuth(fullToken) {
+    return new Promise((resolve, reject) => {
+      const result = validateToken(fullToken);
+      if (result.ok === true) {
+        pool.getConnection((error, connection3) => {
+          if (error) {
+            connection3.release();
+            return reject({ error: true, message: "DB connection failed" });
+          } else {
+            const sql = "select id,name,email from member where email=?";
+            const val = [result.email];
+            connection3.query(sql, val, (error, result) => {
+              connection3.release();
+              if (error) {
+                return reject({ error: true, message: error.message });
+              } else {
+                if (result.length < 0) {
+                  return reject({ error: true, message: "Invalid email" });
+                } else {
+                  console.log("auth query result:", result);
+                  resolve({
+                    ok: true,
+                    user: {
+                      id: result[0].id,
+                      name: result[0].name,
+                      email: result[0].email,
+                    },
+                  });
+                }
+              }
+            });
+          }
+        });
+      } else {
+        return reject({ error: true, message: result.message });
+      }
+    });
+  }
+} //class的括號
+
 export default UserModel;
 //-----------------------------------------------------------
 function createToken(email) {
-  const options = {
-    expiresIn: "7d",
+  const payload = {
+    email: email,
+    iat: Math.floor(Date.now() / 1000),
   };
-  const token = jsonwebtoken.sign({ email }, secretKey, options);
-  // console.log("token=", token);
+  const options = {
+    expiresIn: "14d",
+  };
+  const token = jsonwebtoken.sign(payload, secretKey, options);
   return token;
 }
 async function verify_password(originalPassword, hashedPassword) {
@@ -137,4 +176,20 @@ async function verify_password(originalPassword, hashedPassword) {
   } else {
     return { ok: false };
   }
+}
+
+function validateToken(fullToken) {
+  const token = fullToken.split(" ")[1];
+  const result = jsonwebtoken.verify(token, secretKey, (error, payload) => {
+    if (error) {
+      if (error.name === TokenExpiredError) {
+        return { ok: false, message: "Token expired" };
+      } else {
+        return { ok: false, message: error.name };
+      }
+    } else {
+      return { ok: true, email: payload.email };
+    }
+  });
+  return result;
 }
