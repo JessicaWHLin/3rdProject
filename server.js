@@ -12,6 +12,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 //Routers
 import authRouter from "./routes/authRouter.js";
+import articleRouter from "./routes/articleRouter.js";
 
 //環境參數
 const bucketName = process.env.bucket_name;
@@ -39,6 +40,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(morgan("combined"));
 app.use("/api/auth", authRouter);
+app.use("/api/article", articleRouter);
 
 //靜態網頁
 app.use(express.static(path.join(__dirname, "public")));
@@ -90,7 +92,9 @@ app.get("/api/message", (req, res) => {
     }
   });
 });
+
 app.post("/api/message", upload.single("image"), async (req, res) => {
+  //con
   const message = req.body.message;
   let fileOriginName;
   let imagePath;

@@ -25,8 +25,11 @@
     </div>
     <div class="navi-placeholder"></div>
     <div class="main" style="display: block; width: 710px">
-      <div class="tagIndex">Trip pals 首頁 > 區域 > 分類</div>
-      <select class="zoneList">
+      <div class="tagIndex">
+        <span>Trip pals 首頁</span><span id="zone"></span>
+        <span id="class"></span>
+      </div>
+      <select class="zoneList" id="zoneList">
         <option class="bg_White">(區域)</option>
         <option class="bg_White">東北亞</option>
         <option class="bg_White">東南亞</option>
@@ -38,9 +41,9 @@
         <option class="bg_White">紐澳大洋洲</option>
         <option class="bg_White">非洲</option>
       </select>
-      <div class="zone-setting" style="height: 400px">
+      <div class="zone-setting" style="min-height: 100%">
         <div class="zone-title">發表文章</div>
-        <select class="zoneList" style="width: 100px">
+        <select class="zoneList" id="classList" style="width: 100px">
           <option class="bg_White">(分類)</option>
           <option class="bg_White">行程</option>
           <option class="bg_White">交通</option>
@@ -54,9 +57,20 @@
           type="text"
           class="input_frame bg_White"
           style="width: 300px"
-          placeholder="標題" />
+          placeholder="標題"
+          id="title" />
         <textarea class="textarea" placeholder="分享是種美好..."></textarea>
-        <button class="btn" id="postArticle">發佈</button>
+        <div class="uploadImages">
+          <input
+            type="file"
+            id="inputImage"
+            accept="image/*"
+            style="display: block; margin: 0 15px"
+            multiple />
+        </div>
+        <button class="btn" id="postArticle" style="margin: 10px auto">
+          發佈
+        </button>
       </div>
     </div>
     <div class="footer">COPYRIGHT © 2024 TripPals 旅伴</div>

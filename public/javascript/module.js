@@ -52,7 +52,7 @@ export async function CheckAuth_WithToken(token) {
     },
   };
   const result = await fetchData(url, options);
-  console.log("check_auth:", result);
+  // console.log("check_auth:", result);
   return result;
 }
 

@@ -1,5 +1,5 @@
 import jsonwebtoken from "jsonwebtoken";
-// const { jsonwebtoken } = pkg;
+import TokenExpiredError from "jsonwebtoken";
 import mysql from "mysql2";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
@@ -29,7 +29,7 @@ pool.getConnection((error, connection0) => {
   connection0.release();
 });
 
-class UserModel {
+class AuthModel {
   //註冊
   static async signup(username, email, password) {
     return new Promise((resolve, reject) => {
@@ -135,7 +135,7 @@ class UserModel {
                 if (result.length < 0) {
                   return reject({ error: true, message: "Invalid email" });
                 } else {
-                  console.log("auth query result:", result);
+                  // console.log("auth query result:", result);
                   resolve({
                     ok: true,
                     user: {
@@ -156,7 +156,7 @@ class UserModel {
   }
 } //class的括號
 
-export default UserModel;
+export default AuthModel;
 //-----------------------------------------------------------
 function createToken(email) {
   const payload = {
