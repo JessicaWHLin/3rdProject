@@ -5,6 +5,7 @@ import {
   CheckAuth_WithToken,
   showName,
   userless,
+  signout,
 } from "./module.js";
 back_Homepage();
 go_signpage();
@@ -13,6 +14,7 @@ const token = localStorage.getItem("token");
 if (token) {
   const authResult = await CheckAuth_WithToken(token);
   post_article();
+  signout("/");
   console.log("authResult:", authResult);
   if (authResult.user) {
     showName(authResult.user.name);
@@ -65,7 +67,7 @@ signinBtn.addEventListener("click", async () => {
     body: JSON.stringify(signinData),
   };
   const result = await fetchData(urlSignin, options);
-  console.log("result:", result);
+  console.log("signin-result:", result);
   if (result.ok == true) {
     localStorage.setItem("token", result.token);
     location.href = "/";

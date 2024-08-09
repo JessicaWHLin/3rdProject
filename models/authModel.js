@@ -86,9 +86,8 @@ class AuthModel {
           if (error) {
             return reject({ error: true, message: error.message });
           } else {
-            console.log("model-result:", result[0].password);
             if (result.length == 0) {
-              return reject({ ok: false, message: "invalid email" });
+              resolve({ ok: false, message: "invalid email" });
             } else {
               const verifyResult = await verify_password(
                 password,
@@ -107,7 +106,7 @@ class AuthModel {
                   token: createToken(email),
                 });
               } else if (!verifyResult.ok) {
-                return reject({ error: true, message: "invalid password" });
+                resolve({ ok: false, message: "invalid password" });
               }
             }
           }

@@ -19,10 +19,10 @@ const authController = {
       console.log("con:", { email, password });
       const result = await AuthModel.signin(email, password);
       console.log("con-result:", result);
-      if (result.ok) {
+      if (result.ok === true) {
         res.status(200).json(result);
       }
-      if (!result.ok) {
+      if (result.ok === false) {
         res.status(400).json({ error: result.message });
       }
     } catch (error) {
