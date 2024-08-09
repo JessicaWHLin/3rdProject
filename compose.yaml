@@ -41,6 +41,7 @@ services:
     command: --default-authentication-plugin=caching_sha2_password
     volumes:
       - db-data:/var/lib/mysql
+      - ./mysql:/etc/mysql/mysql.cnf
     environment:
       - MYSQL_ROOT_PASSWORD:${password}
     expose:
