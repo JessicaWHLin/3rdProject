@@ -96,6 +96,34 @@ export function userless() {
     alert("請先登入會員");
   });
 }
+
+//文章條格式
+export class CreateArticleLine {
+  constructor(container) {
+    this.container = document.querySelector(container);
+  }
+  createLine(article) {
+    const subcontainer = document.createElement("div");
+    subcontainer.classList.add("link");
+    const title = document.createElement("span");
+    title.textContent = article.title;
+    const Class = document.createElement("span");
+    Class.textContent = ` 【${article.class}】`;
+    const LikeQty = document.createElement("span");
+    LikeQty.textContent = article.LikeQty;
+    const commentQty = document.createElement("span");
+    commentQty.textContent = article.commentQty;
+    const createDate = document.createElement("span");
+    createDate.textContent = article.created_at.split("T")[0];
+    subcontainer.appendChild(Class);
+    subcontainer.appendChild(title);
+    subcontainer.appendChild(createDate);
+    subcontainer.appendChild(LikeQty);
+    subcontainer.appendChild(commentQty);
+    this.container.appendChild(subcontainer);
+  }
+}
+
 // -------------------------------------
 async function fetchData(url, options) {
   let data = await fetch(url, options)

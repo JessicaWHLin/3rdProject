@@ -6,14 +6,17 @@ import dotenv from "dotenv";
 dotenv.config();
 
 //環境參數
+//環境參數
 const host = process.env.host;
 const user = process.env.user;
 const password = process.env.password;
 const database = process.env.database;
+const db_port = process.env.db_port;
 const secretKey = process.env.secretKey;
 const pool = mysql.createPool({
   host: host,
   user: user,
+  port: db_port,
   password: password,
   database: database,
   charset: "utf8mb4",
@@ -23,7 +26,7 @@ const pool = mysql.createPool({
 //檢查連線
 pool.getConnection((error, connection0) => {
   if (error) {
-    console.log("error:", error.message);
+    console.log("error:", error.message + "authModel DB failed");
     return;
   }
   console.log("userModel DB connection OK");
@@ -53,8 +56,7 @@ class AuthModel {
             } else {
               const hashPassword = await bcrypt.hash(password, 6);
               console.log("hashPassword=", hashPassword);
-              const sql =
-                "insert into member(name,email,password)values(?,?,?)";
+              const sql = "insert into member(name,email,password)values(?,?,?)";
               const val = [username, email, hashPassword];
 
               connection1.execute(sql, val, (error, result) => {
@@ -90,10 +92,7 @@ class AuthModel {
             if (result.length == 0) {
               resolve({ ok: false, message: "invalid email" });
             } else {
-              const verifyResult = await verify_password(
-                password,
-                result[0].password
-              );
+              const verifyResult = await verify_password(password, result[0].password);
               // console.log("verifyResult:", verifyResult);
               if (verifyResult.ok) {
                 console.log("token:" + createToken(email));
@@ -132,10 +131,10 @@ class AuthModel {
               if (error) {
                 return reject({ error: true, message: error.message });
               } else {
-                if (result.length < 0) {
+                if (result.length < 1) {
                   return reject({ error: true, message: "Invalid email" });
                 } else {
-                  // console.log("auth query result:", result);
+                  console.log("auth query result:", result);
                   resolve({
                     ok: true,
                     user: {

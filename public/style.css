@@ -195,17 +195,23 @@ body {
   height: 20px;
   width: 20px;
 }
+.articleView-section {
+  height: min-content;
+  padding-bottom: 20px;
+}
 .articleView-item {
   font-size: 12px;
   padding-right: 10px;
   vertical-align: top;
 }
-.writerInfo {
+.articleView-username {
+  padding: 20px 10px 0 15px;
   text-align: left;
   font-weight: 700;
 }
-.content {
+.articleView-content {
   text-align: left;
+  padding: 0 10px;
 }
 .bg_White {
   background-color: white;

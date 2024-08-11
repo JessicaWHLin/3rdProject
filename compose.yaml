@@ -18,7 +18,7 @@ services:
       - DATABASE_DB=${database}
       - DATABASE_USER=${user}
       - DATABASE_PASSWORD=${password}
-      - DATABASE_HOST=db
+      - DATABASE_HOST=${host}
 
     ports:
       - 3000:3000
@@ -43,8 +43,13 @@ services:
       - db-data:/var/lib/mysql
       - ./mysql:/etc/mysql/mysql.cnf
     environment:
-      - MYSQL_ROOT_PASSWORD:${password}
-    expose:
-      - 3306
+      - DATABASE_DB=${database}
+      - DATABASE_USER=${user}
+      - DATABASE_PASSWORD=${password}
+
+    # expose:
+    #   - 3306
+    ports:
+      - "3307:3306"
 volumes:
   db-data:

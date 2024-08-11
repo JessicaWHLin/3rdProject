@@ -13,4 +13,8 @@ const upload = multer({
 const router = express.Router();
 
 router.post("/write", upload.array("images"), articleController.write);
+router.get("/zoneList", articleController.listZone);
+router.get("/ranking", articleController.ranking);
+router.get("", articleController.articleDetail);
+
 export default router;

@@ -7,9 +7,11 @@ const host = process.env.host;
 const user = process.env.user;
 const password = process.env.password;
 const database = process.env.database;
+const db_port = process.env.db_port;
 const pool = mysql.createPool({
   host: host,
   user: user,
+  port: db_port,
   password: password,
   database: database,
   charset: "utf8mb4",
@@ -20,7 +22,7 @@ const pool = mysql.createPool({
 //檢查連線
 pool.getConnection((error, connection0) => {
   if (error) {
-    console.log("error:", error.message);
+    console.log("error:", error.message + "articleModel DB failed");
     return;
   }
   console.log("articleModel DB connection OK");
@@ -48,8 +50,7 @@ class ArticleModel {
           }
         });
         //文章編號
-        const sql_articleID =
-          "select id from article where title=? and member_id=?";
+        const sql_articleID = "select id from article where title=? and member_id=?";
         const val_articleID = [title, user.id];
         connection1.query(sql_articleID, val_articleID, (error, result) => {
           connection1.release();
@@ -82,6 +83,56 @@ class ArticleModel {
       }); //pool
     }); //promise
   } //write
+
+  static async findArticle(zone) {
+    return new Promise((resolve, reject) => {
+      pool.getConnection((error, connection2) => {
+        if (error) {
+          return reject({ error: true, message: "DB connection failed" });
+        }
+        const sql = `select member.name, article.*,count(article_like.id)as likeQty,count(comment.id) as commentQty from article 
+        left join member on member.id=article.member_id 
+        left join article_like on article.id=article_like.article_id 
+        left join comment on article.id=comment.article_id
+        where zones=? group by article.id,member.name;`;
+        const val = [zone];
+        connection2.query(sql, val, (error, result) => {
+          connection2.release();
+          if (error) {
+            return reject({ error: true, message: error.message + "query zone" });
+          }
+          resolve({ ok: true, articles: result });
+        });
+      });
+    }); //promise
+  } //findArticle
+
+  static async findArticleDetail(article_id) {
+    return new Promise((resolve, reject) => {
+      pool.getConnection((error, connection3) => {
+        if (error) {
+          return reject({ error: true, message: "DB connection failed" });
+        }
+        const sql = `select member.name, article.*,count(article_like.id)as likeQty,count(comment.id) as commentQty from article 
+        left join member on member.id=article.member_id 
+        left join article_like on article.id=article_like.article_id 
+        left join comment on article.id=comment.article_id
+        where article.id=? group by article.id,member.name;`;
+        const val = [article_id];
+        connection3.query(sql, val, (error, result) => {
+          connection3.release();
+          if (error) {
+            return reject({ error: true, message: error.message + "query article_id" });
+          }
+          resolve({ ok: true, articles: result });
+        });
+      }); //connection3
+    });
+  } //findArticleDetail
+
+  static async latest() {} //latest
+
+  static async popular() {} //popular
 } //class
 
 export default ArticleModel;

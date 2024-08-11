@@ -34,9 +34,8 @@ const articleController = {
         if (req.files) {
           for (let i = 0; i < req.files.length; i++) {
             files[i] = req.files[i].originalname;
-            const uniqueSuffix =
-              Date.now() + "-" + Math.round(Math.random() * 1e6);
-            filename[i] = uniqueSuffix + "-" + files[i];
+            const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e6);
+            filename[i] = uniqueSuffix;
             params[i] = {
               Bucket: bucketName,
               Key: filename[i],
@@ -47,16 +46,12 @@ const articleController = {
               command[i] = new PutObjectCommand(params[i]);
               await client.send(command[i]);
 
-              filePath[
-                i
-              ] = `https://d1g5nr6pevif22.cloudfront.net/${filename[i]}`;
+              filePath[i] = `https://d1g5nr6pevif22.cloudfront.net/${filename[i]}`;
             } catch (error) {
               res.status(500).json({ error: error.message });
             }
           }
         }
-        // console.log("req=", { zone, Class, title, content });
-        // console.log("files:", files, "filePath:", filePath);
         const result = await ArticleModel.write(
           auth.user,
           zone,
@@ -73,7 +68,41 @@ const articleController = {
         }
       }
     } catch (error) {
-      console.log("p.64 con error", error.message);
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  listZone: async (req, res) => {
+    try {
+      const { zone } = req.query;
+      const result = await ArticleModel.findArticle(zone);
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+  articleDetail: async (req, res) => {
+    try {
+      const { article_id } = req.query;
+      const result = await ArticleModel.findArticleDetail(article_id);
+      if (result.ok) {
+        res.status(200).json(result);
+      }
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  ranking: async (req, res) => {
+    try {
+      const result_latest = await ArticleModel.latest();
+      const result_popular = await ArticleModel.popular();
+      if (result_latest && result_popular) {
+        res.status(200).json({ ok: true });
+      } else {
+        res.status(200).json({ ok: false });
+      }
+    } catch (error) {
       res.status(500).json({ error: error.message });
     }
   },

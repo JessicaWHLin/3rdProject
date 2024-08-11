@@ -42,7 +42,7 @@ for (let i = 0; i < ZONES.length; i++) {
   zone.classList.add("link");
   zone.textContent = ZONES[i];
   zone.addEventListener("click", () => {
-    location.href = "/articleList";
+    location.href = `/articleList?zone=${ZONES[i]}`;
   });
   container.appendChild(zone);
 }

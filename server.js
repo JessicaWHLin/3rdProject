@@ -66,11 +66,7 @@ app.get("/messageboard", function (req, res) {
 //loader.io
 app.get("/loaderio-3d25eebd5ba80d681bf17e6486b56acb", function (req, res) {
   res.sendFile(
-    path.join(
-      __dirname,
-      "public",
-      "loaderio-3d25eebd5ba80d681bf17e6486b56acb.txt"
-    )
+    path.join(__dirname, "public", "loaderio-3d25eebd5ba80d681bf17e6486b56acb.txt")
   );
 });
 
@@ -124,8 +120,7 @@ app.post("/api/message", upload.single("image"), async (req, res) => {
     imagePath = null;
   }
   try {
-    const sql_msg =
-      "insert into messages(content,imageName, imageUrl)values(?,?,?)";
+    const sql_msg = "insert into messages(content,imageName, imageUrl)values(?,?,?)";
     pool.getConnection((error, connection99) => {
       console.log("DB連線正常");
       console.log(message, fileOriginName, imagePath);
