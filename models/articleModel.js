@@ -107,7 +107,7 @@ class ArticleModel {
     }); //promise
   } //findArticle
 
-  static async findArticleDetail(article_id) {
+  static async findArticleContent(article_id) {
     return new Promise((resolve, reject) => {
       pool.getConnection((error, connection3) => {
         if (error) {
@@ -126,10 +126,70 @@ class ArticleModel {
           }
           resolve({ ok: true, articles: result });
         });
-      }); //connection3
+      });
     });
-  } //findArticleDetail
+  }
 
+  static async findArticleImages(article_id) {
+    return new Promise((resolve, reject) => {
+      pool.getConnection((error, connection4) => {
+        if (error) {
+          return reject({ error: true, message: "DB connection failed" });
+        }
+        const sql = "select imageURL from images where article_id=?";
+        const val = [article_id];
+        connection4.query(sql, val, (error, result) => {
+          connection4.release();
+          if (error) {
+            return reject({ error: true, message: error.message + "query image" });
+          }
+          resolve({ ok: true, images: result });
+        });
+      });
+    });
+  }
+  static async comment(comment, article_id, member_id) {
+    return new Promise((resolve, reject) => {
+      pool.getConnection((error, connection5) => {
+        if (error) {
+          return reject({ error: true, message: "DB connection failed" });
+        }
+        const sql = `insert into comment(
+        member_id,article_id,content)values(?,?,?)`;
+        const val = [member_id, article_id, comment];
+        connection5.execute(sql, val, (error, result) => {
+          connection5.release();
+          if (error) {
+            return reject({ error: true, message: error.message + "insert comment" });
+          }
+          resolve({ ok: true });
+        });
+      });
+    });
+  }
+
+  static async findComment(article_id) {
+    return new Promise((resolve, reject) => {
+      pool.getConnection((error, connection6) => {
+        if (error) {
+          return reject({ error: true, message: "DB connection failed" });
+        }
+        const sql = `select comment.*,count(comment_like.id) as likeQty,member.name 
+          from comment
+          left join comment_like on comment.id=comment_like.comment_id
+          left join member on member.id=comment.member_id
+          where comment.article_id=?  
+          group by comment.id;`;
+        const val = [article_id];
+        connection6.query(sql, val, (error, result) => {
+          if (error) {
+            return reject({ error: true, message: error.message + "query comment" });
+          }
+          resolve({ ok: true, result });
+        });
+      });
+    });
+  }
   static async latest() {} //latest
 
   static async popular() {} //popular

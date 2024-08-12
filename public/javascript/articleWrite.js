@@ -63,7 +63,7 @@ postBtn.addEventListener("click", async (e) => {
         formdata.append("images", input.files[i]);
       }
     }
-    console.log("文章的內容:", formdata.zone);
+
     const url = "/api/article/write";
     const options = {
       method: "POST",

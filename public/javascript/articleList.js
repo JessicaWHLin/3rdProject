@@ -43,9 +43,10 @@ if (result.articles.length > 0) {
   const zoneList = new CreateArticleLine("#zoneList");
   result.articles.forEach((article) => {
     zoneList.createLine(article);
-    console.log("articleID:", article.id);
-    document.querySelector(".link").addEventListener("click", () => {
-      location.href = `/articleView?article_id=${article.id}`;
+  });
+  document.querySelectorAll(".link").forEach((link, index) => {
+    link.addEventListener("click", () => {
+      location.href = `/articleView?article_id=${result.articles[index].id}`;
     });
   });
 }

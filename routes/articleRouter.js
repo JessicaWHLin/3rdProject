@@ -16,5 +16,7 @@ router.post("/write", upload.array("images"), articleController.write);
 router.get("/zoneList", articleController.listZone);
 router.get("/ranking", articleController.ranking);
 router.get("", articleController.articleDetail);
+router.post("/comment", articleController.comment);
+router.get("/comment", articleController.findComment);
 
 export default router;

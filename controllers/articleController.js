@@ -84,9 +84,43 @@ const articleController = {
   articleDetail: async (req, res) => {
     try {
       const { article_id } = req.query;
-      const result = await ArticleModel.findArticleDetail(article_id);
+      const contentResult = await ArticleModel.findArticleContent(article_id);
+      const imagesRresult = await ArticleModel.findArticleImages(article_id);
+      if (contentResult.ok && imagesRresult.ok) {
+        res.status(200).json({ content: contentResult, images: imagesRresult });
+      }
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  comment: async (req, res) => {
+    try {
+      const fullToken = req.headers.authorization;
+      const auth = await AuthModel.checkAuth(fullToken);
+      if (auth.ok) {
+        const member_id = auth.user.id;
+        const { comment, article_id } = req.body;
+        const result = await ArticleModel.comment(comment, article_id, member_id);
+        if (result.ok) {
+          res.status(200).json({ ok: true });
+        } else {
+          res.status(500).json({ ok: false, message: error.message });
+        }
+      } else {
+        res.status(400).json({ ok: false, message: "un-signin" });
+      }
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  findComment: async (req, res) => {
+    try {
+      const { article_id } = req.query;
+      const result = await ArticleModel.findComment(article_id);
       if (result.ok) {
-        res.status(200).json(result);
+        res.status(200).json({ result });
       }
     } catch (error) {
       res.status(500).json({ error: error.message });

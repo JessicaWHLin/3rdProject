@@ -80,9 +80,6 @@ export function signout(url) {
     console.log("status:signout");
     fetch(url)
       .then((response) => response)
-      .then(() => {
-        location.href = url;
-      })
       .catch((error) => {
         console.log({ error: error });
       });
@@ -109,16 +106,18 @@ export class CreateArticleLine {
     title.textContent = article.title;
     const Class = document.createElement("span");
     Class.textContent = ` 【${article.class}】`;
-    const LikeQty = document.createElement("span");
-    LikeQty.textContent = article.LikeQty;
+    const likeQty = document.createElement("span");
+    likeQty.style = "color:red";
+    likeQty.textContent = article.likeQty;
     const commentQty = document.createElement("span");
+    commentQty.style = "color:green";
     commentQty.textContent = article.commentQty;
     const createDate = document.createElement("span");
     createDate.textContent = article.created_at.split("T")[0];
     subcontainer.appendChild(Class);
     subcontainer.appendChild(title);
     subcontainer.appendChild(createDate);
-    subcontainer.appendChild(LikeQty);
+    subcontainer.appendChild(likeQty);
     subcontainer.appendChild(commentQty);
     this.container.appendChild(subcontainer);
   }

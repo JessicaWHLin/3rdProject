@@ -72,7 +72,15 @@ signinBtn.addEventListener("click", async () => {
     localStorage.setItem("token", result.token);
     location.href = "/";
   } else {
-    console.log({ error: result.message });
+    const showResult = document.querySelector(".signinResult");
+    showResult.style = "color:red; font-weight:700";
+    if (result.error == "invalid password") {
+      showResult.textContent = "密碼錯誤";
+    } else if (result.error == "invalid email") {
+      showResult.textContent = "無此用戶信箱";
+    } else {
+      showResult.textContent = `${result.message}`;
+    }
   }
 });
 
