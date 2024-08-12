@@ -21,7 +21,7 @@ const pool = mysql.createPool({
   database: database,
   charset: "utf8mb4",
   waitForConnections: true,
-  connectionLimit: 5,
+  connectionLimit: 25,
 });
 //檢查連線
 pool.getConnection((error, connection0) => {
