@@ -90,7 +90,7 @@ class ArticleModel {
         if (error) {
           return reject({ error: true, message: "DB connection failed" });
         }
-        const sql = `select member.name, article.*,count(article_like.id)as likeQty,count(comment.id) as commentQty from article 
+        const sql = `select member.name, article.*,count(DISTINCT article_like.id)as likeQty,count(DISTINCT comment.id) as commentQty from article 
         left join member on member.id=article.member_id 
         left join article_like on article.id=article_like.article_id 
         left join comment on article.id=comment.article_id
@@ -113,11 +113,12 @@ class ArticleModel {
         if (error) {
           return reject({ error: true, message: "DB connection failed" });
         }
-        const sql = `select member.name, article.*,count(article_like.id)as likeQty,count(comment.id) as commentQty from article 
+        const sql = `select member.name, article.*,count( DISTINCT article_like.id)as likeQty,count(DISTINCT comment.id) as commentQty from article 
         left join member on member.id=article.member_id 
         left join article_like on article.id=article_like.article_id 
         left join comment on article.id=comment.article_id
-        where article.id=? group by article.id,member.name;`;
+        where article.id=? 
+        group by article.id;`;
         const val = [article_id];
         connection3.query(sql, val, (error, result) => {
           connection3.release();
@@ -154,15 +155,30 @@ class ArticleModel {
         if (error) {
           return reject({ error: true, message: "DB connection failed" });
         }
-        const sql = `insert into comment(
+        const sql_insert = `insert into comment(
         member_id,article_id,content)values(?,?,?)`;
-        const val = [member_id, article_id, comment];
-        connection5.execute(sql, val, (error, result) => {
+        const val_insert = [member_id, article_id, comment];
+        connection5.execute(sql_insert, val_insert, (error, result) => {
           connection5.release();
+
           if (error) {
             return reject({ error: true, message: error.message + "insert comment" });
           }
-          resolve({ ok: true });
+          //回傳comment info
+          const sql_query = `select comment.*,count(DISTINCT comment_like.id) as likeQty,member.name
+          from comment
+          left join comment_like on comment.id=comment_like.comment_id
+          left join member on member.id=comment.member_id
+          where comment.id=?
+          group by comment.id`;
+          const val_query = [result.insertId];
+          connection5.query(sql_query, val_query, (error, result) => {
+            connection5.release();
+            if (error) {
+              return reject({ error: true, message: error.message + "query comment" });
+            }
+            resolve({ ok: true, result });
+          });
         });
       });
     });
@@ -174,7 +190,7 @@ class ArticleModel {
         if (error) {
           return reject({ error: true, message: "DB connection failed" });
         }
-        const sql = `select comment.*,count(comment_like.id) as likeQty,member.name 
+        const sql = `select comment.*,count(DISTINCT comment_like.id) as likeQty,member.name 
           from comment
           left join comment_like on comment.id=comment_like.comment_id
           left join member on member.id=comment.member_id
@@ -182,6 +198,7 @@ class ArticleModel {
           group by comment.id;`;
         const val = [article_id];
         connection6.query(sql, val, (error, result) => {
+          connection6.release();
           if (error) {
             return reject({ error: true, message: error.message + "query comment" });
           }
@@ -189,7 +206,82 @@ class ArticleModel {
         });
       });
     });
+  } //findComment
+
+  static async articleLike(article_id, member_id) {
+    return new Promise((resolve, reject) => {
+      pool.getConnection((error, connection7) => {
+        if (error) {
+          return reject({ error: true, message: "DB connection failed" });
+        }
+        const sql_query = `select id from article_like 
+        where article_id=? and member_id=? `;
+        const val_query = [article_id, member_id];
+        connection7.query(sql_query, val_query, (error, result) => {
+          connection7.release();
+          console.log(result[0]);
+          if (error) {
+            return reject({ error: true, message: error.message + "query article_like" });
+          }
+          if (result.length < 1) {
+            const sql_insert = `insert into article_like(article_id,member_id)
+            values(?,?)`;
+            const val_insert = [article_id, member_id];
+            connection7.execute(sql_insert, val_insert, (error, result) => {
+              connection7.release();
+              if (error) {
+                return reject({
+                  error: true,
+                  message: error.message + "insert article_like",
+                });
+              }
+              const article_like_id = result.insertId;
+              return resolve({ ok: true, article_like_id: article_like_id });
+            });
+          } else {
+            const sql_delete = `delete from article_like 
+            where id=?`;
+            const val_delete = [result[0].id];
+            connection7.execute(sql_delete, val_delete, (error, result) => {
+              connection7.release();
+              if (error) {
+                return reject({
+                  error: true,
+                  message: error.message + "delete article_like",
+                });
+              }
+              return resolve({ ok: false, message: "delete article_like" });
+            });
+          }
+        });
+      });
+    });
   }
+
+  static async commentLike(comment_id, member_id) {
+    return new Promise((resolve, reject) => {
+      pool.getConnection((error, connection8) => {
+        if (error) {
+          return reject({ error: true, message: "DB connection failed" });
+        }
+        const sql = `insert into comment_like(comment_id,member_id)
+        values(?,?)`;
+        const val = [comment_id, member_id];
+        connection8.execute(sql, val, (error, result) => {
+          connection8.release();
+          if (error) {
+            return reject({
+              error: true,
+              message: error.message + "insert comment_like",
+            });
+          }
+          const comment_like_id = result.insertId;
+          resolve({ ok: true, comment_like_id: comment_like_id });
+        });
+      });
+    });
+  }
+
   static async latest() {} //latest
 
   static async popular() {} //popular

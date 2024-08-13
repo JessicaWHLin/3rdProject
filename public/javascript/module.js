@@ -80,6 +80,9 @@ export function signout(url) {
     console.log("status:signout");
     fetch(url)
       .then((response) => response)
+      .then(() => {
+        location.href = url;
+      })
       .catch((error) => {
         console.log({ error: error });
       });
@@ -102,22 +105,41 @@ export class CreateArticleLine {
   createLine(article) {
     const subcontainer = document.createElement("div");
     subcontainer.classList.add("link");
+    subcontainer.classList.add("articleList-line");
+
     const title = document.createElement("span");
-    title.textContent = article.title;
     const Class = document.createElement("span");
-    Class.textContent = ` 【${article.class}】`;
     const likeQty = document.createElement("span");
-    likeQty.style = "color:red";
-    likeQty.textContent = article.likeQty;
+    const flowerIcon = document.createElement("img");
+
+    const commentIcon = document.createElement("img");
+
     const commentQty = document.createElement("span");
-    commentQty.style = "color:green";
-    commentQty.textContent = article.commentQty;
     const createDate = document.createElement("span");
+    title.classList.add("articleList-item");
+    title.style = "flex:4";
+    Class.classList.add("articleList-item");
+    Class.style = "flex:1";
+    likeQty.classList.add("articleList-item");
+    commentQty.classList.add("articleList-item");
+    createDate.classList.add("articleList-item");
+    flowerIcon.classList.add("small_icon");
+    commentIcon.classList.add("small_icon");
+
+    title.textContent = article.title;
+    Class.textContent = ` 【${article.class}】`;
+    likeQty.textContent = article.likeQty;
+    commentQty.textContent = article.commentQty;
     createDate.textContent = article.created_at.split("T")[0];
+    flowerIcon.src = "image/flower_by_vecteezy.jpg";
+    commentIcon.src = "image/full_message_by_vecteezy.jpg";
+
     subcontainer.appendChild(Class);
     subcontainer.appendChild(title);
     subcontainer.appendChild(createDate);
+    subcontainer.appendChild(flowerIcon);
     subcontainer.appendChild(likeQty);
+    subcontainer.appendChild(commentIcon);
     subcontainer.appendChild(commentQty);
     this.container.appendChild(subcontainer);
   }

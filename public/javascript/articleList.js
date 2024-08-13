@@ -12,18 +12,7 @@ back_Homepage();
 go_signpage();
 
 const token = localStorage.getItem("token");
-if (token) {
-  const authResult = await CheckAuth_WithToken(token);
-  post_article();
-  signout("/articleList");
-  console.log("authResult:", authResult);
-  if (authResult.user) {
-    showName(authResult.user.name);
-  }
-} else {
-  console.log("status:un-signin");
-  userless();
-}
+
 //----------------------------------
 //取得zone
 const path = window.location.search.split("=");
@@ -49,6 +38,19 @@ if (result.articles.length > 0) {
       location.href = `/articleView?article_id=${result.articles[index].id}`;
     });
   });
+}
+
+if (token) {
+  const authResult = await CheckAuth_WithToken(token);
+  post_article();
+  signout(`/articleList?zone=${zone}`);
+  console.log("authResult:", authResult);
+  if (authResult.user) {
+    showName(authResult.user.name);
+  }
+} else {
+  console.log("status:un-signin");
+  userless();
 }
 
 // -------------------------------------

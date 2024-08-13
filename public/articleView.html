@@ -31,7 +31,7 @@
         <span class="articleView-title" id="title"></span>
         <div class="articleView-info">
           <img class="small_icon" src="image/flower_by_vecteezy.jpg" />
-          <span class="articleView-item" id="likeQty">按讚數</span>
+          <span class="articleView-item" id="article_like">按讚數</span>
           <img class="small_icon" src="image/full_message_by_vecteezy.jpg" />
           <span class="articleView-item" id="commentQty">留言數</span>
           <img class="small_icon" src="image/glasses_by_vecteezy.jpg" />
@@ -45,12 +45,20 @@
       </div>
       <div class="zone-setting articleView-section">
         <div class="articleView-username" id="username"></div>
-        <div class="separator"></div>
+        <div
+          class="response-comment"
+          style="color: rgb(170, 175, 194); font-size: 12px"
+          id="created_at"></div>
+        <div class="separator" style="margin: 10px 0"></div>
         <div class="articleView-content" id="content"></div>
         <div id="articleView-imageContainer"></div>
         <div class="separator"></div>
         <div class="response">
-          <img class="response-flower" src="image/flower_by_vecteezy.jpg" />
+          <img
+            class="response-flower"
+            title="送一朵花吧"
+            id="like"
+            src="image/flower_by_vecteezy.jpg" />
 
           <textarea
             class="response-textarea"
@@ -58,8 +66,8 @@
             placeholder="寫些回應..."></textarea>
           <button class="btn response-btn">留言</button>
         </div>
-        <div id="comment-container"></div>
       </div>
+      <div id="comment-container"></div>
     </div>
     <div class="footer">COPYRIGHT © 2024 TripPals 旅伴</div>
     <script type="module" src="/javascript/articleView.js"></script>

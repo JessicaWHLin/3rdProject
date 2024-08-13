@@ -103,7 +103,7 @@ const articleController = {
         const { comment, article_id } = req.body;
         const result = await ArticleModel.comment(comment, article_id, member_id);
         if (result.ok) {
-          res.status(200).json({ ok: true });
+          res.status(200).json({ result });
         } else {
           res.status(500).json({ ok: false, message: error.message });
         }
@@ -121,6 +121,30 @@ const articleController = {
       const result = await ArticleModel.findComment(article_id);
       if (result.ok) {
         res.status(200).json({ result });
+      }
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  like: async (req, res) => {
+    try {
+      const fullToken = req.headers.authorization;
+      const auth = await AuthModel.checkAuth(fullToken);
+      if (auth.ok) {
+        const member_id = auth.user.id;
+        const { article_id, comment_id } = req.body;
+        if (article_id != null) {
+          const result = await ArticleModel.articleLike(article_id, member_id);
+          if (result) {
+            res.status(200).json(result);
+          }
+        } else {
+          const result = await ArticleModel.commentLike(comment_id, member_id);
+          if (result) {
+            res.status(200).json(result);
+          }
+        }
       }
     } catch (error) {
       res.status(500).json({ error: error.message });
