@@ -117,9 +117,9 @@ export class CreateArticleLine {
     const commentQty = document.createElement("span");
     const createDate = document.createElement("span");
     title.classList.add("articleList-item");
-    title.style = "flex:4";
+    title.style = "flex:4; overflow: hidden; text-overflow: ellipsis;";
     Class.classList.add("articleList-item");
-    Class.style = "flex:1";
+    Class.style = "flex:1 min-width:80px";
     likeQty.classList.add("articleList-item");
     commentQty.classList.add("articleList-item");
     createDate.classList.add("articleList-item");
