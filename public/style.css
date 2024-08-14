@@ -219,7 +219,7 @@ body {
   vertical-align: top;
 }
 .articleView-username {
-  padding: 20px 10px 0 10px;
+  /* padding: 20px 10px 0 10px; */
   text-align: left;
   font-weight: 700;
 }
@@ -302,4 +302,17 @@ body {
 .articleList-item {
   padding: 0 5px;
   text-align: left;
+}
+
+.privateMessage {
+  background-color: rgb(88, 123, 176);
+  border-radius: 10px;
+  border: none;
+  color: white;
+  padding: 3px 10px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  height: fit-content;
 }

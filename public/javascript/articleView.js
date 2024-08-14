@@ -84,7 +84,7 @@ const result = await fetchData(url, options);
 console.log("文章細節:", result);
 const articles = result.content.articles[0];
 const imageURL = result.images.images;
-
+const writer_id = articles.member_id;
 document.title = articles.title;
 document.querySelector("#zone").textContent = ">" + articles.zones;
 document.querySelector("#class").textContent = articles.class;
@@ -129,59 +129,65 @@ if (token) {
   console.log("authResult:", authResult);
   if (authResult.user) {
     showName(authResult.user.name);
+    const privateMessage = document.querySelector("#privateMessage");
+    privateMessage.style = "display:inline-block;";
+    //留言
+    commentBtn.addEventListener("click", async () => {
+      let comment = document.querySelector("#comment");
+      console.log("comment:", comment.value);
+
+      const url = "/api/article/comment";
+      const options = {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ comment: comment.value, article_id: article_id }),
+      };
+      const result = await fetchData(url, options);
+      if (result.result.ok === true) {
+        comment.value = "";
+        const comments = result.result.result;
+        console.log("latest comment:", comments);
+        const createComment = new Comment("#comment-container");
+        createComment.renderComment(comments);
+      } else {
+        console.log("留言return異常:", result);
+      }
+    });
+    //按讚
+    flower.addEventListener("click", async () => {
+      console.log("按讚");
+      const url = "/api/article/like";
+      const options = {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          article_id: article_id,
+          comment_id: null,
+        }),
+      };
+      const result = await fetchData(url, options);
+      console.log("article_like result:", result);
+      let likeQty = parseInt(document.querySelector("#article_like").textContent);
+
+      if (result.ok === true) {
+        document.querySelector("#article_like").textContent = likeQty + 1;
+      } else if (result.ok === false) {
+        document.querySelector("#article_like").textContent = likeQty - 1;
+      } else {
+        console.log("error:", result.message);
+      }
+    });
+    //私訊
+    privateMessage.addEventListener("click", () => {
+      location.href = `/chat?member_id=${writer_id}`;
+    });
   }
-  //留言
-  commentBtn.addEventListener("click", async () => {
-    let comment = document.querySelector("#comment");
-    console.log("comment:", comment.value);
-
-    const url = "/api/article/comment";
-    const options = {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ comment: comment.value, article_id: article_id }),
-    };
-    const result = await fetchData(url, options);
-    if (result.result.ok === true) {
-      comment.value = "";
-      const comments = result.result.result;
-      console.log("latest comment:", comments);
-      const createComment = new Comment("#comment-container");
-      createComment.renderComment(comments);
-    } else {
-      console.log("留言return異常:", result);
-    }
-  });
-  //按讚
-  flower.addEventListener("click", async () => {
-    console.log("按讚");
-    const url = "/api/article/like";
-    const options = {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        article_id: article_id,
-        comment_id: null,
-      }),
-    };
-    const result = await fetchData(url, options);
-    console.log("article_like result:", result);
-    let likeQty = parseInt(document.querySelector("#article_like").textContent);
-
-    if (result.ok === true) {
-      document.querySelector("#article_like").textContent = likeQty + 1;
-    } else if (result.ok === false) {
-      document.querySelector("#article_like").textContent = likeQty - 1;
-    } else {
-      console.log("error:", result.message);
-    }
-  });
 } else {
   userless();
   console.log("status:un-signin");

@@ -9,9 +9,9 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap" />
     <title>聊天室</title>
     <style>
-      body {
+      /* body {
         padding-bottom: 3rem;
-      }
+      } */
 
       #form {
         background: rgba(0, 0, 0, 0.15);
@@ -22,7 +22,7 @@
         right: 0;
         display: flex;
         height: 3rem;
-        box-sizing: border-box;
+
         backdrop-filter: blur(10px);
       }
       #input {
@@ -73,38 +73,18 @@
       </div>
     </div>
     <div class="navi-placeholder"></div>
-    <div class="main">
+    <div class="main" style="min-height: calc(100% - 80px)">
       <div
         class="zone-setting"
-        style="text-align: left; width: 60%; min-width: 360px; margin: 10px auto">
+        style="text-align: left; width: 60%; min-width: 360px; margin: 0 auto 48px auto">
         <ul id="messages"></ul>
-        <form id="form" action="">
-          <input id="input" autocomplete="off" /><button>送出</button>
-        </form>
       </div>
+      <form id="form" action="">
+        <input id="input" autocomplete="off" /><button>送出</button>
+      </form>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script>
-      const socket = io();
-      const form = document.getElementById("form");
-      const input = document.getElementById("input");
-      const messages = document.getElementById("messages");
-
-      form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        if (input.value) {
-          socket.emit("chat message", input.value);
-          input.value = "";
-        }
-      });
-
-      socket.on("chat message", (msg) => {
-        const item = document.createElement("li");
-        item.textContent = "我" + " : " + msg;
-        messages.appendChild(item);
-        window.scrollTo(0, document.body.scrollHeight);
-      });
-    </script>
+    <script type="module" src="/javascript/chat.js"></script>
   </body>
 </html>
