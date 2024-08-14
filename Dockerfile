@@ -22,6 +22,7 @@ RUN --mount=type=bind,source=package.json,target=package.json \
     npm ci --omit=dev
 
 RUN npm install -g nodemon
+COPY package*.json ./
 RUN npm install
 # Run the application as a non-root user.
 USER node
