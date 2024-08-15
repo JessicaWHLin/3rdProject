@@ -47,6 +47,6 @@ services:
       - DATABASE_PASSWORD=${password}
 
     ports:
-      - "3307:3306"
+      - ${db_port}:3306
 volumes:
   db-data:
