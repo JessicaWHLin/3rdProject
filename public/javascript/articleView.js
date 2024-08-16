@@ -185,7 +185,8 @@ if (token) {
     });
     //私訊
     privateMessage.addEventListener("click", () => {
-      location.href = `/chat?member_id=${writer_id}`;
+      const roomId = createRoomId(writer_id, authResult.user.id);
+      location.href = `/chat?roomId=${roomId}`;
     });
   }
 } else {
@@ -203,4 +204,8 @@ async function fetchData(url, options) {
       console.log("error:", error);
     });
   return data;
+}
+
+function createRoomId(userId1, userId2) {
+  return [userId1, userId2].sort().join("-");
 }
