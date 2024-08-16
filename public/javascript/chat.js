@@ -10,6 +10,7 @@ import {
 
 back_Homepage();
 go_signpage();
+
 //取得friend_id
 const path = window.location.search.split("=");
 const roomId = decodeURIComponent(path[1]);
@@ -23,7 +24,13 @@ if (token) {
     showName(authResult.user.name);
 
     //socket.io
-    const socket = io(`/chat?room=${roomId}&Authorization=Bearer ${token}`);
+    // const socket = io(`/chat?room=${roomId}&Authorization=Bearer ${token}`);
+    const socket = io("ws://localhost:4000/chat", {
+      query: {
+        room: roomId,
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     const form = document.getElementById("form");
     const input = document.getElementById("input");
