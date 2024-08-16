@@ -24,10 +24,11 @@ if (token) {
     showName(authResult.user.name);
 
     //socket.io
-    const socket = io("www.trippals.site", {
+    const socket = io("/chat", {
       query: {
         room: roomId,
       },
+      transports: ["websocket"],
     });
 
     const form = document.getElementById("form");
