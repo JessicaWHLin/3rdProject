@@ -24,11 +24,9 @@ if (token) {
     showName(authResult.user.name);
 
     //socket.io
-    // const socket = io(`/chat?room=${roomId}&Authorization=Bearer ${token}`);
-    const socket = io("ws://localhost:4000/chat", {
+    const socket = io("ws://localhost:3000/chat", {
       query: {
         room: roomId,
-        Authorization: `Bearer ${token}`,
       },
     });
 
@@ -38,33 +36,32 @@ if (token) {
     const messageList = [];
 
     // 接收歷史訊息;
-    socket.on("history", (msgList) => {
-      const newArray = [...msgList, ...messageList];
-      Object.assign(messageList, newArray);
+    socket.on("history", (historyList) => {
+      console.log("historyList:", historyList);
     });
 
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       if (input.value) {
-        socket.emit("joinRoom", `${roomId}`);
-        socket.emit("history", messageList);
-        socket.emit("chat message", { msg: input.value });
+        socket.emit("joinRoom", roomId);
+        socket.emit("chat message", { msg: input.value, token: `Bearer ${token}` });
+        socket.emit("history", { roomId: roomId, messageList });
         input.value = "";
       }
     });
 
     socket.on("chat message", (msg) => {
-      console.log(msg);
+      // console.log(msg);
       const item = document.createElement("li");
-      if (msg.id == authResult.user.id) {
-        item.style = "text-align:right;";
-        item.textContent = msg.msg.msg;
+      if (msg.memberId == authResult.user.id) {
+        item.style = "text-align:right; font-weight:700";
+        item.textContent = msg.msg;
       } else {
-        item.textContent = msg.name + " : " + msg.msg.msg;
+        item.textContent = msg.name + " : " + msg.msg;
       }
-
       messages.appendChild(item);
       messageList.push(msg);
+
       window.scrollTo(0, document.body.scrollHeight);
     });
   }
