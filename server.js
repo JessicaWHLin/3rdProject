@@ -18,6 +18,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
+  path: "/chat/socket.io/",
   cors: {
     origin: "*",
   },
