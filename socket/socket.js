@@ -1,13 +1,13 @@
 import AuthModel from "../models/authModel.js";
 export function setupSocket(io) {
-  io.of("/chat").on("connection", async (socket) => {
+  io.on("connection", async (socket) => {
     const roomId = socket.handshake.query.room;
     let msgList = [];
 
     socket.join(roomId);
 
     socket.on("history", async (historyList) => {
-      io.of("/chat").to(roomId).emit("history", historyList);
+      io.to(roomId).emit("history", historyList);
       console.log("historyList", historyList);
     });
 
@@ -22,7 +22,7 @@ export function setupSocket(io) {
         msg: chatInfo.msg,
         createdAt,
       });
-      io.of("/chat").to(roomId).emit("chat message", {
+      io.to(roomId).emit("chat message", {
         memberId: auth.user.id,
         name: auth.user.name,
         msg: chatInfo.msg,
