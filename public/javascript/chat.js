@@ -24,7 +24,7 @@ if (token) {
     showName(authResult.user.name);
 
     //socket.io
-    const socket = io("/chat", {
+    const socket = io("https://www.trippals.site", {
       query: {
         room: roomId,
       },
