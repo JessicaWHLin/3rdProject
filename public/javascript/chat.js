@@ -25,7 +25,7 @@ if (token) {
 
     //socket.io
     const socket = io("https://www.trippals.site/chat", {
-      path: "chat/socket.io",
+      path: "/chat/socket.io",
       query: {
         room: roomId,
       },
