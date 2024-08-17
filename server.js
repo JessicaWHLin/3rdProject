@@ -9,6 +9,7 @@ import { Server } from "socket.io";
 import { setupSocket } from "./socket/socket.js";
 import authRouter from "./routes/authRouter.js";
 import articleRouter from "./routes/articleRouter.js";
+import chatRouter from "./routes/chatRouter.js";
 dotenv.config();
 const port = process.env.port;
 
@@ -31,6 +32,7 @@ app.use(morgan("combined"));
 //Routers
 app.use("/api/auth", authRouter);
 app.use("/api/article", articleRouter);
+app.use("/api/chat", chatRouter);
 setupSocket(io);
 
 //靜態網頁

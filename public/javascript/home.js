@@ -18,7 +18,21 @@ if (token) {
   console.log("authResult:", authResult);
   if (authResult.user) {
     showName(authResult.user.name);
-  }
+    const privateMsgLink = document.querySelector("#privateMsg");
+    privateMsgLink.addEventListener("click", async (e) => {
+      const url = `/api/chat/queryRoomId?member_id=${authResult.user.id}`;
+      const options = { method: "GET", "Content-Type": "application/json" };
+      const result = await fetchData(url, options);
+      if (result.ok) {
+        if (result.result.length < 1) {
+          e.preventDefault();
+          alert("目前無個人私訊");
+        }
+        const room_id = result.result[0].room_id;
+        location.href = `/chat?roomId=${room_id}`;
+      }
+    });
+  } //if(authResult.user)
 } else {
   console.log("status:un-signin");
   userless();
@@ -45,4 +59,16 @@ for (let i = 0; i < ZONES.length; i++) {
     location.href = `/articleList?zone=${ZONES[i]}`;
   });
   container.appendChild(zone);
+}
+
+// -------------------------------------
+async function fetchData(url, options) {
+  let data = await fetch(url, options)
+    .then((response) => {
+      return response.json();
+    })
+    .catch((error) => {
+      console.log("error:", error);
+    });
+  return data;
 }

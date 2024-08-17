@@ -128,7 +128,6 @@ body {
 }
 .left {
   flex: 1;
-  min-width: 50px;
   min-width: 145px;
 }
 .middle {
@@ -306,7 +305,7 @@ body {
 
 .privateMessage {
   padding: 10px;
-  width: 60%;
+  width: 90%;
   min-width: 360px;
   text-align: left;
   margin: 0 auto 48px auto;

@@ -71,6 +71,35 @@ class ChatModel {
       });
     });
   }
+  static async queryRoomId(member_id) {
+    return new Promise((resolve, reject) => {
+      pool.getConnection((error, connection3) => {
+        if (error) {
+          return reject({ error: true, message: "DB connection failed" });
+        }
+        const sql = `
+        select DISTINCT room_id from privateMsg where member_id=?`;
+        const val = [member_id];
+        connection3.query(sql, val, (error, result) => {
+          connection3.release();
+          if (error) {
+            return reject({ error: true, message: error.message + "query room_id" });
+          }
+          resolve({ ok: true, result });
+        });
+      });
+    });
+  }
+  static async querySender(member_ids) {
+    return new Promise((resolve, reject) => {
+      pool.getConnection((error, connection4) => {
+        if (error) {
+          return reject({ error: true, message: "DB connection failed" });
+        }
+        const sql = ``;
+      });
+    });
+  }
 }
 
 export default ChatModel;

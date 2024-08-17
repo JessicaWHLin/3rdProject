@@ -26,6 +26,29 @@ if (token) {
     //socket.io
     const isMemberInRoom = roomId.includes(authResult.user.id.toString());
     console.log("isMemberInRoom", isMemberInRoom);
+    //左邊聊天室選項
+    const url = `/api/chat/queryRoomId?member_id=${authResult.user.id}`;
+    const options = { method: "GET", "Content-Type": "application/json" };
+    const result_room = await fetchData(url, options);
+    console.log(" result_room:", result_room.result);
+    let chat_member_id = [];
+    for (let i = 0; i < result_room.result.length; i++) {
+      let temp = result_room.result[i].room_id.split("-");
+      if (temp[0] == authResult.user.id) {
+        chat_member_id.push(temp[1]);
+      } else {
+        chat_member_id.push(temp[0]);
+      }
+    }
+    console.log("chat_member_id:", chat_member_id);
+
+    if (chat_member_id.length > 0) {
+      const url = `/api/chat/querySender?member_id=${chat_member_id}`;
+      const options = { method: "GET", "Content-Type": "application/json" };
+      const result_sender = await fetchData(url, options);
+      console.log("result_sender:", result_sender);
+    }
+
     if (isMemberInRoom === false) {
       alert("Oops...這不是你的私訊空間");
       location.href = "/";
@@ -86,14 +109,19 @@ if (token) {
   console.log("status:un-signin");
 }
 
+//---------------------------------------------
 function load_history_msg(history, authResult) {
   for (let i = 0; i < history.length; i++) {
     const localtime = new Date(history[i].created_at);
+    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const subcontainer = document.createElement("div");
     const item = document.createElement("div");
     const datetime = document.createElement("span");
     datetime.style = "font-size:10px; color:rgb(170, 175, 194);";
-    datetime.textContent = localtime.toLocaleString();
+    datetime.textContent = localtime.toLocaleString(undefined, {
+      timeZone: userTimeZone,
+      hour12: false,
+    });
     if (history[i].member_id == authResult.user.id) {
       subcontainer.style = "text-align:right;";
       item.textContent = history[i].content;
@@ -105,4 +133,15 @@ function load_history_msg(history, authResult) {
     messages.appendChild(subcontainer);
     window.scrollTo(0, document.body.scrollHeight);
   }
+}
+
+async function fetchData(url, options) {
+  let data = await fetch(url, options)
+    .then((response) => {
+      return response.json();
+    })
+    .catch((error) => {
+      console.log("error:", error);
+    });
+  return data;
 }

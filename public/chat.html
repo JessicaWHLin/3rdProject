@@ -61,13 +61,20 @@
       </div>
     </div>
     <div class="navi-placeholder"></div>
-    <div class="main" style="min-height: calc(100% - 80px)">
-      <div class="zone-setting privateMessage" id="messages"></div>
-      <form id="form" action="">
-        <input id="input" autocomplete="off" /><button>送出</button>
-      </form>
+    <div class="main">
+      <div class="left">
+        <div class="zone-setting" style="height: 400px" id="roomContainer"></div>
+      </div>
+      <div
+        class="middle"
+        style="padding: 5px 0; width: 100%; min-height: calc(100% - 80px)">
+        <div class="zone-setting privateMessage" id="messages"></div>
+        <form id="form" action="">
+          <input id="input" autocomplete="off" /><button>送出</button>
+        </form>
+      </div>
+      <div class="right"></div>
     </div>
-
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script type="module" src="/javascript/chat.js"></script>
   </body>
