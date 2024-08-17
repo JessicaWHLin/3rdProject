@@ -48,7 +48,10 @@ if (token) {
         console.log(history);
         load_history_msg(history, authResult);
       });
-      socket.off("history", history);
+      socket.off("history", (history) => {
+        console.log(history);
+        load_history_msg(history, authResult);
+      });
       form.addEventListener("submit", (e) => {
         e.preventDefault();
         if (input.value) {

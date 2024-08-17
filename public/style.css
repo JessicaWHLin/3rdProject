@@ -311,3 +311,15 @@ body {
   text-align: left;
   margin: 0 auto 48px auto;
 }
+.privateBtn {
+  background-color: rgb(88, 123, 176);
+  border-radius: 10px;
+  border: none;
+  color: white;
+  padding: 3px 10px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  height: fit-content;
+}
