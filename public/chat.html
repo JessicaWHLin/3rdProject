@@ -45,18 +45,6 @@
         outline: none;
         color: #fff;
       }
-
-      #messages {
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
-      }
-      #messages > li {
-        padding: 0.5rem 1rem;
-      }
-      /* #messages > li:nth-child(odd) {
-        background: #efefef;
-      } */
     </style>
   </head>
   <body>
@@ -74,11 +62,7 @@
     </div>
     <div class="navi-placeholder"></div>
     <div class="main" style="min-height: calc(100% - 80px)">
-      <div
-        class="zone-setting"
-        style="text-align: left; width: 60%; min-width: 360px; margin: 0 auto 48px auto">
-        <ul id="messages"></ul>
-      </div>
+      <div class="zone-setting privateMessage" id="messages"></div>
       <form id="form" action="">
         <input id="input" autocomplete="off" /><button>送出</button>
       </form>

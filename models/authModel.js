@@ -6,7 +6,6 @@ import dotenv from "dotenv";
 dotenv.config();
 
 //環境參數
-//環境參數
 const host = process.env.host;
 const user = process.env.user;
 const password = process.env.password;

@@ -1,0 +1,76 @@
+import mysql from "mysql2";
+import dotenv from "dotenv";
+
+dotenv.config();
+//環境參數
+const host = process.env.host;
+const user = process.env.user;
+const password = process.env.password;
+const database = process.env.database;
+const db_port = process.env.db_port;
+const pool = mysql.createPool({
+  host: host,
+  user: user,
+  port: db_port,
+  password: password,
+  database: database,
+  charset: "utf8mb4",
+  waitForConnections: true,
+  connectionLimit: 25,
+});
+
+//檢查連線
+pool.getConnection((error, connection0) => {
+  if (error) {
+    console.log("error:", error.message + "chatModel DB failed");
+    return;
+  }
+  console.log("chatModel DB connection OK");
+  connection0.release();
+});
+
+class ChatModel {
+  static async saveHistoryMsg(room_id, member_id, msg, created_at) {
+    return new Promise((resolve, reject) => {
+      pool.getConnection((error, connection1) => {
+        if (error) {
+          return reject({ error: true, message: "DB connection failed" });
+        }
+        const sql = `
+				insert into privateMsg(room_id,member_id,content,created_at)
+				values(?,?,?,?)`;
+        const val = [room_id, member_id, msg, created_at];
+        connection1.execute(sql, val, (error, result) => {
+          connection1.release();
+          if (error) {
+            return reject({ error: true, message: error.message + "insert privateMsg" });
+          }
+          resolve({ ok: true });
+        });
+      });
+    });
+  }
+  static async queryHistoryMsg(room_id) {
+    return new Promise((resolve, reject) => {
+      pool.getConnection((error, connection2) => {
+        if (error) {
+          return reject({ error: true, message: "DB connection failed" });
+        }
+        const sql = `
+				select member.name,privateMsg.* from privateMsg
+				left join member on member.id=privateMsg.member_id
+				 where room_id=?`;
+        const val = [room_id];
+        connection2.query(sql, val, (error, result) => {
+          connection2.release();
+          if (error) {
+            return reject({ error: true, message: error.message + "query history msg" });
+          }
+          resolve({ ok: true, result });
+        });
+      });
+    });
+  }
+}
+
+export default ChatModel;
