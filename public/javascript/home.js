@@ -20,16 +20,17 @@ if (token) {
     showName(authResult.user.name);
     const privateMsgLink = document.querySelector("#privateMsg");
     privateMsgLink.addEventListener("click", async (e) => {
-      const url = `/api/chat/queryRoomId?member_id=${authResult.user.id}`;
+      const url = `/api/chat/roomId?member_id=${authResult.user.id}`;
       const options = { method: "GET", "Content-Type": "application/json" };
       const result = await fetchData(url, options);
       if (result.ok) {
         if (result.result.length < 1) {
           e.preventDefault();
           alert("目前無個人私訊");
+        } else {
+          const room_id = result.result[0].room_id;
+          location.href = `/chat?roomId=${room_id}`;
         }
-        const room_id = result.result[0].room_id;
-        location.href = `/chat?roomId=${room_id}`;
       }
     });
   } //if(authResult.user)

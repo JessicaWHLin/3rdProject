@@ -77,9 +77,10 @@ class ChatModel {
         if (error) {
           return reject({ error: true, message: "DB connection failed" });
         }
+
         const sql = `
-        select DISTINCT room_id from privateMsg where member_id=?`;
-        const val = [member_id];
+        select DISTINCT room_id from privateMsg where room_id like ?`;
+        const val = [`%${member_id}%`];
         connection3.query(sql, val, (error, result) => {
           connection3.release();
           if (error) {
@@ -96,7 +97,17 @@ class ChatModel {
         if (error) {
           return reject({ error: true, message: "DB connection failed" });
         }
-        const sql = ``;
+        const memberIdsArray = member_ids.split(",").map((id) => parseInt(id, 10));
+        const sql = `select id, name from member where id in (?)`;
+        const val = [memberIdsArray];
+        connection4.query(sql, val, (error, result) => {
+          connection4.release();
+          if (error) {
+            return reject({ error: true, message: error.message + "query member_ids" });
+          }
+          console.log({ result });
+          resolve({ ok: true, result });
+        });
       });
     });
   }

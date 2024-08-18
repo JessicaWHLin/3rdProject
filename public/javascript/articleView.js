@@ -73,7 +73,7 @@ class Comment {
 const commentBtn = document.querySelector(".response-btn");
 const flower = document.querySelector("#like");
 const token = localStorage.getItem("token");
-//--------------------------------------
+
 //文章
 const url = `/api/article?article_id=${article_id}`;
 const options = {
@@ -130,7 +130,10 @@ if (token) {
   if (authResult.user) {
     showName(authResult.user.name);
     const privateMessage = document.querySelector("#privateMessage");
-    privateMessage.style = "display:inline-block;";
+    if (writer_id != authResult.user.id) {
+      privateMessage.style = "display:inline-block;";
+    }
+
     //留言
     commentBtn.addEventListener("click", async () => {
       let comment = document.querySelector("#comment");

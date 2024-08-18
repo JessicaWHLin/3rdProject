@@ -3,7 +3,6 @@ import ChatModel from "../models/chatModel.js";
 export function setupSocket(io) {
   io.on("connection", async (socket) => {
     const roomId = socket.handshake.query.room;
-    let msgList = [];
 
     socket.join(roomId);
     //loading歷史訊息:只有在一開始連線時
@@ -11,7 +10,6 @@ export function setupSocket(io) {
       const result = await ChatModel.queryHistoryMsg(roomId);
       if (result.ok) {
         const history = result.result;
-        // console.log("result:", result);
         socket.emit("history", history);
       }
     } catch (error) {

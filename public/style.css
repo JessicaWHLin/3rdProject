@@ -108,7 +108,7 @@ body {
   width: 90vw;
   min-width: 360px;
   max-width: 1920px;
-  min-height: 100%;
+  min-height: calc(100% - 130px);
   display: flex;
   padding: 5px 0;
 }
@@ -309,6 +309,7 @@ body {
   min-width: 360px;
   text-align: left;
   margin: 0 auto 48px auto;
+  min-height: calc(100% - 80px);
 }
 .privateBtn {
   background-color: rgb(88, 123, 176);
@@ -321,4 +322,10 @@ body {
   font-size: 12px;
   font-weight: 700;
   height: fit-content;
+}
+.chat-leftLink {
+  margin: 5px auto;
+  height: 30px;
+  line-height: 30px;
+  padding: 5px;
 }

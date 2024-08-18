@@ -27,28 +27,60 @@ if (token) {
     const isMemberInRoom = roomId.includes(authResult.user.id.toString());
     console.log("isMemberInRoom", isMemberInRoom);
     //左邊聊天室選項
-    const url = `/api/chat/queryRoomId?member_id=${authResult.user.id}`;
+    const url = `/api/chat/roomId?member_id=${authResult.user.id}`;
     const options = { method: "GET", "Content-Type": "application/json" };
-    const result_room = await fetchData(url, options);
-    console.log(" result_room:", result_room.result);
+    const roomIds = await fetchData(url, options);
+    console.log("roomIds:", roomIds);
     let chat_member_id = [];
-    for (let i = 0; i < result_room.result.length; i++) {
-      let temp = result_room.result[i].room_id.split("-");
+    for (let i = 0; i < roomIds.result.length; i++) {
+      let temp = roomIds.result[i].room_id.split("-");
       if (temp[0] == authResult.user.id) {
         chat_member_id.push(temp[1]);
       } else {
         chat_member_id.push(temp[0]);
       }
     }
-    console.log("chat_member_id:", chat_member_id);
-
-    if (chat_member_id.length > 0) {
-      const url = `/api/chat/querySender?member_id=${chat_member_id}`;
-      const options = { method: "GET", "Content-Type": "application/json" };
-      const result_sender = await fetchData(url, options);
-      console.log("result_sender:", result_sender);
+    class SendersList {
+      constructor(container) {
+        this.container = document.querySelector(container);
+      }
+      listSenders(nameLists, roomIds) {
+        const rooms = roomIds.result;
+        console.log(rooms);
+        console.log(nameLists);
+        for (let i = 0; i < rooms.length; i++) {
+          for (let j = 0; j < nameLists.length; j++) {
+            if (rooms[i].room_id.includes(nameLists[j].id.toString())) {
+              Object.assign(nameLists[j], { room_id: rooms[i].room_id });
+            }
+          }
+        }
+        nameLists.forEach((item) => {
+          const list = document.createElement("div");
+          list.classList.add("chat-leftLink");
+          list.classList.add("link");
+          list.textContent = item.name;
+          list.addEventListener("click", () => {
+            location.href = `/chat?roomId=${item.room_id}`;
+          });
+          this.container.appendChild(list);
+        });
+      }
     }
 
+    //找所有的私訊sender
+    if (chat_member_id.length > 0) {
+      const url = `/api/chat/sender?member_ids=${chat_member_id}`;
+      const options = { method: "GET", "Content-Type": "application/json" };
+      const senders = await fetchData(url, options);
+
+      const senderNameList = senders.result.result;
+      console.log("senders:", senderNameList);
+      const roomContainer = new SendersList("#roomContainer");
+      roomContainer.listSenders(senderNameList, roomIds);
+    }
+
+    //避免非room_id上的member_id會員進入該私訊空間
     if (isMemberInRoom === false) {
       alert("Oops...這不是你的私訊空間");
       location.href = "/";
@@ -64,7 +96,6 @@ if (token) {
       const form = document.getElementById("form");
       const input = document.getElementById("input");
       const messages = document.getElementById("messages");
-      const messageList = [];
 
       // 接收歷史訊息;
       socket.on("history", (history) => {

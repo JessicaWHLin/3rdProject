@@ -14,9 +14,11 @@ const chatController = {
   },
   senders: async (req, res) => {
     try {
-      const { allRoomIds } = req.query;
-      console.log("allRoomIds:", allRoomIds);
-      res.status(200).json({ ok: true });
+      const { member_ids } = req.query;
+      const result = await ChatModel.querySender(member_ids);
+      if (result.ok) {
+        res.status(200).json({ result });
+      }
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
