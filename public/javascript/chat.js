@@ -121,7 +121,13 @@ if (token) {
         const item = document.createElement("div");
         const datetime = document.createElement("span");
         datetime.style = "font-size:10px; color:rgb(170, 175, 194);";
-        datetime.textContent = msg.localtime;
+        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const isotime = new Date(msg.localtime);
+        const localtime = isotime.toLocaleString(undefined, {
+          timeZone: userTimeZone,
+          hour12: false,
+        });
+        datetime.textContent = localtime;
         if (msg.memberId == authResult.user.id) {
           subcontainer.style = "text-align:right;";
           item.textContent = msg.msg;
@@ -146,13 +152,20 @@ if (token) {
 function load_history_msg(history, authResult) {
   for (let i = 0; i < history.length; i++) {
     const localtime = new Date(history[i].created_at);
+    console.log("localtime:", localtime, "傳入:", history[i].created_at);
     const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const subcontainer = document.createElement("div");
     const item = document.createElement("div");
     const datetime = document.createElement("span");
     datetime.style = "font-size:10px; color:rgb(170, 175, 194);";
-    datetime.textContent = localtime.toLocaleString(undefined, {
+    datetime.textContent = localtime.toLocaleString("zh-TW", {
       timeZone: userTimeZone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
       hour12: false,
     });
     if (history[i].member_id == authResult.user.id) {

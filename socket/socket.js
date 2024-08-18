@@ -11,6 +11,7 @@ export function setupSocket(io) {
       if (result.ok) {
         const history = result.result;
         socket.emit("history", history);
+        console.log(history);
       }
     } catch (error) {
       console.log("error:", error.message);
@@ -20,20 +21,21 @@ export function setupSocket(io) {
     socket.on("chat message", async (chatInfo) => {
       const fullToken = chatInfo.token;
       const auth = await AuthModel.checkAuth(fullToken);
-      const datetime = new Date(Date.now());
-      const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      const localtime = datetime.toLocaleString(undefined, {
-        timeZone: userTimeZone,
-        hour12: false,
-      });
+      const datetime = new Date();
+      console.log(datetime);
+      // const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      // const localtime = datetime.toLocaleString(undefined, {
+      //   timeZone: userTimeZone,
+      //   hour12: false,
+      // });
       const isoString = datetime.toISOString();
-      const formattedForDB = isoString.replace("T", " ").substring(0, 19); // 转换为 'YYYY-MM-DD HH:MM:SS' 格式
-
+      const formattedForDB = datetime.toISOString().slice(0, 19).replace("T", " "); // 转换为 'YYYY-MM-DD HH:MM:SS' 格式
+      console.log("formattedForDB:", formattedForDB);
       io.to(roomId).emit("chat message", {
         memberId: auth.user.id,
         name: auth.user.name,
         msg: chatInfo.msg,
-        localtime,
+        localtime: isoString,
       });
       try {
         const result = await ChatModel.saveHistoryMsg(
