@@ -138,6 +138,8 @@ if (token) {
 } else {
   userless();
   console.log("status:un-signin");
+  alert("Oops...這不是你的私訊空間");
+  location.href = "/";
 }
 
 //---------------------------------------------
