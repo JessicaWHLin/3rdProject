@@ -219,7 +219,7 @@ body {
   vertical-align: top;
 }
 .articleView-username {
-  /* padding: 20px 10px 0 10px; */
+  padding: 0px 10px;
   text-align: left;
   font-weight: 700;
 }
@@ -246,6 +246,7 @@ body {
 }
 
 .response-flower {
+  position: relative;
   height: 30px;
   object-fit: contain;
   position: absolute;
@@ -258,6 +259,32 @@ body {
   border: 2px solid rgb(238, 239, 242);
   border-radius: 5px;
 }
+
+.like-animation {
+  position: absolute;
+  top: -20px;
+  left: 10%;
+  transform: translateX(-50%);
+  font-size: 20px;
+  font-weight: 700;
+  opacity: 1;
+  animation: moveUpFadeOut 1s ease forwards;
+}
+@keyframes moveUpFadeOut {
+  0% {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -20px);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-50%, -40px);
+    opacity: 0;
+  }
+}
+
 .response-textarea {
   position: absolute;
   width: calc(100% - 200px);
@@ -279,7 +306,7 @@ body {
   right: 50px;
 }
 .response-comment {
-  padding: 5px 10px;
+  padding: 0px 10px;
   text-align: left;
 }
 
@@ -333,4 +360,18 @@ body {
   height: 30px;
   line-height: 30px;
   padding: 5px;
+}
+
+.new-message {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.5s ease, background-color 2s ease, transform 0.5s ease;
+}
+.new-message.visible {
+  opacity: 1;
+  transform: scale(1);
+  background-color: #fffbe6;
+}
+.new-message.finished {
+  background-color: white;
 }

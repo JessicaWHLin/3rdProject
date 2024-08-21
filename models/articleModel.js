@@ -141,26 +141,25 @@ class ArticleModel {
         insert into comment(
         member_id,article_id,content)values(?,?,?)`;
         const val_insert = [member_id, article_id, comment];
-        connection5.execute(sql_insert, val_insert);
+        const [result_comment] = await connection5.execute(sql_insert, val_insert);
+        //回傳留言
+        try {
+          const sql_query = `select comment.*,count(DISTINCT comment_like.id) as likeQty,member.name
+            from comment
+            left join comment_like on comment.id=comment_like.comment_id
+            left join member on member.id=comment.member_id
+            where comment.id=?
+            group by comment.id`;
+          const val_query = [result_comment.insertId];
+          const [result] = await connection5.query(sql_query, val_query);
+          return { ok: true, result };
+        } catch (error) {
+          return { error: true, message: error.message + "query comment" };
+        }
       } catch (error) {
         return { error: true, message: error.message + "insert comment" };
       } finally {
         connection5.release();
-      }
-      //回傳留言
-      connection5 = await pool.getConnection();
-      try {
-        const sql_query = `select comment.*,count(DISTINCT comment_like.id) as likeQty,member.name
-          from comment
-          left join comment_like on comment.id=comment_like.comment_id
-          left join member on member.id=comment.member_id
-          where comment.id=?
-          group by comment.id`;
-        const val_query = [result.insertId];
-        const [result] = await connection5.query(sql_query, val_query);
-        return { ok: true, result };
-      } catch (error) {
-        return { error: true, message: error.message + "query comment" };
       }
     } catch (error) {
       return { error: true, message: "DB connection failed" };

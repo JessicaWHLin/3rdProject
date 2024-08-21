@@ -30,10 +30,11 @@ class Comment {
   constructor(container) {
     this.container = document.querySelector(container);
   }
-  renderComment(data) {
+  renderComment(data, mode) {
     for (let i = 0; i < data.length; i++) {
       const subContainer = document.createElement("div");
       subContainer.classList.add("zone-setting");
+      subContainer.style = "padding:10px 0px 0px 0px;";
       const name = document.createElement("div");
       name.classList.add("articleView-username");
 
@@ -67,6 +68,17 @@ class Comment {
       subContainer.appendChild(comment);
       subContainer.appendChild(likeQtyContainer);
       this.container.appendChild(subContainer);
+
+      if (mode === "new") {
+        subContainer.classList.add("new-message");
+        setTimeout(() => {
+          subContainer.classList.add("visible");
+        }, 10);
+        subContainer.scrollIntoView({ behavior: "smooth", block: "center" });
+        setTimeout(() => {
+          subContainer.classList.add("finished");
+        }, 2000);
+      }
     }
   }
 }
@@ -104,7 +116,7 @@ const oldComments = await fetchData(`/api/article/comment?article_id=${article_i
 console.log("oldComment:", oldComments);
 const comments = oldComments.result.result;
 const createComment = new Comment("#comment-container");
-createComment.renderComment(comments);
+createComment.renderComment(comments, "old");
 
 //未登入想留言
 const name = document.querySelector(".showName");
@@ -154,7 +166,7 @@ if (token) {
         const comments = result.result.result;
         console.log("latest comment:", comments);
         const createComment = new Comment("#comment-container");
-        createComment.renderComment(comments);
+        createComment.renderComment(comments, "new");
       } else {
         console.log("留言return異常:", result);
       }
@@ -177,14 +189,24 @@ if (token) {
       const result = await fetchData(url, options);
       console.log("article_like result:", result);
       let likeQty = parseInt(document.querySelector("#article_like").textContent);
-
+      const showLikeQty = document.querySelector("#article_like");
+      const alertLikeQty = document.createElement("span");
+      alertLikeQty.classList.add("like-animation");
       if (result.ok === true) {
-        document.querySelector("#article_like").textContent = likeQty + 1;
+        showLikeQty.textContent = likeQty + 1;
+        alertLikeQty.textContent = "+1";
+        alertLikeQty.style = "color:green";
       } else if (result.ok === false) {
-        document.querySelector("#article_like").textContent = likeQty - 1;
+        showLikeQty.textContent = likeQty - 1;
+        alertLikeQty.textContent = "-1";
+        alertLikeQty.style = "color:red";
       } else {
         console.log("error:", result.message);
       }
+      flower.parentElement.appendChild(alertLikeQty);
+      alertLikeQty.addEventListener("animationend", () => {
+        alertLikeQty.remove();
+      });
     });
     //私訊
     privateMessage.addEventListener("click", () => {
