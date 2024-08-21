@@ -104,29 +104,35 @@ export class CreateArticleLine {
   }
   createLine(article) {
     const subcontainer = document.createElement("div");
-    subcontainer.classList.add("link");
     subcontainer.classList.add("articleList-line");
 
     const title = document.createElement("span");
+    const zone = document.createElement("span");
     const Class = document.createElement("span");
     const likeQty = document.createElement("span");
     const flowerIcon = document.createElement("img");
-
     const commentIcon = document.createElement("img");
-
     const commentQty = document.createElement("span");
     const createDate = document.createElement("span");
+
     title.classList.add("articleList-item");
+    title.classList.add("link");
     title.style = "flex:4; overflow: hidden; text-overflow: ellipsis;";
+    zone.classList.add("articleList-item");
+    zone.style = "flex:1 min-width:80px";
     Class.classList.add("articleList-item");
     Class.style = "flex:1 min-width:80px";
     likeQty.classList.add("articleList-item");
+    likeQty.classList.add("articleList-nolink");
     commentQty.classList.add("articleList-item");
+    commentQty.classList.add("articleList-nolink");
     createDate.classList.add("articleList-item");
+    createDate.classList.add("articleList-nolink");
     flowerIcon.classList.add("small_icon");
     commentIcon.classList.add("small_icon");
 
     title.textContent = article.title;
+    zone.textContent = ` 【${article.zones}】`;
     Class.textContent = ` 【${article.class}】`;
     likeQty.textContent = article.likeQty;
     commentQty.textContent = article.commentQty;
@@ -134,6 +140,7 @@ export class CreateArticleLine {
     flowerIcon.src = "image/flower_by_vecteezy.jpg";
     commentIcon.src = "image/full_message_by_vecteezy.jpg";
 
+    subcontainer.appendChild(zone);
     subcontainer.appendChild(Class);
     subcontainer.appendChild(title);
     subcontainer.appendChild(createDate);

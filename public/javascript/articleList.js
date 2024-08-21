@@ -26,16 +26,15 @@ const options = {
   "Content-Type": "application/json",
 };
 const result = await fetchData(url, options);
-console.log({ result });
 
-if (result.articles.length > 0) {
+if (result.result.length > 0) {
   const zoneList = new CreateArticleLine("#zoneList");
-  result.articles.forEach((article) => {
+  result.result.forEach((article) => {
     zoneList.createLine(article);
   });
   document.querySelectorAll(".link").forEach((link, index) => {
     link.addEventListener("click", () => {
-      location.href = `/articleView?article_id=${result.articles[index].id}`;
+      location.href = `/articleView?article_id=${result.result[index].id}`;
     });
   });
 }

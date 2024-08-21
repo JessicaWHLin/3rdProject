@@ -6,6 +6,7 @@ import {
   showName,
   signout,
   userless,
+  CreateArticleLine,
 } from "./module.js";
 back_Homepage();
 go_signpage();
@@ -40,6 +41,7 @@ if (token) {
 }
 
 //-----------------------------------------------------------
+//未登入也看的到
 const ZONES = [
   "東北亞",
   "東南亞",
@@ -60,6 +62,24 @@ for (let i = 0; i < ZONES.length; i++) {
     location.href = `/articleList?zone=${ZONES[i]}`;
   });
   container.appendChild(zone);
+}
+
+const url = "api/article/ranking";
+const options = { method: "GET", "Content-Type": "application/json" };
+try {
+  const ranking = await fetchData(url, options);
+  console.log(ranking);
+  const latestArticle = new CreateArticleLine("#latestArticle");
+  ranking.result_latest.result.forEach((article) => {
+    latestArticle.createLine(article);
+  });
+  document.querySelectorAll("#latestArticle .articleList-line").forEach((line, index) => {
+    line.addEventListener("click", () => {
+      location.href = `/articleView?article_id=${ranking.result_latest.result[index].id}`;
+    });
+  });
+} catch (error) {
+  console.log("後端未傳資料");
 }
 
 // -------------------------------------

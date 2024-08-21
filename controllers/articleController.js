@@ -84,8 +84,10 @@ const articleController = {
   articleDetail: async (req, res) => {
     try {
       const { article_id } = req.query;
+      console.log({ article_id });
       const contentResult = await ArticleModel.findArticleContent(article_id);
       const imagesRresult = await ArticleModel.findArticleImages(article_id);
+
       if (contentResult.ok && imagesRresult.ok) {
         res.status(200).json({ content: contentResult, images: imagesRresult });
       }
@@ -155,8 +157,8 @@ const articleController = {
     try {
       const result_latest = await ArticleModel.latest();
       const result_popular = await ArticleModel.popular();
-      if (result_latest && result_popular) {
-        res.status(200).json({ ok: true });
+      if (result_latest) {
+        res.status(200).json({ ok: true, result_latest });
       } else {
         res.status(200).json({ ok: false });
       }

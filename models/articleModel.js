@@ -1,4 +1,4 @@
-import mysql from "mysql2";
+import mysql from "mysql2/promise";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -20,99 +20,82 @@ const pool = mysql.createPool({
 });
 
 //檢查連線
-pool.getConnection((error, connection0) => {
-  if (error) {
-    console.log("error:", error.message + "articleModel DB failed");
-    return;
-  }
+try {
+  const connection0 = await pool.getConnection();
   console.log("articleModel DB connection OK");
   connection0.release();
-});
+} catch (error) {
+  console.log("error:", error.message + "articleModel DB failed");
+}
 
 class ArticleModel {
   //發表
   static async write(user, zone, Class, title, content, files, filePath) {
-    return new Promise((resolve, reject) => {
-      pool.getConnection((error, connection1) => {
-        if (error) {
-          return reject({ error: true, message: "DB connection failed" });
-        }
+    try {
+      const connection1 = await pool.getConnection();
+      try {
         const sql =
           "insert into article(member_id,zones,class,title,content)values(?,?,?,?,?)";
         const val = [user.id, zone, Class, title, content];
-        connection1.execute(sql, val, (error, result) => {
-          connection1.release();
-          if (error) {
-            return reject({
-              error: true,
-              message: error.message + "insert content",
-            });
-          }
-        });
-        //文章編號
-        const sql_articleID = "select id from article where title=? and member_id=?";
-        const val_articleID = [title, user.id];
-        connection1.query(sql_articleID, val_articleID, (error, result) => {
-          connection1.release();
-          if (error) {
-            return reject({
-              error: true,
-              message: error.message + "query article id",
-            });
-          }
-          const articleID = result[0].id;
-          if (files.length > 0) {
-            for (let i = 0; i < files.length; i++) {
+        const [result] = await connection1.execute(sql, val);
+        const article_id = result.insertId; //文章編號
+        //存放圖片
+        if (files.length > 0) {
+          for (let i = 0; i < files.length; i++) {
+            try {
               const sql = "insert into images(article_id,imageURL)values(?,?)";
-              const val = [articleID, filePath[i]];
-              connection1.execute(sql, val, (error, result) => {
-                connection1.release();
-                if (error) {
-                  return reject({
-                    error: true,
-                    message: error.message + "image",
-                  });
-                }
-              });
+              const val = [article_id, filePath[i]];
+              await connection1.execute(sql, val);
+            } catch (error) {
+              return {
+                error: true,
+                message: error.message + "insert image",
+              };
             }
-            resolve({ ok: true, articleID: articleID, imageURL: filePath });
-          } else {
-            resolve({ ok: true, articleID: articleID });
           }
-        });
-      }); //pool
-    }); //promise
-  } //write
+          return { ok: true, articleID: article_id, imageURL: filePath };
+        } else {
+          return { ok: true, articleID: article_id };
+        }
+      } catch (error) {
+        return {
+          error: true,
+          message: error.message + "insert content",
+        };
+      } finally {
+        connection1.release();
+      }
+    } catch (error) {
+      return { error: true, message: "DB connection failed" };
+    }
+  }
 
   static async findArticle(zone) {
-    return new Promise((resolve, reject) => {
-      pool.getConnection((error, connection2) => {
-        if (error) {
-          return reject({ error: true, message: "DB connection failed" });
-        }
-        const sql = `select member.name, article.*,count(DISTINCT article_like.id)as likeQty,count(DISTINCT comment.id) as commentQty from article 
-        left join member on member.id=article.member_id 
-        left join article_like on article.id=article_like.article_id 
+    try {
+      const connection2 = await pool.getConnection();
+      try {
+        const sql = `select member.name, article.*,count(DISTINCT article_like.id)as likeQty,count(DISTINCT comment.id) as commentQty from article
+        left join member on member.id=article.member_id
+        left join article_like on article.id=article_like.article_id
         left join comment on article.id=comment.article_id
         where zones=? group by article.id,member.name;`;
         const val = [zone];
-        connection2.query(sql, val, (error, result) => {
-          connection2.release();
-          if (error) {
-            return reject({ error: true, message: error.message + "query zone" });
-          }
-          resolve({ ok: true, articles: result });
-        });
-      });
-    }); //promise
-  } //findArticle
+        const [result] = await connection2.query(sql, val);
+        return { ok: true, result };
+      } catch (error) {
+        return { error: true, message: error.message + "query zone" };
+      } finally {
+        connection2.release();
+      }
+    } catch (error) {
+      return { error: true, message: "DB connection failed" };
+    }
+  }
 
   static async findArticleContent(article_id) {
-    return new Promise((resolve, reject) => {
-      pool.getConnection((error, connection3) => {
-        if (error) {
-          return reject({ error: true, message: "DB connection failed" });
-        }
+    try {
+      const connection3 = await pool.getConnection();
+      try {
         const sql = `select member.name, article.*,count( DISTINCT article_like.id)as likeQty,count(DISTINCT comment.id) as commentQty from article 
         left join member on member.id=article.member_id 
         left join article_like on article.id=article_like.article_id 
@@ -120,76 +103,74 @@ class ArticleModel {
         where article.id=? 
         group by article.id;`;
         const val = [article_id];
-        connection3.query(sql, val, (error, result) => {
-          connection3.release();
-          if (error) {
-            return reject({ error: true, message: error.message + "query article_id" });
-          }
-          resolve({ ok: true, articles: result });
-        });
-      });
-    });
+        const [result] = await connection3.query(sql, val);
+        return { ok: true, articles: result };
+      } catch (error) {
+        return { error: true, message: error.message + "query article_id" };
+      } finally {
+        connection3.release();
+      }
+    } catch (error) {
+      return { error: true, message: "DB connection failed" };
+    }
   }
 
   static async findArticleImages(article_id) {
-    return new Promise((resolve, reject) => {
-      pool.getConnection((error, connection4) => {
-        if (error) {
-          return reject({ error: true, message: "DB connection failed" });
-        }
+    try {
+      const connection4 = await pool.getConnection();
+      try {
         const sql = "select imageURL from images where article_id=?";
         const val = [article_id];
-        connection4.query(sql, val, (error, result) => {
-          connection4.release();
-          if (error) {
-            return reject({ error: true, message: error.message + "query image" });
-          }
-          resolve({ ok: true, images: result });
-        });
-      });
-    });
+        const [result] = await connection4.query(sql, val);
+        return { ok: true, images: result };
+      } catch (error) {
+        return { error: true, message: error.message + "query image" };
+      } finally {
+        connection4.release();
+      }
+    } catch (error) {
+      return { error: true, message: "DB connection failed" };
+    }
   }
   static async comment(comment, article_id, member_id) {
-    return new Promise((resolve, reject) => {
-      pool.getConnection((error, connection5) => {
-        if (error) {
-          return reject({ error: true, message: "DB connection failed" });
-        }
-        const sql_insert = `insert into comment(
+    //新增留言
+    try {
+      const connection5 = await pool.getConnection();
+      try {
+        const sql_insert = `
+        insert into comment(
         member_id,article_id,content)values(?,?,?)`;
         const val_insert = [member_id, article_id, comment];
-        connection5.execute(sql_insert, val_insert, (error, result) => {
-          connection5.release();
-
-          if (error) {
-            return reject({ error: true, message: error.message + "insert comment" });
-          }
-          //回傳comment info
-          const sql_query = `select comment.*,count(DISTINCT comment_like.id) as likeQty,member.name
+        connection5.execute(sql_insert, val_insert);
+      } catch (error) {
+        return { error: true, message: error.message + "insert comment" };
+      } finally {
+        connection5.release();
+      }
+      //回傳留言
+      connection5 = await pool.getConnection();
+      try {
+        const sql_query = `select comment.*,count(DISTINCT comment_like.id) as likeQty,member.name
           from comment
           left join comment_like on comment.id=comment_like.comment_id
           left join member on member.id=comment.member_id
           where comment.id=?
           group by comment.id`;
-          const val_query = [result.insertId];
-          connection5.query(sql_query, val_query, (error, result) => {
-            connection5.release();
-            if (error) {
-              return reject({ error: true, message: error.message + "query comment" });
-            }
-            resolve({ ok: true, result });
-          });
-        });
-      });
-    });
+        const val_query = [result.insertId];
+        const [result] = await connection5.query(sql_query, val_query);
+        return { ok: true, result };
+      } catch (error) {
+        return { error: true, message: error.message + "query comment" };
+      }
+    } catch (error) {
+      return { error: true, message: "DB connection failed" };
+    }
   }
 
   static async findComment(article_id) {
-    return new Promise((resolve, reject) => {
-      pool.getConnection((error, connection6) => {
-        if (error) {
-          return reject({ error: true, message: "DB connection failed" });
-        }
+    try {
+      const connection6 = await pool.getConnection();
+      try {
         const sql = `select comment.*,count(DISTINCT comment_like.id) as likeQty,member.name 
           from comment
           left join comment_like on comment.id=comment_like.comment_id
@@ -197,92 +178,110 @@ class ArticleModel {
           where comment.article_id=?  
           group by comment.id;`;
         const val = [article_id];
-        connection6.query(sql, val, (error, result) => {
-          connection6.release();
-          if (error) {
-            return reject({ error: true, message: error.message + "query comment" });
-          }
-          resolve({ ok: true, result });
-        });
-      });
-    });
-  } //findComment
+        const [result] = await connection6.query(sql, val);
+        return { ok: true, result };
+      } catch (error) {
+        return { error: true, message: error.message + "query comment" };
+      } finally {
+        connection6.release();
+      }
+    } catch (error) {
+      return { error: true, message: "DB connection failed" };
+    }
+  }
 
   static async articleLike(article_id, member_id) {
-    return new Promise((resolve, reject) => {
-      pool.getConnection((error, connection7) => {
-        if (error) {
-          return reject({ error: true, message: "DB connection failed" });
-        }
+    try {
+      const connection7 = await pool.getConnection();
+      try {
         const sql_query = `select id from article_like 
         where article_id=? and member_id=? `;
         const val_query = [article_id, member_id];
-        connection7.query(sql_query, val_query, (error, result) => {
-          connection7.release();
-          console.log(result[0]);
-          if (error) {
-            return reject({ error: true, message: error.message + "query article_like" });
-          }
-          if (result.length < 1) {
-            const sql_insert = `insert into article_like(article_id,member_id)
-            values(?,?)`;
+        const [result] = await connection7.query(sql_query, val_query);
+        if (result.length < 1) {
+          try {
+            const sql_insert = `
+            insert into article_like(article_id,member_id) values(?,?)`;
             const val_insert = [article_id, member_id];
-            connection7.execute(sql_insert, val_insert, (error, result) => {
-              connection7.release();
-              if (error) {
-                return reject({
-                  error: true,
-                  message: error.message + "insert article_like",
-                });
-              }
-              const article_like_id = result.insertId;
-              return resolve({ ok: true, article_like_id: article_like_id });
-            });
-          } else {
-            const sql_delete = `delete from article_like 
-            where id=?`;
-            const val_delete = [result[0].id];
-            connection7.execute(sql_delete, val_delete, (error, result) => {
-              connection7.release();
-              if (error) {
-                return reject({
-                  error: true,
-                  message: error.message + "delete article_like",
-                });
-              }
-              return resolve({ ok: false, message: "delete article_like" });
-            });
+            const [result_add] = await connection7.execute(sql_insert, val_insert);
+            const article_like_id = result_add.insertId;
+            return { ok: true, article_like_id: article_like_id };
+          } catch (error) {
+            return {
+              error: true,
+              message: error.message + "insert article_like",
+            };
           }
-        });
-      });
-    });
+        } else {
+          try {
+            const sql_delete = `delete from article_like where id=?`;
+            const val_delete = [result[0].id];
+            await connection7.execute(sql_delete, val_delete);
+            return { ok: false, message: "delete article_like" };
+          } catch (error) {
+            return {
+              error: true,
+              message: error.message + "delete article_like",
+            };
+          }
+        }
+      } catch (error) {
+        return { error: true, message: error.message + "query article_like" };
+      } finally {
+        connection7.release();
+      }
+    } catch (error) {
+      return { error: true, message: "DB connection failed" };
+    }
   }
 
   static async commentLike(comment_id, member_id) {
-    return new Promise((resolve, reject) => {
-      pool.getConnection((error, connection8) => {
-        if (error) {
-          return reject({ error: true, message: "DB connection failed" });
-        }
-        const sql = `insert into comment_like(comment_id,member_id)
-        values(?,?)`;
+    try {
+      const connection8 = await pool.getConnection();
+      try {
+        const sql = `insert into comment_like(comment_id,member_id)  values(?,?)`;
         const val = [comment_id, member_id];
-        connection8.execute(sql, val, (error, result) => {
-          connection8.release();
-          if (error) {
-            return reject({
-              error: true,
-              message: error.message + "insert comment_like",
-            });
-          }
-          const comment_like_id = result.insertId;
-          resolve({ ok: true, comment_like_id: comment_like_id });
-        });
-      });
-    });
+        const [result] = await connection8.execute(sql, val);
+        const comment_like_id = result.insertId;
+        return { ok: true, comment_like_id: comment_like_id };
+      } catch (error) {
+        return {
+          error: true,
+          message: error.message + "insert comment_like",
+        };
+      } finally {
+        connection8.release();
+      }
+    } catch (error) {
+      return { error: true, message: "DB connection failed" };
+    }
   }
 
-  static async latest() {} //latest
+  static async latest() {
+    try {
+      const connection9 = await pool.getConnection();
+      try {
+        const sql = `select article.id, article.title,article.zones,article.class,article.created_at,
+        count(distinct comment.id) as commentQty,
+        count(distinct article_like.id) as likeQty 
+        from article
+        left join comment on article.id=comment.article_id
+        left join article_like on article.id=article_like.article_id
+        group by article.id
+        order by created_at desc
+        limit 3;
+         `;
+        const [result] = await connection9.query(sql);
+        return { ok: true, result };
+      } catch (error) {
+        return { error: true, message: error.message + "find latest article" };
+      } finally {
+        connection9.release();
+      }
+    } catch (error) {
+      return { error: true, message: "DB connection failed" };
+    }
+  }
 
   static async popular() {} //popular
 } //class
