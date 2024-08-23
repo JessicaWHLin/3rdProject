@@ -46,8 +46,8 @@ if (token) {
       }
       listSenders(nameLists, roomIds) {
         const rooms = roomIds.result;
-        console.log(rooms);
-        console.log(nameLists);
+        // console.log(rooms);
+        // console.log(nameLists);
         for (let i = 0; i < rooms.length; i++) {
           for (let j = 0; j < nameLists.length; j++) {
             if (rooms[i].room_id.includes(nameLists[j].id.toString())) {
@@ -75,7 +75,7 @@ if (token) {
       const senders = await fetchData(url, options);
 
       const senderNameList = senders.result.result;
-      console.log("senders:", senderNameList);
+      // console.log("senders:", senderNameList);
       const roomContainer = new SendersList("#roomContainer");
       roomContainer.listSenders(senderNameList, roomIds);
     }
@@ -99,7 +99,7 @@ if (token) {
 
       // 接收歷史訊息;
       socket.on("history", (history) => {
-        console.log(history);
+        // console.log(history);
         load_history_msg(history, authResult);
       });
       socket.off("history", (history) => {
@@ -152,7 +152,7 @@ if (token) {
 function load_history_msg(history, authResult) {
   for (let i = 0; i < history.length; i++) {
     const localtime = new Date(history[i].created_at);
-    console.log("localtime:", localtime, "傳入:", history[i].created_at);
+    // console.log("localtime:", localtime, "傳入:", history[i].created_at);
     const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const subcontainer = document.createElement("div");
     const item = document.createElement("div");

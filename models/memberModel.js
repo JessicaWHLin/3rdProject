@@ -79,12 +79,21 @@ class MemberModel {
     try {
       const connection3 = await pool.getConnection();
       try {
-        const hashPassword = await bcrypt.hash(password, 6);
-        const sql = `update member 
-        set name=?,password=?,birthday=?,aboutMe=?,updated_at=?
-        where id=?`;
-        const val = [name, hashPassword, birthday, aboutMe, updated_at, member_id];
-        await connection3.execute(sql, val);
+        if (password == "*******") {
+          let sql = `update member 
+          set name=?,birthday=?,aboutMe=?,updated_at=?
+          where id=?`;
+          let val = [name, birthday, aboutMe, updated_at, member_id];
+          await connection3.execute(sql, val);
+        } else {
+          const hashPassword = await bcrypt.hash(password, 6);
+          let sql = `update member 
+          set name=?,password=?,birthday=?,aboutMe=?,updated_at=?
+          where id=?`;
+          let val = [name, hashPassword, birthday, aboutMe, updated_at, member_id];
+          await connection3.execute(sql, val);
+        }
+
         return { ok: true };
       } catch (error) {
         return { error: true, message: error.message + "update profile" };
