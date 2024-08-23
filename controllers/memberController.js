@@ -58,6 +58,45 @@ const memberController = {
       res.status(500).json({ error: error.message });
     }
   },
+  profile: async (req, res) => {
+    try {
+      const fullToken = req.headers.authorization;
+      const auth = await AuthModel.checkAuth(fullToken);
+      if (auth.ok) {
+        const result = await MemberModel.profile(auth.user.id);
+        res.status(200).json(result);
+      }
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+  updateProfile: async (req, res) => {
+    try {
+      const { name, password, birthday, aboutMe } = req.body;
+      const updated_at = new Date().toISOString();
+      const formattedForDB = updated_at.slice(0, 19).replace("T", " "); // 转换为 'YYYY-MM-DD HH:MM:SS' 格式
+      const fullToken = req.headers.authorization;
+      const auth = await AuthModel.checkAuth(fullToken);
+      if (auth.ok) {
+        console.log({ name, password, birthday, aboutMe, updated_at });
+        const result = await MemberModel.updateProfile(
+          auth.user.id,
+          name,
+          password,
+          birthday,
+          aboutMe,
+          formattedForDB
+        );
+        if (result.ok) {
+          res.status(200).json(result);
+        } else {
+          res.status(400).json(result);
+        }
+      }
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
 };
 
 export default memberController;

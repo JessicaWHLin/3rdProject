@@ -23,11 +23,7 @@ export function setupSocket(io) {
       const auth = await AuthModel.checkAuth(fullToken);
       const datetime = new Date();
       console.log(datetime);
-      // const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      // const localtime = datetime.toLocaleString(undefined, {
-      //   timeZone: userTimeZone,
-      //   hour12: false,
-      // });
+
       const isoString = datetime.toISOString();
       const formattedForDB = datetime.toISOString().slice(0, 19).replace("T", " "); // 转换为 'YYYY-MM-DD HH:MM:SS' 格式
       console.log("formattedForDB:", formattedForDB);

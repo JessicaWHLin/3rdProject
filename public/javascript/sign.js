@@ -26,40 +26,48 @@ if (token) {
 
 //註冊
 const signupBtn = document.querySelector("#signupBtn");
+const signinEmail = document.querySelector("#signinEmail");
+const signinPassword = document.querySelector("#signinPassword");
 const re = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{8,16}$/;
 signupBtn.addEventListener("click", async () => {
-  const username = document.querySelector("#signupUsername").value;
-  const email = document.querySelector("#signupEmail").value;
-  const password = document.querySelector("#signupPassword").value;
-  const signupData = { username: username, email: email, password: password };
+  const username = document.querySelector("#signupUsername");
+  const email = document.querySelector("#signupEmail");
+  const password = document.querySelector("#signupPassword");
+  const signupData = {
+    username: username.value,
+    email: email.value,
+    password: password.value,
+  };
   const urlSignup = "/api/auth/signup";
-  const object = {};
   const options = {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(signupData),
   };
   console.log(signupData);
-  const result = await fetchData(urlSignup, options);
+  const result_signup = await fetchData(urlSignup, options);
 
-  if (result.ok == true) {
+  if (result_signup.ok === true) {
     document.querySelector(".signupResult").textContent = "註冊成功";
-    document.querySelector(".signupResult").style.color = "green";
-    document.querySelector(".signupResult").style.fontSize = "700";
+    document.querySelector(".signupResult").style = "color:green";
+    document.querySelector(".signupResult").style = "font-weight:700;";
+    signinEmail.value = email.value;
+    signinPassword.vlaue = password.value;
     //TODO:把輸入都清空
+    username.value = "";
+    email.value = "";
+    password.value = "";
   }
-  if (result.error == "Existed Email") {
+  if (result_signup.message === "Email existed") {
     document.querySelector(".signupResult").textContent = "Email已存在";
-    document.querySelector(".signupResult").style.color = "red";
-    document.querySelector(".signupResult").style.fontSize = "700";
+    document.querySelector(".signupResult").style = "color:red";
+    document.querySelector(".signupResult").style = "font-weight:700;";
   }
 });
 //登入
 const signinBtn = document.querySelector("#signinBtn");
 signinBtn.addEventListener("click", async () => {
-  const signinEmail = document.querySelector("#signinEmail").value;
-  const signinPassword = document.querySelector("#signinPassword").value;
-  const signinData = { email: signinEmail, password: signinPassword };
+  const signinData = { email: signinEmail.value, password: signinPassword.value };
   const urlSignin = "/api/auth/signin";
   const options = {
     method: "POST",

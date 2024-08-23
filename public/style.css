@@ -378,7 +378,7 @@ body {
   width: 180px;
   height: 180px;
   position: relative;
-  border: 1px solid #666666;
+  /* border: 1px solid #666666; */
   border-radius: 5px;
   margin: 5px auto;
   background-image: url(../image/photo_icon.png);

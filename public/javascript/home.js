@@ -19,6 +19,13 @@ if (token) {
   console.log("authResult:", authResult);
   if (authResult.user) {
     showName(authResult.user.name);
+    //出現會員功能按鈕
+    document.querySelector("#memberPage").style = "display:block";
+    document.querySelector("#myArticles").style = "display:block";
+    document.querySelector("#mySavedArticles").style = "display:block";
+    document.querySelector("#myCommentArticles").style = "display:block";
+    document.querySelector("#privateMsg").style = "display:block";
+
     const privateMsgLink = document.querySelector("#privateMsg");
     privateMsgLink.addEventListener("click", async (e) => {
       const url = `/api/chat/roomId?member_id=${authResult.user.id}`;
@@ -33,6 +40,9 @@ if (token) {
           location.href = `/chat?roomId=${room_id}`;
         }
       }
+    });
+    document.querySelector("#memberPage").addEventListener("click", () => {
+      location.href = "/member";
     });
   } //if(authResult.user)
 } else {

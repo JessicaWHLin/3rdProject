@@ -88,10 +88,7 @@ const token = localStorage.getItem("token");
 
 //文章
 const url = `/api/article?article_id=${article_id}`;
-const options = {
-  method: "GET",
-  "Content-Type": "application/json",
-};
+const options = { method: "GET", "Content-Type": "application/json" };
 const result = await fetchData(url, options);
 console.log("文章細節:", result);
 const articles = result.content.articles[0];

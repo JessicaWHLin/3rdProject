@@ -6,8 +6,11 @@ const authController = {
       const { username, email, password } = req.body;
       console.log("req=", { username, email, password });
       const result = await AuthModel.signup(username, email, password);
-      console.log("authController.signup-result:" + result);
-      res.status(201).json(result);
+      if (result.ok) {
+        res.status(200).json(result);
+      } else {
+        res.status(400).json(result);
+      }
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
@@ -16,6 +19,7 @@ const authController = {
   signin: async (req, res) => {
     try {
       const { email, password } = req.body;
+      console.log({ email, password });
       const result = await AuthModel.signin(email, password);
       console.log("authController.signin-result:", result);
       if (result.ok === true) {

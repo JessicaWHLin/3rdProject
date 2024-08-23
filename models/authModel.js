@@ -33,41 +33,34 @@ try {
 class AuthModel {
   //註冊
   static async signup(username, email, password) {
-    return new Promise((resolve, reject) => {
-      pool.getConnection((error, connection1) => {
-        if (error) {
-          return reject({ error: true, message: "DB connection failed" });
-        }
+    try {
+      const connection1 = await pool.getConnection();
+      try {
         //檢查有無重複
-        connection1.query(
-          "select * from member where email =?",
-          [email],
-          async (error, result) => {
-            if (error) {
-              connection1.release();
-              return reject({ error: true, message: error.message });
-            }
-            if (result.length > 0) {
-              connection1.release();
-              return reject({ error: true, message: "Email existed" });
-            } else {
-              const hashPassword = await bcrypt.hash(password, 6);
-              console.log("hashPassword=", hashPassword);
-              const sql = "insert into member(name,email,password)values(?,?,?)";
-              const val = [username, email, hashPassword];
-
-              connection1.execute(sql, val, (error, result) => {
-                connection1.release();
-                if (error) {
-                  return reject({ error: true, message: error.message });
-                }
-                resolve({ ok: true });
-              });
-            }
+        const sql_query = "select * from member where email =?";
+        const val_query = [email];
+        const [result_query] = await connection1.query(sql_query, val_query);
+        if (result_query.length > 0) {
+          return { error: true, message: "Email existed" };
+        } else {
+          const hashPassword = await bcrypt.hash(password, 6);
+          try {
+            const sql = `insert into member(name,email,password)values(?,?,?)`;
+            const val = [username, email, hashPassword];
+            await connection1.execute(sql, val);
+            return { ok: true };
+          } catch (error) {
+            return { error: true, message: error.message + "signup" };
           }
-        );
-      });
-    });
+        }
+      } catch (error) {
+        return { error: true, message: error.message + "query member email" };
+      } finally {
+        connection1.release();
+      }
+    } catch (error) {
+      return { error: true, message: "DB connection failed" };
+    }
   }
 
   //登入
@@ -78,8 +71,7 @@ class AuthModel {
         const sql = "select id,name,email,password from member where email=?";
         const val = [email];
         const [result] = await connection2.query(sql, val);
-        // console.log("登入的=", result);
-        if (result.length === 0) {
+        if (result.length < 1) {
           return { ok: false, message: "invalid email" };
         } else {
           const verifyResult = await verify_password(password, result[0].password);

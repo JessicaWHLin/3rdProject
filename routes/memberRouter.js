@@ -11,5 +11,6 @@ const upload = multer({
 const router = express.Router();
 
 router.post("/photo", upload.array("images"), memberController.photo);
-
+router.get("/profile", memberController.profile);
+router.put("/profile", memberController.updateProfile);
 export default router;
