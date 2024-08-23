@@ -10,6 +10,7 @@ import { setupSocket } from "./socket/socket.js";
 import authRouter from "./routes/authRouter.js";
 import articleRouter from "./routes/articleRouter.js";
 import chatRouter from "./routes/chatRouter.js";
+import memberRouter from "./routes/memberRouter.js";
 dotenv.config();
 const port = process.env.port;
 
@@ -33,6 +34,7 @@ app.use(morgan("combined"));
 app.use("/api/auth", authRouter);
 app.use("/api/article", articleRouter);
 app.use("/api/chat", chatRouter);
+app.use("/api/member", memberRouter);
 setupSocket(io);
 
 //靜態網頁
@@ -49,11 +51,14 @@ app.get("/articleView", function (req, res) {
 app.get("/articleList", function (req, res) {
   res.sendFile(path.join(__dirname, "public", "articleList.html"));
 });
-app.get("/user", function (req, res) {
-  res.sendFile(path.join(__dirname, "public", "user.html"));
+app.get("/sign", function (req, res) {
+  res.sendFile(path.join(__dirname, "public", "sign.html"));
 });
 app.get("/chat", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "chat.html"));
+});
+app.get("/member", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "member.html"));
 });
 
 //loader.io

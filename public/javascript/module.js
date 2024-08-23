@@ -15,7 +15,7 @@ export function back_Homepage() {
 export function go_signpage() {
   const signpage = document.querySelector("#signpage");
   signpage.addEventListener("click", () => {
-    const url = "/user";
+    const url = "/sign";
     fetch(url)
       .then((response) => response)
       .then((data) => {
@@ -137,7 +137,7 @@ export class CreateArticleLine {
     likeQty.textContent = article.likeQty;
     commentQty.textContent = article.commentQty;
     createDate.textContent = article.created_at.split("T")[0];
-    flowerIcon.src = "image/flower_by_vecteezy.jpg";
+    flowerIcon.src = "image/flower_by_vecteezy.png";
     commentIcon.src = "image/full_message_by_vecteezy.jpg";
 
     subcontainer.appendChild(zone);

@@ -61,7 +61,7 @@ class Comment {
       name.textContent = data[i].name;
       likeQty.textContent = data[i].likeQty;
       created_at.textContent = data[i].created_at.split("T")[0];
-      flowerIcon.src = "image/flower_by_vecteezy.jpg";
+      flowerIcon.src = "image/flower_by_vecteezy.png";
       subContainer.appendChild(name);
       subContainer.appendChild(created_at);
       subContainer.appendChild(separator);

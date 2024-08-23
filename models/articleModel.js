@@ -1,6 +1,5 @@
 import mysql from "mysql2/promise";
 import dotenv from "dotenv";
-
 dotenv.config();
 //環境參數
 const host = process.env.host;

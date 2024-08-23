@@ -1,6 +1,6 @@
 import jsonwebtoken from "jsonwebtoken";
 import TokenExpiredError from "jsonwebtoken";
-import mysql from "mysql2";
+import mysql from "mysql2/promise";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 dotenv.config();
@@ -23,15 +23,13 @@ const pool = mysql.createPool({
   connectionLimit: 25,
 });
 //檢查連線
-pool.getConnection((error, connection0) => {
-  if (error) {
-    console.log("error:", error.message + "authModel DB failed");
-    return;
-  }
-  console.log("userModel DB connection OK");
+try {
+  const connection0 = await pool.getConnection();
+  console.log("authModel DB connection OK");
   connection0.release();
-});
-
+} catch (error) {
+  console.log("error:", error.message + "authModel DB failed");
+}
 class AuthModel {
   //註冊
   static async signup(username, email, password) {
@@ -74,83 +72,74 @@ class AuthModel {
 
   //登入
   static async signin(email, password) {
-    return new Promise((resolve, reject) => {
-      pool.getConnection((error, connection2) => {
-        if (error) {
-          return reject({ error: true, message: "DB connection failed" });
-        }
-
+    try {
+      const connection2 = await pool.getConnection();
+      try {
         const sql = "select id,name,email,password from member where email=?";
         const val = [email];
-
-        connection2.query(sql, val, async (error, result) => {
-          connection2.release();
-          if (error) {
-            return reject({ error: true, message: error.message });
-          } else {
-            if (result.length == 0) {
-              resolve({ ok: false, message: "invalid email" });
-            } else {
-              const verifyResult = await verify_password(password, result[0].password);
-              // console.log("verifyResult:", verifyResult);
-              if (verifyResult.ok) {
-                console.log("token:" + createToken(email));
-                resolve({
-                  ok: true,
-                  user: {
-                    id: result[0].id,
-                    name: result[0].name,
-                    email: result[0].email,
-                  },
-                  token: createToken(email),
-                });
-              } else if (!verifyResult.ok) {
-                resolve({ ok: false, message: "invalid password" });
-              }
-            }
+        const [result] = await connection2.query(sql, val);
+        // console.log("登入的=", result);
+        if (result.length === 0) {
+          return { ok: false, message: "invalid email" };
+        } else {
+          const verifyResult = await verify_password(password, result[0].password);
+          if (verifyResult.ok) {
+            return {
+              ok: true,
+              user: {
+                id: result[0].id,
+                name: result[0].name,
+                email: result[0].email,
+              },
+              token: createToken(email),
+            };
+          } else if (!verifyResult.ok) {
+            return { ok: false, message: "invalid password" };
           }
-        });
-      });
-    });
+        }
+      } catch (error) {
+        return { error: true, message: error.message + " query email" };
+      } finally {
+        connection2.release();
+      }
+    } catch (error) {
+      return { error: true, message: "DB connection failed" };
+    }
   }
   //user state
   static async checkAuth(fullToken) {
-    return new Promise((resolve, reject) => {
-      const result = validateToken(fullToken);
-      if (result.ok === true) {
-        pool.getConnection((error, connection3) => {
-          if (error) {
-            connection3.release();
-            return reject({ error: true, message: "DB connection failed" });
+    const result = validateToken(fullToken);
+    if (result.ok === true) {
+      try {
+        const connection3 = await pool.getConnection();
+        try {
+          const sql = "select id,name,email from member where email=?";
+          const val = [result.email];
+          const [queryResult] = await connection3.query(sql, val);
+          if (queryResult.length < 1) {
+            return { error: true, message: "Invalid email" };
           } else {
-            const sql = "select id,name,email from member where email=?";
-            const val = [result.email];
-            connection3.query(sql, val, (error, result) => {
-              connection3.release();
-              if (error) {
-                return reject({ error: true, message: error.message });
-              } else {
-                if (result.length < 1) {
-                  return reject({ error: true, message: "Invalid email" });
-                } else {
-                  // console.log("auth query result:", result);
-                  resolve({
-                    ok: true,
-                    user: {
-                      id: result[0].id,
-                      name: result[0].name,
-                      email: result[0].email,
-                    },
-                  });
-                }
-              }
-            });
+            // console.log("auth query result:", result);
+            return {
+              ok: true,
+              user: {
+                id: queryResult[0].id,
+                name: queryResult[0].name,
+                email: queryResult[0].email,
+              },
+            };
           }
-        });
-      } else {
-        return reject({ error: true, message: result.message });
+        } catch (error) {
+          return { error: true, message: error.message + "query auth" };
+        } finally {
+          connection3.release();
+        }
+      } catch (error) {
+        return { error: true, message: "DB connection failed" };
       }
-    });
+    } else {
+      return { error: true, message: result.message };
+    }
   }
 } //class的括號
 

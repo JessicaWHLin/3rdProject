@@ -5,7 +5,7 @@
   font-family: "Noto Sans TC", sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
     Roboto, Helvetica, Arial;
   font-size: 16px;
-  color: rgb(102, 94, 92);
+  /* color: rgb(102, 94, 92); */
 }
 html,
 body {
@@ -14,7 +14,6 @@ body {
   position: relative;
 }
 
-/* for week1 */
 .separator {
   width: 100%;
   height: 0px;
@@ -22,15 +21,12 @@ body {
   margin: 0 auto;
   margin: 20px 0;
 }
-.message {
-  font-size: 15px;
-}
-.image {
-  height: 100px;
-  width: 80px;
+
+.profilePhoto {
+  height: 100%;
+  width: 100%;
   object-fit: contain;
 }
-/* for week1 */
 
 .btn {
   background-color: rgb(88, 123, 176);
@@ -115,6 +111,7 @@ body {
 }
 .zone-setting {
   margin: 5px 5px 10px 5px;
+  padding: 5px;
   border-radius: 5px;
   background-color: white;
   text-align: center;
@@ -333,6 +330,7 @@ body {
 .articleList-nolink {
   color: rgb(170, 175, 194);
   font-size: 12px;
+  line-height: 20px;
 }
 
 .privateMessage {
@@ -374,4 +372,15 @@ body {
 }
 .new-message.finished {
   background-color: white;
+}
+
+.member-photoContainer {
+  width: 180px;
+  height: 180px;
+  position: relative;
+  border: 1px solid #666666;
+  border-radius: 5px;
+  margin: 5px auto;
+  background-image: url(../image/photo_icon.png);
+  background-size: cover;
 }
