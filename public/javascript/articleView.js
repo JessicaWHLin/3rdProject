@@ -85,6 +85,7 @@ class Comment {
 const commentBtn = document.querySelector(".response-btn");
 const flower = document.querySelector("#like");
 const token = localStorage.getItem("token");
+const saveClick = document.querySelector("#saveClick");
 
 //文章
 const url = `/api/article?article_id=${article_id}`;
@@ -138,6 +139,20 @@ if (token) {
   console.log("authResult:", authResult);
   if (authResult.user) {
     showName(authResult.user.name);
+
+    //判斷有無收藏文章
+    saveClick.style = "display: inline-block";
+    const url = `api/article/favorite?article_id=${article_id}`;
+    const options = {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "applcation/json" },
+    };
+    const savedThisArticle = await fetchData(url, options);
+    if (savedThisArticle.ok === true) {
+      document.querySelector("#saveClick .small_icon").src = "image/redheart.png";
+      document.querySelector("#saveClick .articleView-item").textContent = "已收藏";
+    }
+    //私訊button
     const privateMessage = document.querySelector("#privateMessage");
     if (writer_id != authResult.user.id) {
       privateMessage.style = "display:inline-block;";
@@ -209,6 +224,26 @@ if (token) {
     privateMessage.addEventListener("click", () => {
       const roomId = createRoomId(writer_id, authResult.user.id);
       location.href = `/chat?roomId=${roomId}`;
+    });
+    //收藏文章
+    saveClick.addEventListener("click", async () => {
+      const url = "api/article/favorite";
+      const options = {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ article_id: article_id }),
+      };
+      const result = await fetchData(url, options);
+      if (result.ok) {
+        if (result.message === "delete save_article") {
+          document.querySelector("#saveClick .small_icon").src =
+            "image/heart_by_icondock.png";
+          document.querySelector("#saveClick .articleView-item").textContent = "收藏";
+        } else {
+          document.querySelector("#saveClick .small_icon").src = "image/redheart.png";
+          document.querySelector("#saveClick .articleView-item").textContent = "已收藏";
+        }
+      }
     });
   }
 } else {

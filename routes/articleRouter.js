@@ -18,6 +18,8 @@ router.get("", articleController.articleDetail);
 router.post("/comment", articleController.comment);
 router.get("/comment", articleController.findComment);
 router.post("/like", articleController.like);
-
 router.get("/ranking", articleController.ranking);
+router.post("/favorite", articleController.favorite);
+router.get("/favorite", articleController.findFavorite);
+
 export default router;

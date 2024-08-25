@@ -13,4 +13,5 @@ const router = express.Router();
 router.post("/photo", upload.array("images"), memberController.photo);
 router.get("/profile", memberController.profile);
 router.put("/profile", memberController.updateProfile);
+router.get("/article", memberController.articles);
 export default router;

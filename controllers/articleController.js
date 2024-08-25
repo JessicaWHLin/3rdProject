@@ -66,6 +66,8 @@ const articleController = {
         } else {
           res.status(500).json({ error: result.message });
         }
+      } else {
+        res.status(400).json({ ok: false, message: "un-signin" });
       }
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -147,6 +149,8 @@ const articleController = {
             res.status(200).json(result);
           }
         }
+      } else {
+        res.status(400).json({ ok: false, message: "un-signin" });
       }
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -158,9 +162,47 @@ const articleController = {
       const result_latest = await ArticleModel.latest();
       const result_popular = await ArticleModel.popular();
       if (result_latest) {
-        res.status(200).json({ ok: true, result_latest });
+        res.status(200).json(result_latest);
       } else {
         res.status(200).json({ ok: false });
+      }
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  favorite: async (req, res) => {
+    try {
+      const fullToken = req.headers.authorization;
+      const auth = await AuthModel.checkAuth(fullToken);
+      if (auth.ok) {
+        const { article_id } = req.body;
+        const result = await ArticleModel.saveArticles(auth.user.id, article_id);
+        if (result.ok) {
+          res.status(200).json({ ok: true, message: result.message });
+        }
+      } else {
+        res.status(400).json({ ok: false, message: "un-signin" });
+      }
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  findFavorite: async (req, res) => {
+    try {
+      const fullToken = req.headers.authorization;
+      const auth = await AuthModel.checkAuth(fullToken);
+      if (auth.ok) {
+        const { article_id } = req.query;
+        const result = await ArticleModel.findSavedArticle(auth.user.id, article_id);
+        if (result.ok) {
+          res.status(200).json(result);
+        } else {
+          res.status(200).json(result);
+        }
+      } else {
+        res.status(400).json({ ok: false, message: "un-signin" });
       }
     } catch (error) {
       res.status(500).json({ error: error.message });

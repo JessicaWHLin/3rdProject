@@ -97,6 +97,19 @@ const memberController = {
       res.status(500).json({ error: error.message });
     }
   },
+  articles: async (req, res) => {
+    try {
+      const fullToken = req.headers.authorization;
+      const auth = await AuthModel.checkAuth(fullToken);
+      if (auth.ok) {
+        const { item } = req.query;
+        const result = await MemberModel.findArticles(auth.user.id, item);
+        res.status(200).json({ ok: true, result });
+      }
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
 };
 
 export default memberController;

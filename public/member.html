@@ -69,12 +69,34 @@
           <span class="input_title">關於我的二三事</span>
           <textarea
             class="textarea"
-            style="background-color: rgb(238, 239, 242)"
+            style="background-color: rgb(238, 239, 242); height: 100px"
             id="aboutMe"
             placeholder="我是一個..."></textarea>
         </div>
         <button class="btn" type="button" id="updateBtn">更新會員資料</button>
-        <div class="separator"></div>
+      </div>
+      <div
+        class="zone-setting"
+        id="myArticleContainer"
+        style="min-height: 200px; height: max-content">
+        <div
+          id="myArticles"
+          class="zone-title"
+          style="display: inline-block; cursor: pointer; margin-right: 15px">
+          我的文章
+        </div>
+        <div
+          id="commentArticles"
+          class="zone-title"
+          style="display: inline-block; cursor: pointer; margin-right: 15px">
+          我留言過的文章
+        </div>
+        <div
+          id="savedArticles"
+          class="zone-title"
+          style="display: inline-block; cursor: pointer">
+          收藏的文章
+        </div>
       </div>
     </div>
 

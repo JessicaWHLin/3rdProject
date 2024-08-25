@@ -57,7 +57,7 @@ class MemberModel {
         // console.log({ result });
         const birthday = new Date(result[0].birthday);
         const formatedBirthday = format(birthday, "yyyy-MM-dd");
-        console.log("format=", formatedBirthday);
+        // console.log("format=", formatedBirthday);
         const profileData = {
           name: result[0].name,
           email: result[0].email,
@@ -99,6 +99,61 @@ class MemberModel {
         return { error: true, message: error.message + "update profile" };
       } finally {
         connection3.release();
+      }
+    } catch (error) {
+      return { error: true, message: "DB connection failed" };
+    }
+  }
+  static async findArticles(member_id, item) {
+    try {
+      const connection4 = await pool.getConnection();
+      try {
+        if (item == "myArticles") {
+          const sql = `
+            select article.id, article.zones,article.class,article.title,article.created_at,
+            count(DISTINCT article_like.id)as likeQty, count(DISTINCT comment.id)as commentQty
+            from article
+            left join article_like on article.id=article_like.article_id 
+            left join comment on article.id=comment.article_id 
+            where article.member_id=?
+            group by article.id
+            `;
+          const val = [member_id];
+          const [result] = await connection4.query(sql, val);
+          return result;
+        } else if (item == "commentArticles") {
+          const sql = `
+            select DISTINCT article.id, article.zones,article.class,article.title,
+            article.created_at,
+            count(DISTINCT article_like.id)as likeQty,count(DISTINCT comment.id) as commentQty
+            from article 
+            left join article_like on article.id=article_like.article_id
+            left join comment on article.id=comment.article_id 
+            where comment.member_id=? 
+            group by article.id;
+            `;
+          const val = [member_id];
+          const [result] = await connection4.query(sql, val);
+          return result;
+        } else if (item == "savedArticles") {
+          const sql = `select distinct save_article.article_id,article.zones,article.class,
+          article.title,article.created_at,
+          count(distinct article_like.id)as likeQty,
+          count(distinct comment.id) as commentQty
+          from article
+          left join save_article on article.id=save_article.article_id
+          left join article_like on article.id=article_like.article_id
+          left join comment on article.id=comment.article_id
+          where save_article.member_id=?
+          group by save_article.article_id;`;
+          const val = [member_id];
+          const [result] = await connection4.query(sql, val);
+          return result;
+        }
+      } catch (error) {
+        return { error: true, message: error.message + " find member articles" };
+      } finally {
+        connection4.release();
       }
     } catch (error) {
       return { error: true, message: "DB connection failed" };

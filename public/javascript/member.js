@@ -89,6 +89,112 @@ if (token) {
         location.href = "/member";
       }
     });
+    //render 文章資料
+    const myArticleBtn = document.querySelector("#myArticles");
+    const commentArticleBtn = document.querySelector("#commentArticles");
+    const savedArticleBtn = document.querySelector("#savedArticles");
+
+    myArticleBtn.addEventListener("click", async () => {
+      myArticleBtn.classList.add("underline");
+      commentArticleBtn.classList.remove("underline");
+      savedArticleBtn.classList.remove("underline");
+      const elements = document.querySelectorAll("#myArticleContainer .articleList-line");
+      elements.forEach((element) => {
+        element.remove();
+      });
+      const url = "/api/member/article?item=myArticles";
+      const options = {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      };
+      const result = await fetchData(url, options);
+      const articleItems = result.result;
+      const myArticle = new CreateArticleLine("#myArticleContainer");
+      articleItems.forEach((item) => {
+        myArticle.createLine(item);
+      });
+      document
+        .querySelectorAll("#myArticleContainer .articleList-line")
+        .forEach((line, index) => {
+          line.addEventListener("click", () => {
+            location.href = `/articleView?article_id=${articleItems[index].id}`;
+          });
+        });
+    });
+
+    commentArticleBtn.addEventListener("click", async () => {
+      myArticleBtn.classList.remove("underline");
+      commentArticleBtn.classList.add("underline");
+      savedArticleBtn.classList.remove("underline");
+      const elements = document.querySelectorAll("#myArticleContainer .articleList-line");
+      elements.forEach((element) => {
+        element.remove();
+      });
+      const url = "/api/member/article?item=commentArticles";
+      const options = {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      };
+      const result = await fetchData(url, options);
+      const articleItems = result.result;
+      const commentArticle = new CreateArticleLine("#myArticleContainer");
+      articleItems.forEach((item) => {
+        commentArticle.createLine(item);
+      });
+      document
+        .querySelectorAll("#myArticleContainer .articleList-line")
+        .forEach((line, index) => {
+          line.addEventListener("click", () => {
+            location.href = `/articleView?article_id=${articleItems[index].id}`;
+          });
+        });
+    });
+    savedArticleBtn.addEventListener("click", async () => {
+      myArticleBtn.classList.remove("underline");
+      commentArticleBtn.classList.remove("underline");
+      savedArticleBtn.classList.add("underline");
+      const elements = document.querySelectorAll("#myArticleContainer .articleList-line");
+      elements.forEach((element) => {
+        element.remove();
+      });
+      const url = "/api/member/article?item=savedArticles";
+      const options = {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      };
+      const result = await fetchData(url, options);
+      const articleItems = result.result;
+      console.log({ articleItems });
+      const savedArticle = new CreateArticleLine("#myArticleContainer");
+      articleItems.forEach((item) => {
+        savedArticle.createLine(item);
+      });
+      document
+        .querySelectorAll("#myArticleContainer .articleList-line")
+        .forEach((line, index) => {
+          line.addEventListener("click", () => {
+            location.href = `/articleView?article_id=${articleItems[index].article_id}`;
+          });
+        });
+    });
+
+    //從首頁來
+    const urlParams = new URLSearchParams(window.location.search);
+    const source = urlParams.get("source");
+    if (source === "myArticles") {
+      myArticleBtn.click();
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    } else if (source === "commentArticles") {
+      commentArticleBtn.click();
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    } else if (source === "savedArticles") {
+      savedArticleBtn.click();
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    } else {
+      if (myArticleBtn) {
+        myArticleBtn.click();
+      }
+    }
   } //auth.user
 } else {
   console.log("status:un-signin");

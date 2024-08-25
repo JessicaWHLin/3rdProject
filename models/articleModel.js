@@ -282,6 +282,68 @@ class ArticleModel {
   }
 
   static async popular() {} //popular
+
+  static async saveArticles(member_id, article_id) {
+    try {
+      const connection10 = await pool.getConnection();
+      try {
+        const sql_query = `select id from save_article
+        where article_id=?and member_id=?`;
+        const val_query = [article_id, member_id];
+        const [result] = await connection10.query(sql_query, val_query);
+        console.log({ result });
+        if (result.length < 1) {
+          try {
+            const sql_save = `insert into save_article(member_id,article_id)
+            values(?,?)`;
+            const val_save = [member_id, article_id];
+            const [result_save] = await connection10.execute(sql_save, val_save);
+            const save_article_id = result_save.insertId;
+            return { ok: true, message: save_article_id[0] };
+          } catch (error) {
+            return { error: true, message: error.message + " insert save_article" };
+          }
+        } else {
+          try {
+            const sql_delete = `delete from save_article where id=?`;
+            const val_delete = [result[0].id];
+            await connection10.execute(sql_delete, val_delete);
+
+            return { ok: true, message: "delete save_article" };
+          } catch (error) {
+            return { error: true, message: error.message + " delete save_article" };
+          }
+        }
+      } catch (error) {
+        return { error: true, message: error.message + " query save_article" };
+      } finally {
+        connection10.release();
+      }
+    } catch (error) {
+      return { error: true, message: "DB connection failed" };
+    }
+  }
+  static async findSavedArticle(member_id, article_id) {
+    try {
+      const connection11 = await pool.getConnection();
+      try {
+        const sql = `select id from save_article where member_id=? and article_id=?`;
+        const val = [member_id, article_id];
+        const [result] = await connection11.query(sql, val);
+        if (result.length > 0) {
+          return { ok: true, result };
+        } else {
+          return { ok: false };
+        }
+      } catch (error) {
+        return { error: true, message: error.message + " query save_article" };
+      } finally {
+        connection11.release();
+      }
+    } catch (error) {
+      return { error: true, message: "DB connection failed" };
+    }
+  }
 } //class
 
 export default ArticleModel;
