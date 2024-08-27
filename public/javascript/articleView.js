@@ -172,7 +172,8 @@ if (token) {
     };
     const savedThisArticle = await fetchData(url, options);
     if (savedThisArticle.ok === true) {
-      document.querySelector("#saveClick .small_icon").src = "image/redheart.png";
+      document.querySelector("#saveClick .fa").classList.remove("fa-bookmark-o");
+      document.querySelector("#saveClick .fa").classList.add("fa-bookmark");
       document.querySelector("#saveClick .articleView-item").textContent = "已收藏";
     }
     //私訊button
@@ -259,11 +260,12 @@ if (token) {
       const result = await fetchData(url, options);
       if (result.ok) {
         if (result.message === "delete save_article") {
-          document.querySelector("#saveClick .small_icon").src =
-            "image/heart_by_icondock.png";
+          document.querySelector("#saveClick .fa").classList.remove("fa-bookmark");
+          document.querySelector("#saveClick .fa").classList.add("fa-bookmark-o");
           document.querySelector("#saveClick .articleView-item").textContent = "收藏";
         } else {
-          document.querySelector("#saveClick .small_icon").src = "image/redheart.png";
+          document.querySelector("#saveClick .fa").classList.remove("fa-bookmark-o");
+          document.querySelector("#saveClick .fa").classList.add("fa-bookmark");
           document.querySelector("#saveClick .articleView-item").textContent = "已收藏";
         }
       }

@@ -111,7 +111,7 @@ export class CreateArticleLine {
     const Class = document.createElement("span");
     const likeQty = document.createElement("span");
     const flowerIcon = document.createElement("img");
-    const commentIcon = document.createElement("img");
+    const commentIcon = document.createElement("i");
     const commentQty = document.createElement("span");
     const createDate = document.createElement("span");
 
@@ -129,7 +129,8 @@ export class CreateArticleLine {
     createDate.classList.add("articleList-item");
     createDate.classList.add("articleList-nolink");
     flowerIcon.classList.add("small_icon");
-    commentIcon.classList.add("small_icon");
+    commentIcon.classList.add("fa");
+    commentIcon.classList.add("fa-comments");
 
     title.textContent = article.title;
     zone.textContent = ` 【${article.zones}】`;
@@ -138,7 +139,6 @@ export class CreateArticleLine {
     commentQty.textContent = article.commentQty;
     createDate.textContent = article.created_at.split("T")[0];
     flowerIcon.src = "image/flower_by_vecteezy.png";
-    commentIcon.src = "image/full_message_by_vecteezy.jpg";
 
     subcontainer.appendChild(zone);
     subcontainer.appendChild(Class);

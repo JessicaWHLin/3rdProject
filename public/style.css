@@ -207,6 +207,8 @@ body {
   object-fit: contain;
   height: 20px;
   width: 20px;
+  vertical-align: bottom;
+  color: black;
 }
 .articleView-section {
   height: min-content;
@@ -215,7 +217,7 @@ body {
 .articleView-item {
   font-size: 12px;
   padding-right: 10px;
-  vertical-align: top;
+  /* vertical-align: top; */
 }
 .articleView-click {
   display: none;
