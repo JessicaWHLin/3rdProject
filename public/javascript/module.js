@@ -152,6 +152,14 @@ export class CreateArticleLine {
   }
 }
 
+export function setCookie() {
+  const today = new Date().toISOString().split("T")[0];
+  const trackingId = today + "-" + Math.floor(Math.random() * 10000);
+  if (!Cookies.get("trackingId")) {
+    Cookies.set("trackingId", trackingId, { expires: 1 });
+  }
+}
+
 // -------------------------------------
 async function fetchData(url, options) {
   let data = await fetch(url, options)

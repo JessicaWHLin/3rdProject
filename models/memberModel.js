@@ -54,7 +54,6 @@ class MemberModel {
         const sql = `select * from member where id=?`;
         const val = [member_id];
         const [result] = await connection2.query(sql, val);
-        // console.log({ result });
         const birthday = new Date(result[0].birthday);
         const formatedBirthday = format(birthday, "yyyy-MM-dd");
         // console.log("format=", formatedBirthday);

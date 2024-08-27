@@ -21,5 +21,7 @@ router.post("/like", articleController.like);
 router.get("/ranking", articleController.ranking);
 router.post("/favorite", articleController.favorite);
 router.get("/favorite", articleController.findFavorite);
+router.post("/views", articleController.viewCount);
+router.get("/views", articleController.sumViewCount);
 
 export default router;

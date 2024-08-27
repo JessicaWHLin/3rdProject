@@ -7,10 +7,11 @@ import {
   signout,
   userless,
   CreateArticleLine,
+  setCookie,
 } from "./module.js";
 back_Homepage();
 go_signpage();
-
+setCookie();
 const token = localStorage.getItem("token");
 if (token) {
   const authResult = await CheckAuth_WithToken(token);
@@ -86,21 +87,33 @@ for (let i = 0; i < ZONES.length; i++) {
   });
   container.appendChild(zone);
 }
-//最新文章
-const url = "api/article/ranking";
+//人氣文章-最新文章
+const url = "/api/article/ranking";
 const options = { method: "GET", "Content-Type": "application/json" };
 try {
   const ranking = await fetchData(url, options);
-  console.log(ranking);
+  console.log("ranking:", ranking);
   const latestArticle = new CreateArticleLine("#latestArticle");
-  ranking.result.forEach((article) => {
+  ranking.result_latest.result.forEach((article) => {
     latestArticle.createLine(article);
   });
   document.querySelectorAll("#latestArticle .articleList-line").forEach((line, index) => {
     line.addEventListener("click", () => {
-      location.href = `/articleView?article_id=${ranking.result[index].id}`;
+      location.href = `/articleView?article_id=${ranking.result_latest.result[index].id}`;
     });
   });
+
+  const popularArticle = new CreateArticleLine("#popularArticle");
+  ranking.result_popular.result.forEach((article) => {
+    popularArticle.createLine(article);
+  });
+  document
+    .querySelectorAll("#popularArticle .articleList-line")
+    .forEach((line, index) => {
+      line.addEventListener("click", () => {
+        location.href = `/articleView?article_id=${ranking.result_popular.result[index].id}`;
+      });
+    });
 } catch (error) {
   console.log("後端未傳資料");
 }

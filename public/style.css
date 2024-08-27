@@ -130,6 +130,7 @@ body {
 }
 .middle {
   flex: 3;
+  min-width: 450px;
 }
 .right {
   flex: 1;
@@ -145,6 +146,7 @@ body {
   text-align: center;
   position: sticky;
   top: 100vh;
+  /* top: 0; */
 }
 .text {
   width: max-content;
@@ -317,7 +319,8 @@ body {
 
 .articleWrite-uploadImg {
   height: 180px;
-  width: 320px;
+  max-width: 320px;
+  width: 100%;
   object-fit: contain;
 }
 

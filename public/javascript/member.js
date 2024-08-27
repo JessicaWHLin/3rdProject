@@ -7,10 +7,11 @@ import {
   signout,
   userless,
   CreateArticleLine,
+  setCookeie,
 } from "./module.js";
 back_Homepage();
 go_signpage();
-
+setCookeie();
 const token = localStorage.getItem("token");
 const profilePhoto = document.querySelector("#photo");
 const photoContainer = document.querySelector("#photoContainer");

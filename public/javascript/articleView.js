@@ -6,13 +6,15 @@ import {
   showName,
   signout,
   userless,
+  setCookie,
 } from "./module.js";
 back_Homepage();
 go_signpage();
+setCookie();
 //取得article_id
 const path = window.location.search.split("=");
 const article_id = decodeURIComponent(path[1]);
-console.log("article_id", article_id);
+console.log("article_id:", article_id);
 class Image {
   constructor(container) {
     this.container = document.querySelector(container);
@@ -111,7 +113,7 @@ imageContainer.createImage(imageURL);
 const oldComments = await fetchData(`/api/article/comment?article_id=${article_id}`, {
   method: "GET",
 });
-console.log("oldComment:", oldComments);
+// console.log("oldComment:", oldComments);
 const comments = oldComments.result.result;
 const createComment = new Comment("#comment-container");
 createComment.renderComment(comments, "old");
@@ -121,7 +123,7 @@ const name = document.querySelector(".showName");
 commentBtn.addEventListener("click", (e) => {
   if (name.textContent == "") {
     e.preventDefault();
-    alert("請先登入");
+    toast("請先登入");
   }
 });
 //未登入想按讚
@@ -131,6 +133,27 @@ flower.addEventListener("click", (e) => {
     alert("請先登入");
   }
 });
+//views-紀錄trackingId
+const tracking_id = Cookies.get("trackingId");
+console.log("tracking_id:", tracking_id);
+const url_viewCount = "/api/article/views";
+const options_viewCount = {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ tracking_id: tracking_id, article_id: article_id }),
+};
+await fetchData(url_viewCount, options_viewCount);
+//views-統計-render
+const url_viewQty = `/api/article/views?article_id=${article_id}`;
+const options_viewQty = {
+  method: "GET",
+  headers: { "Content-Type": "application/json" },
+};
+const result_viewQty = await fetchData(url_viewQty, options_viewQty);
+console.log("result_viewQty=", result_viewQty);
+if (result_viewQty) {
+  document.querySelector("#viewQty").textContent = result_viewQty.viewQty;
+}
 
 if (token) {
   const authResult = await CheckAuth_WithToken(token);

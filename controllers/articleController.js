@@ -86,7 +86,6 @@ const articleController = {
   articleDetail: async (req, res) => {
     try {
       const { article_id } = req.query;
-      console.log({ article_id });
       const contentResult = await ArticleModel.findArticleContent(article_id);
       const imagesRresult = await ArticleModel.findArticleImages(article_id);
 
@@ -161,8 +160,8 @@ const articleController = {
     try {
       const result_latest = await ArticleModel.latest();
       const result_popular = await ArticleModel.popular();
-      if (result_latest) {
-        res.status(200).json(result_latest);
+      if (result_latest && result_popular) {
+        res.status(200).json({ result_latest, result_popular });
       } else {
         res.status(200).json({ ok: false });
       }
@@ -206,6 +205,28 @@ const articleController = {
       }
     } catch (error) {
       res.status(500).json({ error: error.message });
+    }
+  },
+  viewCount: async (req, res) => {
+    try {
+      const { article_id, tracking_id } = req.body;
+      const result = await ArticleModel.view(article_id, tracking_id);
+      if (result.ok) {
+        res.status(200).json({ ok: true });
+      }
+    } catch (error) {
+      res.status(500).json({ error: true, message: error.message });
+    }
+  },
+  sumViewCount: async (req, res) => {
+    try {
+      const { article_id } = req.query;
+      const result = await ArticleModel.sumViewCount(article_id);
+      if (result.ok) {
+        res.status(200).json(result);
+      }
+    } catch (error) {
+      return res.status(500), json({ error: true, message: error.message });
     }
   },
 };

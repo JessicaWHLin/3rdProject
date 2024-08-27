@@ -272,7 +272,7 @@ class ArticleModel {
         const [result] = await connection9.query(sql);
         return { ok: true, result };
       } catch (error) {
-        return { error: true, message: error.message + "find latest article" };
+        return { error: true, message: error.message + " find latest article" };
       } finally {
         connection9.release();
       }
@@ -281,7 +281,33 @@ class ArticleModel {
     }
   }
 
-  static async popular() {} //popular
+  static async popular() {
+    try {
+      const connection14 = await pool.getConnection();
+      try {
+        const sql = `select article.id,article.title,article.zones,article.class,article.created_at,
+        count(distinct comment.id)as commentQty,
+        count(distinct article_like.id)as likeQty,
+        count(distinct views.id)as viewQty
+        from article
+        left join comment on article.id=comment.article_id
+        left join article_like on article.id=article_like.article_id
+        left join views on article.id=views.article_id
+        group by article.id
+        order by viewQty desc
+        limit 3;
+        `;
+        const [result] = await connection14.query(sql);
+        return { ok: true, result };
+      } catch (error) {
+        return { error: true, message: error.message + " find popular article" };
+      } finally {
+        connection14.release();
+      }
+    } catch (error) {
+      return { error: true, message: "DB connection failed" };
+    }
+  } //popular
 
   static async saveArticles(member_id, article_id) {
     try {
@@ -339,6 +365,55 @@ class ArticleModel {
         return { error: true, message: error.message + " query save_article" };
       } finally {
         connection11.release();
+      }
+    } catch (error) {
+      return { error: true, message: "DB connection failed" };
+    }
+  }
+  static async view(article_id, tracking_id) {
+    try {
+      const connection12 = await pool.getConnection();
+      try {
+        const sql = `select * from views 
+        where article_id=? and tracking_id=?`;
+        const val = [article_id, tracking_id];
+        const [result] = await connection12.query(sql, val);
+        if (result.length < 1) {
+          try {
+            const sql_insert = `insert into views(article_id,tracking_id)
+              values(?,?)`;
+            const val_insert = [article_id, tracking_id];
+            const [result_insert] = await connection12.execute(sql_insert, val_insert);
+            const view_id = result_insert.insertId;
+            return { ok: true, view_id: view_id };
+          } catch (error) {
+            return { error: true, message: error.message + " insert viewCount" };
+          }
+        } else {
+          return { ok: true, message: "today already counted" };
+        }
+      } catch (error) {
+        return { error: true, message: error.message + " query viewCount" };
+      } finally {
+        connection12.release();
+      }
+    } catch (error) {
+      return { error: true, message: "DB connection failed" };
+    }
+  }
+  static async sumViewCount(article_id) {
+    try {
+      const connection13 = await pool.getConnection();
+      try {
+        const sql = `select count(article_id) as viewQty from views
+        where article_id=?`;
+        const val = [article_id];
+        const [result] = await connection13.query(sql, val);
+        return { ok: true, viewQty: result[0].viewQty };
+      } catch (error) {
+        return { error: true, message: error.message + " query viewQty" };
+      } finally {
+        connection13.release();
       }
     } catch (error) {
       return { error: true, message: "DB connection failed" };

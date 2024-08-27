@@ -7,10 +7,11 @@ import {
   signout,
   userless,
   CreateArticleLine,
+  setCookie,
 } from "./module.js";
 back_Homepage();
 go_signpage();
-
+setCookie();
 const token = localStorage.getItem("token");
 
 //----------------------------------
