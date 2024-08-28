@@ -162,9 +162,8 @@ class ArticleModel {
         const [result_comment] = await connection5.execute(sql_insert, val_insert);
         //回傳留言
         try {
-          const sql_query = `select comment.*,count(DISTINCT comment_like.id) as likeQty,member.name
+          const sql_query = `select comment.*,member.name
             from comment
-            left join comment_like on comment.id=comment_like.comment_id
             left join member on member.id=comment.member_id
             where comment.id=?
             group by comment.id`;
