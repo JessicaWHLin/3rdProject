@@ -174,28 +174,37 @@ if (token) {
     }
 
     //留言
-    commentBtn.addEventListener("click", async () => {
-      let comment = document.querySelector("#comment");
-      console.log("comment:", comment.value);
-
-      const url = "/api/article/comment";
-      const options = {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ comment: comment.value, article_id: article_id }),
-      };
-      const result = await fetchData(url, options);
-      if (result.result.ok === true) {
-        comment.value = "";
-        const comments = result.result.result;
-        console.log("latest comment:", comments);
-        const createComment = new Comment("#comment-container");
-        createComment.renderComment(comments, "new");
+    commentBtn.addEventListener("click", async (e) => {
+      const comment = document.querySelector("#comment");
+      if (comment.value === "") {
+        e.preventDefault();
+        const snackbar = document.querySelector("#snackbar");
+        snackbar.className = "show";
+        setTimeout(() => {
+          snackbar.className = snackbar.className.replace("show", "");
+        }, 3000);
       } else {
-        console.log("留言return異常:", result);
+        console.log("comment:", comment.value);
+
+        const url = "/api/article/comment";
+        const options = {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ comment: comment.value, article_id: article_id }),
+        };
+        const result = await fetchData(url, options);
+        if (result.result.ok === true) {
+          comment.value = "";
+          const comments = result.result.result;
+          console.log("latest comment:", comments);
+          const createComment = new Comment("#comment-container");
+          createComment.renderComment(comments, "new");
+        } else {
+          console.log("留言return異常:", result);
+        }
       }
     });
     //按讚

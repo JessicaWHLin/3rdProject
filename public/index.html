@@ -39,19 +39,19 @@
         <button class="btn" id="articlepage">
           <i class="fa fa-pencil" aria-hidden="true" style="padding: 0 3px 0 0"></i>發文
         </button>
-        <button class="btn" id="signpage">會員登入</button>
+        <button class="btn" id="signpage">註冊</button>
         <button class="btn" id="signoutBtn" style="display: none">登出</button>
       </div>
     </div>
     <div class="navi-placeholder"></div>
     <div class="main">
       <div class="left">
-        <div class="zone-setting" style="height: 400px" id="zoneList">
+        <div class="zone-setting" style="height: 300px" id="zoneList">
           <div class="zone-title">網站總覽</div>
         </div>
       </div>
       <div class="middle">
-        <div class="zone-setting" style="height: 250px" id="popularArticle">
+        <div class="zone-setting" style="height: 200px" id="popularArticle">
           <div class="zone-title">人氣文章</div>
         </div>
         <div class="zone-setting" style="height: 200px" id="latestArticle">
@@ -59,15 +59,34 @@
         </div>
       </div>
       <div class="right">
-        <div class="zone-setting" style="height: 300px">
+        <div class="zone-setting" style="display: none" id="memberFunction">
           <div class="zone-title">會員中心</div>
-          <div class="link" style="display: none" id="memberPage">會員資料</div>
-          <div class="link" style="display: none" id="myArticles">我的文章</div>
-          <div class="link" style="display: none" id="commentArticles">
-            我留言過的文章
+          <div class="link" id="memberPage">會員資料</div>
+          <div class="link" id="myArticles">我的文章</div>
+          <div class="link" id="commentArticles">我留言過的文章</div>
+          <div class="link" id="savedArticles">收藏的文章</div>
+          <div class="link" id="privateMsg">私人訊息</div>
+        </div>
+        <div class="zone-setting" style="height: 180px" id="no-memberFunction">
+          <div class="zone-title">會員登入</div>
+          <div class="input_set">
+            <input
+              type="text"
+              class="input_frame"
+              id="signinEmail"
+              placeholder="電子郵件"
+              style="width: 95%" />
           </div>
-          <div class="link" style="display: none" id="savedArticles">收藏的文章</div>
-          <div class="link" style="display: none" id="privateMsg">私人訊息</div>
+          <div class="input_set">
+            <input
+              type="password"
+              class="input_frame"
+              id="signinPassword"
+              placeholder="密碼"
+              style="width: 95%" />
+          </div>
+          <button class="btn" id="signinBtn">登入</button>
+          <div class="signinResult text"></div>
         </div>
       </div>
     </div>

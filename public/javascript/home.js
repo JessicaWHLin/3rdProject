@@ -9,11 +9,13 @@ import {
   CreateArticleLine,
   setCookie,
   search,
+  signin,
 } from "./module.js";
 back_Homepage();
 go_signpage();
 setCookie();
 search();
+
 const token = localStorage.getItem("token");
 if (token) {
   const authResult = await CheckAuth_WithToken(token);
@@ -21,18 +23,17 @@ if (token) {
   signout("/");
   console.log("authResult:", authResult);
   if (authResult.user) {
+    document.querySelector("#no-memberFunction").style = "display:none;";
+
     showName(authResult.user.name);
     //出現會員功能按鈕
+    document.querySelector("#memberFunction").style = "display:block; height:150px";
     const myArticles = document.querySelector("#myArticles");
     const savedArticles = document.querySelector("#savedArticles");
     const commentArticles = document.querySelector("#commentArticles");
     const privateMsgLink = document.querySelector("#privateMsg");
     const memberPage = document.querySelector("#memberPage");
-    memberPage.style = "display:block";
-    myArticles.style = "display:block";
-    savedArticles.style = "display:block";
-    commentArticles.style = "display:block";
-    privateMsgLink.style = "display:block";
+
     myArticles.addEventListener("click", () => {
       location.href = "/member?source=myArticles";
     });
@@ -57,12 +58,13 @@ if (token) {
         }
       }
     });
-    document.querySelector("#memberPage").addEventListener("click", () => {
+    memberPage.addEventListener("click", () => {
       location.href = "/member";
     });
   } //if(authResult.user)
 } else {
   console.log("status:un-signin");
+  signin();
   userless();
 }
 

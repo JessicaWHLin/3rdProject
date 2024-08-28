@@ -68,6 +68,35 @@ export function showName(username) {
   showName.textContent = `歡迎光臨 ${username}`;
 }
 
+export async function signin() {
+  const signinBtn = document.querySelector("#signinBtn");
+  signinBtn.addEventListener("click", async () => {
+    const signinData = { email: signinEmail.value, password: signinPassword.value };
+    const urlSignin = "/api/auth/signin";
+    const options = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(signinData),
+    };
+    const result = await fetchData(urlSignin, options);
+    console.log("signin-result:", result);
+    if (result.ok == true) {
+      localStorage.setItem("token", result.token);
+      location.href = "/";
+    } else {
+      const showResult = document.querySelector(".signinResult");
+      showResult.style = "color:red; font-weight:700";
+      if (result.error == "invalid password") {
+        showResult.textContent = "密碼錯誤";
+      } else if (result.error == "invalid email") {
+        showResult.textContent = "無此用戶信箱";
+      } else {
+        showResult.textContent = `${result.message}`;
+      }
+    }
+  });
+}
+
 export function signout(url) {
   const signoutBtn = document.querySelector("#signoutBtn");
   const showName = document.querySelector(".showName");
