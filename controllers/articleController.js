@@ -74,10 +74,11 @@ const articleController = {
     }
   },
 
-  listZone: async (req, res) => {
+  listArticle: async (req, res) => {
     try {
-      const { zone } = req.query;
-      const result = await ArticleModel.findArticle(zone);
+      const { zone, keyword } = req.query;
+
+      const result = await ArticleModel.findArticle(zone, keyword);
       res.status(200).json(result);
     } catch (error) {
       res.status(500).json({ error: error.message });

@@ -7,10 +7,12 @@ import {
   signout,
   userless,
   setCookie,
+  search,
 } from "./module.js";
 back_Homepage();
 go_signpage();
 setCookie();
+search();
 const token = localStorage.getItem("token");
 if (token) {
   const authResult = await CheckAuth_WithToken(token);

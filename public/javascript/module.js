@@ -160,6 +160,14 @@ export function setCookie() {
   }
 }
 
+export function search() {
+  const searchbtn = document.querySelector(".searchbtn");
+  searchbtn.addEventListener("click", () => {
+    const keyword = document.querySelector("#search").value;
+    location.href = `/articleList?keyword=${keyword}`;
+  });
+}
+
 // -------------------------------------
 async function fetchData(url, options) {
   let data = await fetch(url, options)

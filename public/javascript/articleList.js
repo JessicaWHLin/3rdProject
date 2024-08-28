@@ -8,34 +8,45 @@ import {
   userless,
   CreateArticleLine,
   setCookie,
+  search,
 } from "./module.js";
 back_Homepage();
 go_signpage();
 setCookie();
+search();
 const token = localStorage.getItem("token");
 
 //----------------------------------
-//取得zone
+//取得zone or keyword
 const path = window.location.search.split("=");
-const zone = decodeURIComponent(path[1]);
-const zoneName = document.querySelector("#zoneName");
-zoneName.textContent = zone;
+const titleName = document.querySelector("#zoneName");
+let url;
+console.log("path:", path);
+console.log(path[0].includes("keyword"));
+if (path[0].includes("zone")) {
+  const zone = decodeURIComponent(path[1]);
+  titleName.textContent = zone;
+  url = `/api/article/articleList?zone=${zone}`;
+} else if (path[0].includes("keyword")) {
+  const keyword = decodeURIComponent(path[1]);
+  titleName.textContent = keyword;
+  url = `/api/article/articleList?keyword=${keyword}`;
+}
 
-const url = `/api/article/zoneList?zone=${zone}`;
 const options = {
   method: "GET",
-  "Content-Type": "application/json",
+  headers: { "Content-Type": "application/json" },
 };
 const result = await fetchData(url, options);
-
-if (result.result.length > 0) {
+const articles = result.result;
+if (articles.length > 0) {
   const zoneList = new CreateArticleLine("#zoneList");
-  result.result.forEach((article) => {
+  articles.forEach((article) => {
     zoneList.createLine(article);
   });
   document.querySelectorAll(".link").forEach((link, index) => {
     link.addEventListener("click", () => {
-      location.href = `/articleView?article_id=${result.result[index].id}`;
+      location.href = `/articleView?article_id=${articles[index].id}`;
     });
   });
 }
@@ -43,7 +54,8 @@ if (result.result.length > 0) {
 if (token) {
   const authResult = await CheckAuth_WithToken(token);
   post_article();
-  signout(`/articleList?zone=${zone}`);
+  const path_now = window.location.search.split("?");
+  signout(`/articleList?${path_now[1]}`);
   console.log("authResult:", authResult);
   if (authResult.user) {
     showName(authResult.user.name);

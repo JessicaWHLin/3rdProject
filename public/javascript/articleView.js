@@ -7,10 +7,12 @@ import {
   signout,
   userless,
   setCookie,
+  search,
 } from "./module.js";
 back_Homepage();
 go_signpage();
 setCookie();
+search();
 //取得article_id
 const path = window.location.search.split("=");
 const article_id = decodeURIComponent(path[1]);
@@ -123,7 +125,7 @@ const name = document.querySelector(".showName");
 commentBtn.addEventListener("click", (e) => {
   if (name.textContent == "") {
     e.preventDefault();
-    toast("請先登入");
+    alert("請先登入");
   }
 });
 //未登入想按讚

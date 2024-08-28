@@ -69,22 +69,41 @@ class ArticleModel {
     }
   }
 
-  static async findArticle(zone) {
+  static async findArticle(zone, keyword) {
+    console.log({ zone, keyword });
     try {
       const connection2 = await pool.getConnection();
-      try {
-        const sql = `select member.name, article.*,count(DISTINCT article_like.id)as likeQty,count(DISTINCT comment.id) as commentQty from article
-        left join member on member.id=article.member_id
-        left join article_like on article.id=article_like.article_id
-        left join comment on article.id=comment.article_id
-        where zones=? group by article.id,member.name;`;
-        const val = [zone];
-        const [result] = await connection2.query(sql, val);
-        return { ok: true, result };
-      } catch (error) {
-        return { error: true, message: error.message + "query zone" };
-      } finally {
-        connection2.release();
+      if (zone) {
+        try {
+          const sql = `select member.name, article.*,count(DISTINCT article_like.id)as likeQty,count(DISTINCT comment.id) as commentQty from article
+          left join member on member.id=article.member_id
+          left join article_like on article.id=article_like.article_id
+          left join comment on article.id=comment.article_id
+          where zones=? group by article.id;`;
+          const val = [zone];
+          const [result] = await connection2.query(sql, val);
+          return { ok: true, result };
+        } catch (error) {
+          return { error: true, message: error.message + "query zone" };
+        } finally {
+          connection2.release();
+        }
+      } else if (keyword) {
+        try {
+          const sql = `select member.name, article.*,count(DISTINCT article_like.id)as likeQty,count(DISTINCT comment.id) as commentQty from article
+          left join member on member.id=article.member_id
+          left join article_like on article.id=article_like.article_id
+          left join comment on article.id=comment.article_id
+          where article.title like ? or article.zones like ?
+          group by article.id;`;
+          const val = [`%${keyword}%`, `%${keyword}%`];
+          const [result] = await connection2.query(sql, val);
+          return { ok: true, result };
+        } catch (error) {
+          return { error: true, message: error.message + " query keyword" };
+        } finally {
+          connection2.release();
+        }
       }
     } catch (error) {
       return { error: true, message: "DB connection failed" };

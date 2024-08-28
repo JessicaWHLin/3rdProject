@@ -13,7 +13,7 @@ const upload = multer({
 const router = express.Router();
 
 router.post("/write", upload.array("images"), articleController.write);
-router.get("/zoneList", articleController.listZone);
+router.get("/articleList", articleController.listArticle);
 router.get("", articleController.articleDetail);
 router.post("/comment", articleController.comment);
 router.get("/comment", articleController.findComment);

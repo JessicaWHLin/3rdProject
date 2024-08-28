@@ -79,6 +79,35 @@ body {
   top: calc(50% - 30px);
   background-color: white;
 }
+.navi-middle {
+  position: absolute;
+  left: calc(50% - 155px);
+  top: calc(50% - 20px);
+  height: max-content;
+  width: max-content;
+  background-color: rgb(238, 239, 242);
+  border-radius: 22px;
+  padding: 0 20px;
+}
+.search-input {
+  height: 40px;
+  width: 100%;
+  border-color: transparent;
+  outline: none;
+}
+.searchbtn {
+  border-radius: 19px;
+  border-color: transparent;
+  height: 36px;
+  width: 36px;
+  margin: 2px 0 0 -19px;
+  position: absolute;
+  cursor: pointer;
+}
+.searchbtn:hover {
+  background-color: rgb(200, 201, 204);
+}
+
 .navi-right {
   position: absolute;
   right: 30px;

@@ -37,7 +37,7 @@ app.use("/api/chat", chatRouter);
 app.use("/api/member", memberRouter);
 setupSocket(io);
 
-//靜態網頁
+//static
 app.use(express.static(path.join(__dirname, "public")));
 app.get("/", function (req, res) {
   res.sendFile(path.join(__dirname, "public", "index.html"));

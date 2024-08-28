@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" type="text/css" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -21,9 +24,20 @@
         <img class="img" src="image/simple_plane_travel_around _Pngtree.png" />
         <span class="name" id="home"> Trip Pals </span>
       </div>
+      <div class="navi-middle">
+        <input
+          type="text"
+          placeholder="搜尋關鍵字、地點或景點"
+          class="input_frame search-input"
+          id="search" /><button type="button" class="searchbtn">
+          <i class="fa fa-search" aria-hidden="true"></i>
+        </button>
+      </div>
       <div class="navi-right">
         <span class="showName" style="display: none"></span>
-        <button class="btn" id="articlepage">發文</button>
+        <button class="btn" id="articlepage">
+          <i class="fa fa-pencil" aria-hidden="true" style="padding: 0 3px 0 0"></i>發文
+        </button>
         <button class="btn" id="signpage">會員登入</button>
         <button class="btn" id="signoutBtn" style="display: none">登出</button>
       </div>
