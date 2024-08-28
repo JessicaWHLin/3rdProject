@@ -349,9 +349,10 @@ body {
 }
 
 .articleWrite-uploadImg {
-  height: 180px;
-  max-width: 320px;
-  width: 100%;
+  max-width: 95%;
+  max-height: 720px;
+  width: auto;
+  height: auto;
   object-fit: contain;
 }
 

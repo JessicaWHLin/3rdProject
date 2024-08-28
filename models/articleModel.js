@@ -188,9 +188,8 @@ class ArticleModel {
     try {
       const connection6 = await pool.getConnection();
       try {
-        const sql = `select comment.*,count(DISTINCT comment_like.id) as likeQty,member.name 
+        const sql = `select comment.*,member.name 
           from comment
-          left join comment_like on comment.id=comment_like.comment_id
           left join member on member.id=comment.member_id
           where comment.article_id=?  
           group by comment.id;`;
@@ -246,28 +245,6 @@ class ArticleModel {
         return { error: true, message: error.message + "query article_like" };
       } finally {
         connection7.release();
-      }
-    } catch (error) {
-      return { error: true, message: "DB connection failed" };
-    }
-  }
-
-  static async commentLike(comment_id, member_id) {
-    try {
-      const connection8 = await pool.getConnection();
-      try {
-        const sql = `insert into comment_like(comment_id,member_id)  values(?,?)`;
-        const val = [comment_id, member_id];
-        const [result] = await connection8.execute(sql, val);
-        const comment_like_id = result.insertId;
-        return { ok: true, comment_like_id: comment_like_id };
-      } catch (error) {
-        return {
-          error: true,
-          message: error.message + "insert comment_like",
-        };
-      } finally {
-        connection8.release();
       }
     } catch (error) {
       return { error: true, message: "DB connection failed" };

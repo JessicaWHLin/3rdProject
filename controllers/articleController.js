@@ -143,11 +143,6 @@ const articleController = {
           if (result) {
             res.status(200).json(result);
           }
-        } else {
-          const result = await ArticleModel.commentLike(comment_id, member_id);
-          if (result) {
-            res.status(200).json(result);
-          }
         }
       } else {
         res.status(400).json({ ok: false, message: "un-signin" });

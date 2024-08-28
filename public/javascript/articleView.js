@@ -38,7 +38,7 @@ class Comment {
     for (let i = 0; i < data.length; i++) {
       const subContainer = document.createElement("div");
       subContainer.classList.add("zone-setting");
-      subContainer.style = "padding:10px 0px 0px 0px;";
+      subContainer.style = "padding:10px 0px;";
       const name = document.createElement("div");
       name.classList.add("articleView-username");
 
@@ -52,25 +52,14 @@ class Comment {
       comment.classList.add("response-comment");
       comment.style = "white-space: pre-wrap;";
 
-      const likeQtyContainer = document.createElement("div");
-      likeQtyContainer.classList.add("response-comment");
-      const likeQty = document.createElement("span");
-      likeQty.style = "vertical-align: top; color: rgb(170, 175, 194);";
-      const flowerIcon = document.createElement("img");
-      flowerIcon.classList.add("small_icon");
-      likeQtyContainer.appendChild(flowerIcon);
-      likeQtyContainer.appendChild(likeQty);
-
       comment.textContent = data[i].content;
       name.textContent = data[i].name;
-      likeQty.textContent = data[i].likeQty;
+
       created_at.textContent = data[i].created_at.split("T")[0];
-      flowerIcon.src = "image/flower_by_vecteezy.png";
       subContainer.appendChild(name);
       subContainer.appendChild(created_at);
       subContainer.appendChild(separator);
       subContainer.appendChild(comment);
-      subContainer.appendChild(likeQtyContainer);
       this.container.appendChild(subContainer);
 
       if (mode === "new") {
