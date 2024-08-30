@@ -76,10 +76,14 @@ class ArticleModel {
       const connection2 = await pool.getConnection();
       if (zone) {
         try {
-          const sql = `select member.name, article.*,count(DISTINCT article_like.id)as likeQty,count(DISTINCT comment.id) as commentQty from article
+          const sql = `select member.name, article.*,count(DISTINCT article_like.id)as likeQty,
+          count(DISTINCT comment.id) as commentQty,
+          count(distinct views.id)as viewQty
+          from article
           left join member on member.id=article.member_id
           left join article_like on article.id=article_like.article_id
           left join comment on article.id=comment.article_id
+          left join views on article.id=views.article_id
           where zones=? group by article.id;`;
           const val = [zone];
           const [result] = await connection2.query(sql, val);
@@ -91,10 +95,14 @@ class ArticleModel {
         }
       } else if (keyword) {
         try {
-          const sql = `select member.name, article.*,count(DISTINCT article_like.id)as likeQty,count(DISTINCT comment.id) as commentQty from article
+          const sql = `select member.name, article.*,count(DISTINCT article_like.id)as likeQty,
+          count(DISTINCT comment.id) as commentQty, 
+          count(distinct views.id)as viewQty
+          from article
           left join member on member.id=article.member_id
           left join article_like on article.id=article_like.article_id
           left join comment on article.id=comment.article_id
+          left join views on article.id=views.article_id
           where article.title like ? or article.zones like ?
           group by article.id;`;
           const val = [`%${keyword}%`, `%${keyword}%`];
@@ -257,13 +265,15 @@ class ArticleModel {
       try {
         const sql = `select article.id, article.title,article.zones,article.class,article.created_at,
         count(distinct comment.id) as commentQty,
-        count(distinct article_like.id) as likeQty 
+        count(distinct article_like.id) as likeQty,
+        count(distinct views.id)as viewQty
         from article
         left join comment on article.id=comment.article_id
         left join article_like on article.id=article_like.article_id
+        left join views on article.id=views.article_id
         group by article.id
         order by created_at desc
-        limit 3;
+        limit 5;
          `;
         const [result] = await connection9.query(sql);
         return { ok: true, result };
@@ -291,7 +301,7 @@ class ArticleModel {
         left join views on article.id=views.article_id
         group by article.id
         order by viewQty desc
-        limit 3;
+        limit 5;
         `;
         const [result] = await connection14.query(sql);
         return { ok: true, result };

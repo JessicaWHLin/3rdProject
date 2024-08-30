@@ -111,10 +111,12 @@ class MemberModel {
         if (item == "myArticles") {
           const sql = `
             select article.id, article.zones,article.class,article.title,article.created_at,
-            count(DISTINCT article_like.id)as likeQty, count(DISTINCT comment.id)as commentQty
+            count(DISTINCT article_like.id)as likeQty, count(DISTINCT comment.id)as commentQty,
+            count(distinct views.id)as viewQty
             from article
             left join article_like on article.id=article_like.article_id 
-            left join comment on article.id=comment.article_id 
+            left join comment on article.id=comment.article_id
+            left join views on article.id=views.article_id 
             where article.member_id=?
             group by article.id
             `;
@@ -125,10 +127,12 @@ class MemberModel {
           const sql = `
             select DISTINCT article.id, article.zones,article.class,article.title,
             article.created_at,
-            count(DISTINCT article_like.id)as likeQty,count(DISTINCT comment.id) as commentQty
+            count(DISTINCT article_like.id)as likeQty,count(DISTINCT comment.id) as commentQty,
+            count(distinct views.id)as viewQty
             from article 
             left join article_like on article.id=article_like.article_id
             left join comment on article.id=comment.article_id 
+            left join views on article.id=views.article_id
             where comment.member_id=? 
             group by article.id;
             `;
@@ -139,11 +143,13 @@ class MemberModel {
           const sql = `select distinct save_article.article_id,article.zones,article.class,
           article.title,article.created_at,
           count(distinct article_like.id)as likeQty,
-          count(distinct comment.id) as commentQty
+          count(distinct comment.id) as commentQty,
+          count(distinct views.id)as viewQty
           from article
           left join save_article on article.id=save_article.article_id
           left join article_like on article.id=article_like.article_id
           left join comment on article.id=comment.article_id
+          left join views on article.id=views.article_id
           where save_article.member_id=?
           group by save_article.article_id;`;
           const val = [member_id];

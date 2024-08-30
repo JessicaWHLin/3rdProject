@@ -120,7 +120,7 @@ try {
       });
     });
 } catch (error) {
-  console.log("後端未傳資料");
+  console.log("error:", error.message);
 }
 
 // -------------------------------------

@@ -143,14 +143,16 @@ export class CreateArticleLine {
     const commentIcon = document.createElement("i");
     const commentQty = document.createElement("span");
     const createDate = document.createElement("span");
+    const viewIcon = document.createElement("i");
+    const viewQty = document.createElement("span");
 
     title.classList.add("articleList-item");
     title.classList.add("link");
     title.style = "flex:4; overflow: hidden; text-overflow: ellipsis;";
     zone.classList.add("articleList-item");
-    zone.style = "flex:1 min-width:80px";
+    zone.style = " font-size:12px;line-height:20px";
     Class.classList.add("articleList-item");
-    Class.style = "flex:1 min-width:80px";
+    Class.style = " font-size:12px;line-height:20px";
     likeQty.classList.add("articleList-item");
     likeQty.classList.add("articleList-nolink");
     commentQty.classList.add("articleList-item");
@@ -160,23 +162,32 @@ export class CreateArticleLine {
     flowerIcon.classList.add("small_icon");
     commentIcon.classList.add("fa");
     commentIcon.classList.add("fa-comments");
+    commentIcon.classList.add("articleList-nolink");
+    viewIcon.classList.add("fa");
+    viewIcon.classList.add("fa-eye");
+    viewIcon.classList.add("articleList-nolink");
+    viewQty.classList.add("articleList-item");
+    viewQty.classList.add("articleList-nolink");
 
     title.textContent = article.title;
-    zone.textContent = ` 【${article.zones}】`;
-    Class.textContent = ` 【${article.class}】`;
+    zone.textContent = ` ${article.zones}`;
+    Class.textContent = ` ${article.class}`;
     likeQty.textContent = article.likeQty;
     commentQty.textContent = article.commentQty;
+    viewQty.textContent = article.viewQty;
     createDate.textContent = article.created_at.split("T")[0];
     flowerIcon.src = "image/flower_by_vecteezy.png";
 
+    subcontainer.appendChild(title);
     subcontainer.appendChild(zone);
     subcontainer.appendChild(Class);
-    subcontainer.appendChild(title);
     subcontainer.appendChild(createDate);
     subcontainer.appendChild(flowerIcon);
     subcontainer.appendChild(likeQty);
     subcontainer.appendChild(commentIcon);
     subcontainer.appendChild(commentQty);
+    subcontainer.appendChild(viewIcon);
+    subcontainer.appendChild(viewQty);
     this.container.appendChild(subcontainer);
   }
 }
