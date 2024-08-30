@@ -141,9 +141,9 @@ export class CreateArticleLine {
     const likeQty = document.createElement("span");
     const flowerIcon = document.createElement("img");
     const commentIcon = document.createElement("i");
+    const viewIcon = document.createElement("i");
     const commentQty = document.createElement("span");
     const createDate = document.createElement("span");
-    const viewIcon = document.createElement("i");
     const viewQty = document.createElement("span");
 
     title.classList.add("articleList-item");
@@ -159,6 +159,7 @@ export class CreateArticleLine {
     commentQty.classList.add("articleList-nolink");
     createDate.classList.add("articleList-item");
     createDate.classList.add("articleList-nolink");
+    createDate.style = "width:max-content";
     flowerIcon.classList.add("small_icon");
     commentIcon.classList.add("fa");
     commentIcon.classList.add("fa-comments");
