@@ -46,7 +46,7 @@
     <div class="navi-placeholder"></div>
     <div class="main">
       <div class="left">
-        <div class="zone-setting" style="height: 300px" id="zoneList">
+        <div class="zone-setting" style="height: max-content" id="zoneList">
           <div class="zone-title">網站總覽</div>
         </div>
       </div>
@@ -59,17 +59,22 @@
         </div>
       </div>
       <div class="right">
-        <div class="zone-setting" style="display: none" id="memberFunction">
+        <div
+          class="zone-setting"
+          style="display: none; height: max-content"
+          id="memberFunction">
           <div class="zone-title">會員中心</div>
-          <div class="link" id="memberPage">會員資料</div>
-          <div class="link" id="myArticles">我的文章</div>
-          <div class="link" id="commentArticles">我留言過的文章</div>
-          <div class="link" id="savedArticles">收藏的文章</div>
-          <div class="link" id="privateMsg">私人訊息</div>
+          <div class="link" id="memberPage" style="margin: 15px 0">會員資料</div>
+          <div class="link" id="myArticles" style="margin: 15px 0">我的文章</div>
+          <div class="link" id="commentArticles" style="margin: 15px 0">
+            我留言過的文章
+          </div>
+          <div class="link" id="savedArticles" style="margin: 15px 0">收藏的文章</div>
+          <div class="link" id="privateMsg" style="margin: 15px 0">私人訊息</div>
         </div>
         <div class="zone-setting" style="height: 180px" id="no-memberFunction">
           <div class="zone-title">會員登入</div>
-          <div class="input_set">
+          <div class="input_set" style="margin: 15px 0">
             <input
               type="text"
               class="input_frame"
@@ -77,7 +82,7 @@
               placeholder="電子郵件"
               style="width: 95%" />
           </div>
-          <div class="input_set">
+          <div class="input_set" style="margin: 15px 0">
             <input
               type="password"
               class="input_frame"

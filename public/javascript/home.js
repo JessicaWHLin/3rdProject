@@ -27,7 +27,7 @@ if (token) {
 
     showName(authResult.user.name);
     //出現會員功能按鈕
-    document.querySelector("#memberFunction").style = "display:block; height:150px";
+    document.querySelector("#memberFunction").style = "display:block";
     const myArticles = document.querySelector("#myArticles");
     const savedArticles = document.querySelector("#savedArticles");
     const commentArticles = document.querySelector("#commentArticles");
@@ -85,6 +85,7 @@ const container = document.querySelector("#zoneList");
 for (let i = 0; i < ZONES.length; i++) {
   let zone = document.createElement("div");
   zone.classList.add("link");
+  zone.style = "margin:15px 0";
   zone.textContent = ZONES[i];
   zone.addEventListener("click", () => {
     location.href = `/articleList?zone=${ZONES[i]}`;
