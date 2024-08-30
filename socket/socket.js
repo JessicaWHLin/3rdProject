@@ -11,7 +11,6 @@ export function setupSocket(io) {
       if (result.ok) {
         const history = result.result;
         socket.emit("history", history);
-        console.log(history);
       }
     } catch (error) {
       console.log("error:", error.message);
@@ -22,7 +21,6 @@ export function setupSocket(io) {
       const fullToken = chatInfo.token;
       const auth = await AuthModel.checkAuth(fullToken);
       const datetime = new Date();
-      console.log(datetime);
 
       const isoString = datetime.toISOString();
       const formattedForDB = datetime.toISOString().slice(0, 19).replace("T", " "); // 转换为 'YYYY-MM-DD HH:MM:SS' 格式

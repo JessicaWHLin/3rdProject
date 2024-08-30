@@ -19,6 +19,7 @@ const pool = mysql.createPool({
   charset: "utf8mb4",
   waitForConnections: true,
   connectionLimit: 25,
+  timezone: "Z",
 });
 //檢查連線
 try {

@@ -103,7 +103,7 @@ if (token) {
         load_history_msg(history, authResult);
       });
       socket.off("history", (history) => {
-        console.log(history);
+        // console.log(history);
         load_history_msg(history, authResult);
       });
       form.addEventListener("submit", (e) => {
