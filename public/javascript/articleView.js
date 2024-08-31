@@ -76,7 +76,7 @@ class Comment {
   }
 }
 const commentBtn = document.querySelector(".response-btn");
-const flower = document.querySelector("#like");
+const thumbup = document.querySelector("#like");
 const token = localStorage.getItem("token");
 const saveClick = document.querySelector("#saveClick");
 
@@ -118,7 +118,7 @@ commentBtn.addEventListener("click", (e) => {
   }
 });
 //未登入想按讚
-flower.addEventListener("click", (e) => {
+thumbup.addEventListener("click", (e) => {
   if (name.textContent == "") {
     e.preventDefault();
     alert("請先登入");
@@ -154,19 +154,25 @@ if (token) {
   if (authResult.user) {
     showName(authResult.user.name);
 
-    //判斷有無收藏文章
+    //判斷有無收藏或按讚文章
     saveClick.style = "display: inline-block";
     const url = `api/article/favorite?article_id=${article_id}`;
     const options = {
       method: "GET",
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "applcation/json" },
     };
-    const savedThisArticle = await fetchData(url, options);
-    if (savedThisArticle.ok === true) {
+    const favorite = await fetchData(url, options);
+    if (favorite.saved.ok === true) {
       document.querySelector("#saveClick .fa").classList.remove("fa-bookmark-o");
       document.querySelector("#saveClick .fa").classList.add("fa-bookmark");
       document.querySelector("#saveClick .articleView-item").textContent = "已收藏";
     }
+    if (favorite.liked.ok === true) {
+      thumbup.classList.remove("fa-thumbs-o-up");
+      thumbup.classList.add("fa-thumbs-up");
+      thumbup.title = "你已按讚此篇文章!";
+    }
+
     //私訊button
     const privateMessage = document.querySelector("#privateMessage");
     if (writer_id != authResult.user.id) {
@@ -208,7 +214,7 @@ if (token) {
       }
     });
     //按讚
-    flower.addEventListener("click", async () => {
+    thumbup.addEventListener("click", async () => {
       console.log("按讚");
       const url = "/api/article/like";
       const options = {
@@ -219,7 +225,6 @@ if (token) {
         },
         body: JSON.stringify({
           article_id: article_id,
-          comment_id: null,
         }),
       };
       const result = await fetchData(url, options);
@@ -229,17 +234,23 @@ if (token) {
       const alertLikeQty = document.createElement("span");
       alertLikeQty.classList.add("like-animation");
       if (result.ok === true) {
+        thumbup.classList.remove("fa-thumbs-o-up");
+        thumbup.classList.add("fa-thumbs-up");
         showLikeQty.textContent = likeQty + 1;
         alertLikeQty.textContent = "+1";
         alertLikeQty.style = "color:green";
+        thumbup.title = "你已按讚此篇文章!";
       } else if (result.ok === false) {
+        thumbup.classList.remove("fa-thumbs-up");
+        thumbup.classList.add("fa-thumbs-o-up");
         showLikeQty.textContent = likeQty - 1;
         alertLikeQty.textContent = "-1";
         alertLikeQty.style = "color:red";
+        thumbup.title = "給這篇文章一個讚!";
       } else {
         console.log("error:", result.message);
       }
-      flower.parentElement.appendChild(alertLikeQty);
+      thumbup.parentElement.appendChild(alertLikeQty);
       alertLikeQty.addEventListener("animationend", () => {
         alertLikeQty.remove();
       });

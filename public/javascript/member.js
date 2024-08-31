@@ -35,7 +35,6 @@ if (token) {
       "Content-Type": "application/json",
     };
     const profile = await fetchData(url, options);
-    console.log(profile.profileData);
     if (profile.profileData.profile_photo) {
       profilePhoto.src = profile.profileData.profile_photo;
       photoContainer.style = "background:transparent;";
@@ -165,7 +164,6 @@ if (token) {
       };
       const result = await fetchData(url, options);
       const articleItems = result.result;
-      console.log({ articleItems });
       const savedArticle = new CreateArticleLine("#myArticleContainer");
       articleItems.forEach((item) => {
         savedArticle.createLine(item);

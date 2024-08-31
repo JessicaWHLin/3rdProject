@@ -60,7 +60,7 @@
         <option class="bg_White">紐澳大洋洲</option>
         <option class="bg_White">非洲</option>
       </select>
-      <div class="zone-setting" style="min-height: 100%">
+      <div class="zone-setting" style="min-height: 100%; position: relative">
         <div class="zone-title">發表文章</div>
         <select class="zoneList" id="classList" style="width: 100px">
           <option class="bg_White">(分類)</option>
@@ -84,8 +84,15 @@
             type="file"
             id="inputImage"
             accept="image/*"
-            style="display: block; margin: 0 15px"
+            style="display: none; margin: 0 15px"
             multiple />
+          <label
+            for="inputImage"
+            class="privateBtn"
+            style="position: absolute; left: 15px"
+            >上傳圖片預覽</label
+          >
+          <div style="height: 20px"></div>
         </div>
         <button class="btn" id="postArticle" style="margin: 10px auto">發佈</button>
       </div>

@@ -123,7 +123,9 @@ class ArticleModel {
     try {
       const connection3 = await pool.getConnection();
       try {
-        const sql = `select member.name, article.*,count( DISTINCT article_like.id)as likeQty,count(DISTINCT comment.id) as commentQty from article 
+        const sql = `select member.name, article.*,count( DISTINCT article_like.id)as likeQty,
+        count(DISTINCT comment.id) as commentQty 
+        from article 
         left join member on member.id=article.member_id 
         left join article_like on article.id=article_like.article_id 
         left join comment on article.id=comment.article_id
@@ -286,6 +288,13 @@ class ArticleModel {
       return { error: true, message: "DB connection failed" };
     }
   }
+  static async latest_all() {
+    try {
+    } catch (error) {
+      return {};
+    }
+  }
+  static async popular_all() {}
 
   static async popular() {
     try {
@@ -315,7 +324,7 @@ class ArticleModel {
     }
   } //popular
 
-  static async saveArticles(member_id, article_id) {
+  static async savedArticles(member_id, article_id) {
     try {
       const connection10 = await pool.getConnection();
       try {
@@ -376,6 +385,29 @@ class ArticleModel {
       return { error: true, message: "DB connection failed" };
     }
   }
+
+  static async findLikedArticle(member_id, article_id) {
+    try {
+      const connection15 = await pool.getConnection();
+      try {
+        const sql = `select id from article_like where member_id=? and article_id=? `;
+        const val = [member_id, article_id];
+        const [result] = await connection15.query(sql, val);
+        if (result.length > 0) {
+          return { ok: true, result };
+        } else {
+          return { ok: false };
+        }
+      } catch (error) {
+        return { error: true, message: error.message + " query like_article" };
+      } finally {
+        connection15.release();
+      }
+    } catch (error) {
+      return { error: true, message: "DB connection failed" };
+    }
+  }
+
   static async view(article_id, tracking_id) {
     try {
       const connection12 = await pool.getConnection();

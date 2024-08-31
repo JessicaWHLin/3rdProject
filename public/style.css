@@ -214,6 +214,7 @@ body {
   margin: 10px 0;
   resize: vertical;
   line-height: 1.5;
+  outline: none;
 }
 
 .articleView-class {
@@ -248,7 +249,6 @@ body {
 .articleView-item {
   font-size: 12px;
   padding-right: 10px;
-  /* vertical-align: top; */
 }
 .articleView-click {
   display: none;
@@ -285,15 +285,14 @@ body {
   margin: 5px 0;
 }
 
-.response-flower {
-  position: relative;
-  height: 30px;
-  object-fit: contain;
+.response-like {
   position: absolute;
   top: 2px;
   left: 30px;
+  padding: 2px;
+  color: rgb(88, 123, 176);
 }
-.response-flower:hover {
+.response-like:hover {
   cursor: pointer;
   height: 35px;
   border: 2px solid rgb(238, 239, 242);
@@ -339,6 +338,7 @@ body {
   line-height: 1.5;
   resize: vertical;
   white-space: pre-wrap;
+  outline: none;
 }
 .response-btn {
   position: absolute;
@@ -356,6 +356,7 @@ body {
   width: auto;
   height: auto;
   object-fit: contain;
+  margin: 10px 0 0 0;
 }
 
 .articleList-line {

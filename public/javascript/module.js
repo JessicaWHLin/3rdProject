@@ -139,7 +139,7 @@ export class CreateArticleLine {
     const zone = document.createElement("span");
     const Class = document.createElement("span");
     const likeQty = document.createElement("span");
-    const flowerIcon = document.createElement("img");
+    const likeIcon = document.createElement("i");
     const commentIcon = document.createElement("i");
     const viewIcon = document.createElement("i");
     const commentQty = document.createElement("span");
@@ -160,7 +160,10 @@ export class CreateArticleLine {
     createDate.classList.add("articleList-item");
     createDate.classList.add("articleList-nolink");
     createDate.style = "width:max-content";
-    flowerIcon.classList.add("small_icon");
+    likeIcon.classList.add("small_icon");
+    likeIcon.classList.add("fa");
+    likeIcon.classList.add("fa-thumbs-up");
+    likeIcon.style = "color: rgb(88, 123, 176)";
     commentIcon.classList.add("fa");
     commentIcon.classList.add("fa-comments");
     commentIcon.classList.add("articleList-nolink");
@@ -177,13 +180,13 @@ export class CreateArticleLine {
     commentQty.textContent = article.commentQty;
     viewQty.textContent = article.viewQty;
     createDate.textContent = article.created_at.split("T")[0];
-    flowerIcon.src = "image/flower_by_vecteezy.png";
+    likeIcon.src = "image/flower_by_vecteezy.png";
 
     subcontainer.appendChild(title);
     subcontainer.appendChild(zone);
     subcontainer.appendChild(Class);
     subcontainer.appendChild(createDate);
-    subcontainer.appendChild(flowerIcon);
+    subcontainer.appendChild(likeIcon);
     subcontainer.appendChild(likeQty);
     subcontainer.appendChild(commentIcon);
     subcontainer.appendChild(commentQty);

@@ -166,13 +166,25 @@ const articleController = {
     }
   },
 
+  ranking_for_all: async (req, res) => {
+    try {
+      const result_latest = await ArticleModel.latest_all();
+      const result_popular = await ArticleModel.popular_all();
+      res.status(200).json({ ok: true });
+      if (result_latest && result_popular) {
+      }
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
   favorite: async (req, res) => {
     try {
       const fullToken = req.headers.authorization;
       const auth = await AuthModel.checkAuth(fullToken);
       if (auth.ok) {
         const { article_id } = req.body;
-        const result = await ArticleModel.saveArticles(auth.user.id, article_id);
+        const result = await ArticleModel.savedArticles(auth.user.id, article_id);
         if (result.ok) {
           res.status(200).json({ ok: true, message: result.message });
         }
@@ -190,11 +202,16 @@ const articleController = {
       const auth = await AuthModel.checkAuth(fullToken);
       if (auth.ok) {
         const { article_id } = req.query;
-        const result = await ArticleModel.findSavedArticle(auth.user.id, article_id);
-        if (result.ok) {
-          res.status(200).json(result);
-        } else {
-          res.status(200).json(result);
+        const result_saved = await ArticleModel.findSavedArticle(
+          auth.user.id,
+          article_id
+        );
+        const result_liked = await ArticleModel.findLikedArticle(
+          auth.user.id,
+          article_id
+        );
+        if (result_saved && result_liked) {
+          res.status(200).json({ saved: result_saved, liked: result_liked });
         }
       } else {
         res.status(400).json({ ok: false, message: "un-signin" });
