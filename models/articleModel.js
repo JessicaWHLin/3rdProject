@@ -11,6 +11,7 @@ const db_port = process.env.db_port;
 const redis_password = process.env.redis_password;
 const TOP5Popular = process.env.popular;
 const TOP5Latest = process.env.latest;
+const update_require = process.env.update_require;
 
 const pool = mysql.createPool({
   host: host,
@@ -75,8 +76,10 @@ class ArticleModel {
               };
             }
           }
+          await client.set(update_require, "true");
           return { ok: true, articleID: article_id, imageURL: filePath };
         } else {
+          await client.set(update_require, "true");
           return { ok: true, articleID: article_id };
         }
       } catch (error) {
@@ -285,40 +288,51 @@ class ArticleModel {
 
   static async latest() {
     try {
+      const needToUpdate = await client.get(update_require);
       const redisArticles = await client.get(TOP5Latest);
-      if (redisArticles) {
+      console.log("Need to update:", needToUpdate);
+
+      if (needToUpdate || !redisArticles) {
+        try {
+          const connection9 = await pool.getConnection();
+          try {
+            const sql = `select article.id, article.title,article.zones,article.class,article.created_at,
+              count(distinct comment.id) as commentQty,
+              count(distinct article_like.id) as likeQty,
+              count(distinct views.id)as viewQty
+              from article
+              left join comment on article.id=comment.article_id
+              left join article_like on article.id=article_like.article_id
+              left join views on article.id=views.article_id
+              group by article.id
+              order by created_at desc
+              limit 5;
+              `;
+            const [result] = await connection9.query(sql);
+            if (!redisArticles) {
+              await client.set(TOP5Latest, JSON.stringify(result));
+            }
+            if (update_require) {
+              await client.del(update_require);
+            }
+
+            return { ok: true, result };
+          } catch (error) {
+            return { error: true, message: error.message + " find latest article" };
+          } finally {
+            connection9.release();
+          }
+        } catch (error) {
+          return { error: true, message: "DB connection failed" };
+        }
+      } else {
         return { ok: true, result: JSON.parse(redisArticles), redis: true };
       }
     } catch (error) {
       console.log("redis error:", error);
     }
-    try {
-      const connection9 = await pool.getConnection();
-      try {
-        const sql = `select article.id, article.title,article.zones,article.class,article.created_at,
-        count(distinct comment.id) as commentQty,
-        count(distinct article_like.id) as likeQty,
-        count(distinct views.id)as viewQty
-        from article
-        left join comment on article.id=comment.article_id
-        left join article_like on article.id=article_like.article_id
-        left join views on article.id=views.article_id
-        group by article.id
-        order by created_at desc
-        limit 5;
-         `;
-        const [result] = await connection9.query(sql);
-        await client.set(TOP5Latest, JSON.stringify(result));
-        return { ok: true, result };
-      } catch (error) {
-        return { error: true, message: error.message + " find latest article" };
-      } finally {
-        connection9.release();
-      }
-    } catch (error) {
-      return { error: true, message: "DB connection failed" };
-    }
   }
+
   static async latest_all() {
     try {
     } catch (error) {
