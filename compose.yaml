@@ -36,7 +36,6 @@ services:
       - DATABASE_DB=${database}
       - DATABASE_USER=${user}
       - DATABASE_PASSWORD=${password}
-
     ports:
       - ${db_port}:3306
 volumes:

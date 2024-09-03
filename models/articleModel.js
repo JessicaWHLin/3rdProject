@@ -1,5 +1,6 @@
 import mysql from "mysql2/promise";
 import dotenv from "dotenv";
+import { createClient } from "redis";
 dotenv.config();
 //環境參數
 const host = process.env.host;
@@ -7,6 +8,7 @@ const user = process.env.user;
 const password = process.env.password;
 const database = process.env.database;
 const db_port = process.env.db_port;
+const redis_password = process.env.redis_password;
 const pool = mysql.createPool({
   host: host,
   user: user,
@@ -19,13 +21,30 @@ const pool = mysql.createPool({
   timezone: "Z",
 });
 
-//檢查連線
+//檢查連線(DB)
 try {
   const connection0 = await pool.getConnection();
   console.log("articleModel DB connection OK");
   connection0.release();
 } catch (error) {
   console.log("error:", error.message + "articleModel DB failed");
+}
+
+const client = createClient({
+  connectTimeout: 10000,
+  password: redis_password,
+  socket: {
+    host: "redis-11323.c285.us-west-2-2.ec2.redns.redis-cloud.com",
+    port: 11323,
+  },
+});
+//檢查連線(Redis)
+client.on("error", (err) => console.log("Redis Client Error", err));
+try {
+  await client.connect();
+  console.log("Redis connection OK ");
+} catch (error) {
+  console.log("Error:", error);
 }
 
 class ArticleModel {
@@ -263,6 +282,14 @@ class ArticleModel {
 
   static async latest() {
     try {
+      const redisArticles = await client.get("TOP5Latest");
+      if (redisArticles) {
+        return { ok: true, result: JSON.parse(redisArticles), redis: true };
+      }
+    } catch (error) {
+      console.log("redis error:", error);
+    }
+    try {
       const connection9 = await pool.getConnection();
       try {
         const sql = `select article.id, article.title,article.zones,article.class,article.created_at,
@@ -278,6 +305,7 @@ class ArticleModel {
         limit 5;
          `;
         const [result] = await connection9.query(sql);
+        await client.set("TOP5Latest", JSON.stringify(result));
         return { ok: true, result };
       } catch (error) {
         return { error: true, message: error.message + " find latest article" };
@@ -298,6 +326,14 @@ class ArticleModel {
 
   static async popular() {
     try {
+      const redisArticles = await client.get("TOP5Popular");
+      if (redisArticles) {
+        return { ok: true, result: JSON.parse(redisArticles), redis: true };
+      }
+    } catch (error) {
+      console.log("redis error:", error);
+    }
+    try {
       const connection14 = await pool.getConnection();
       try {
         const sql = `select article.id,article.title,article.zones,article.class,article.created_at,
@@ -313,6 +349,7 @@ class ArticleModel {
         limit 5;
         `;
         const [result] = await connection14.query(sql);
+        await client.setEx("TOP5Popular", 3600, JSON.stringify(result)); //TTL(time to live):1hr
         return { ok: true, result };
       } catch (error) {
         return { error: true, message: error.message + " find popular article" };
