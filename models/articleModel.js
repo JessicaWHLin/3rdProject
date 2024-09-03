@@ -9,6 +9,9 @@ const password = process.env.password;
 const database = process.env.database;
 const db_port = process.env.db_port;
 const redis_password = process.env.redis_password;
+const TOP5Popular = process.env.popular;
+const TOP5Latest = process.env.latest;
+
 const pool = mysql.createPool({
   host: host,
   user: user,
@@ -282,7 +285,7 @@ class ArticleModel {
 
   static async latest() {
     try {
-      const redisArticles = await client.get("TOP5Latest");
+      const redisArticles = await client.get(TOP5Latest);
       if (redisArticles) {
         return { ok: true, result: JSON.parse(redisArticles), redis: true };
       }
@@ -305,7 +308,7 @@ class ArticleModel {
         limit 5;
          `;
         const [result] = await connection9.query(sql);
-        await client.set("TOP5Latest", JSON.stringify(result));
+        await client.set(TOP5Latest, JSON.stringify(result));
         return { ok: true, result };
       } catch (error) {
         return { error: true, message: error.message + " find latest article" };
@@ -326,7 +329,7 @@ class ArticleModel {
 
   static async popular() {
     try {
-      const redisArticles = await client.get("TOP5Popular");
+      const redisArticles = await client.get(TOP5Popular);
       if (redisArticles) {
         return { ok: true, result: JSON.parse(redisArticles), redis: true };
       }
@@ -349,7 +352,7 @@ class ArticleModel {
         limit 5;
         `;
         const [result] = await connection14.query(sql);
-        await client.setEx("TOP5Popular", 3600, JSON.stringify(result)); //TTL(time to live):1hr
+        await client.setEx(TOP5Popular, 3600, JSON.stringify(result)); //TTL(time to live):1hr
         return { ok: true, result };
       } catch (error) {
         return { error: true, message: error.message + " find popular article" };
