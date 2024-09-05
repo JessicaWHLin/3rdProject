@@ -95,8 +95,8 @@ class ArticleModel {
     }
   }
 
-  static async findArticle(zone, keyword) {
-    console.log({ zone, keyword });
+  static async findArticle(zone, keyword, item, page) {
+    console.log({ zone, keyword, item, page });
     try {
       const connection2 = await pool.getConnection();
       if (zone) {
@@ -109,10 +109,14 @@ class ArticleModel {
           left join article_like on article.id=article_like.article_id
           left join comment on article.id=comment.article_id
           left join views on article.id=views.article_id
-          where zones=? group by article.id;`;
-          const val = [zone];
+          where zones=? 
+          group by article.id
+          limit ?
+          offset ?;`;
+          const val = [zone, 8, page * 8];
           const [result] = await connection2.query(sql, val);
-          return { ok: true, result };
+          const nextPage = await findNextPage(sql, page, connection2, keyword, zone);
+          return { ok: true, result, nextPage: nextPage };
         } catch (error) {
           return { error: true, message: error.message + "query zone" };
         } finally {
@@ -129,12 +133,59 @@ class ArticleModel {
           left join comment on article.id=comment.article_id
           left join views on article.id=views.article_id
           where article.title like ? or article.zones like ?
-          group by article.id;`;
-          const val = [`%${keyword}%`, `%${keyword}%`];
+          group by article.id
+          limit ?
+          offset ?;`;
+          const val = [`%${keyword}%`, `%${keyword}%`, 8, page * 8];
           const [result] = await connection2.query(sql, val);
-          return { ok: true, result };
+          const nextPage = await findNextPage(sql, page, connection2, keyword, zone);
+          return { ok: true, result, nextPage: nextPage };
         } catch (error) {
           return { error: true, message: error.message + " query keyword" };
+        } finally {
+          connection2.release();
+        }
+      } else if (item) {
+        try {
+          if (item === "popularAll") {
+            const sql = `select article.id,article.title,article.zones,article.class,article.created_at,
+              count(distinct comment.id)as commentQty,
+              count(distinct article_like.id)as likeQty,
+              count(distinct views.id)as viewQty
+              from article
+              left join comment on article.id=comment.article_id
+              left join article_like on article.id=article_like.article_id
+              left join views on article.id=views.article_id
+              group by article.id
+              order by viewQty desc
+              limit ?
+              offset ?`;
+            const val = [8, page * 8];
+            const [result] = await connection2.query(sql, val);
+            const nextPage = await findNextPage(sql, page, connection2, keyword, zone);
+            return { ok: true, result, nextPage: nextPage };
+          }
+          if (item === "latestAll") {
+            const sql = `select article.id, article.title,article.zones,article.class,article.created_at,
+            count(distinct comment.id) as commentQty,
+            count(distinct article_like.id) as likeQty,
+            count(distinct views.id)as viewQty
+            from article
+            left join comment on article.id=comment.article_id
+            left join article_like on article.id=article_like.article_id
+            left join views on article.id=views.article_id
+            group by article.id
+            order by created_at desc
+            limit ?
+            offset ?;
+            `;
+            const val = [8, page * 8];
+            const [result] = await connection2.query(sql, val);
+            const nextPage = await findNextPage(sql, page, connection2, keyword, zone);
+            return { ok: true, result, nextPage: nextPage };
+          }
+        } catch (error) {
+          return { error: true, message: error.message + " find ranking all" };
         } finally {
           connection2.release();
         }
@@ -333,14 +384,6 @@ class ArticleModel {
     }
   }
 
-  static async latest_all() {
-    try {
-    } catch (error) {
-      return {};
-    }
-  }
-  static async popular_all() {}
-
   static async popular() {
     try {
       const redisArticles = await client.get(TOP5Popular);
@@ -512,5 +555,24 @@ class ArticleModel {
     }
   }
 } //class
+
+async function findNextPage(sql, page, connection, keyword, zone) {
+  // 1 page= 8 articles
+  let val;
+  if (!keyword && !zone) {
+    val = [9, page * 8];
+  } else if (keyword) {
+    val = [`%${keyword}%`, `%${keyword}%`, 9, page * 8];
+  } else if (zone) {
+    val = [zone, 9, page * 8];
+  }
+  const [result] = await connection.query(sql, val);
+  if (result.length < 9) {
+    console.log("result=null");
+    return null;
+  } else {
+    return parseInt(page) + 1;
+  }
+}
 
 export default ArticleModel;

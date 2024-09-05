@@ -119,6 +119,14 @@ try {
         location.href = `/articleView?article_id=${ranking.result_popular.result[index].id}`;
       });
     });
+  const popularAll = document.querySelector("#popularArticle_link");
+  const latestAll = document.querySelector("#latestArticle_link");
+  popularAll.addEventListener("click", () => {
+    location.href = "/articleList?item=popularAll";
+  });
+  latestAll.addEventListener("click", () => {
+    location.href = "/articleList?item=latestAll";
+  });
 } catch (error) {
   console.log("error:", error.message);
 }

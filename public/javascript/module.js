@@ -148,6 +148,7 @@ export class CreateArticleLine {
 
     title.classList.add("articleList-item");
     title.classList.add("link");
+    title.classList.add("flag");
     title.style = "flex:4; overflow: hidden; text-overflow: ellipsis;";
     zone.classList.add("articleList-item");
     zone.style = " font-size:12px;line-height:20px";

@@ -434,6 +434,7 @@ body {
 .underline {
   border-bottom: 2px solid rgb(88, 123, 176);
 }
+
 #snackbar {
   position: fixed;
   z-index: 2;

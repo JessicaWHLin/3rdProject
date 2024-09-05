@@ -76,9 +76,9 @@ const articleController = {
 
   listArticle: async (req, res) => {
     try {
-      const { zone, keyword } = req.query;
+      const { zone, keyword, item, page } = req.query;
 
-      const result = await ArticleModel.findArticle(zone, keyword);
+      const result = await ArticleModel.findArticle(zone, keyword, item, page);
       res.status(200).json(result);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -160,18 +160,6 @@ const articleController = {
         res.status(200).json({ result_latest, result_popular });
       } else {
         res.status(200).json({ ok: false });
-      }
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  },
-
-  ranking_for_all: async (req, res) => {
-    try {
-      const result_latest = await ArticleModel.latest_all();
-      const result_popular = await ArticleModel.popular_all();
-      res.status(200).json({ ok: true });
-      if (result_latest && result_popular) {
       }
     } catch (error) {
       res.status(500).json({ error: error.message });
