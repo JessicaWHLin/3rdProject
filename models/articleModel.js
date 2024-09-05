@@ -360,6 +360,7 @@ class ArticleModel {
               limit 5;
               `;
             const [result] = await connection9.query(sql);
+            await client.set(TOP5Latest, JSON.stringify(result));
             if (!redisArticles) {
               await client.set(TOP5Latest, JSON.stringify(result));
             }

@@ -24,7 +24,8 @@ let url;
 let page = 0;
 const loadMore = document.createElement("button");
 loadMore.classList.add("btn");
-loadMore.style = "position:absolute;bottom:20px; left:calc(50% - 63px);";
+loadMore.style = "margin:10px auto;";
+
 loadMore.textContent = "載入更多文章";
 
 if (path[0].includes("zone")) {
@@ -111,10 +112,13 @@ function updateUrl(item, page) {
 }
 function loadingmore(item) {
   if (page) {
-    document.querySelector("#zoneList").appendChild(loadMore);
+    const zoneList = document.querySelector("#zoneList");
+    zoneList.appendChild(loadMore);
     //load more
     loadMore.addEventListener("click", async () => {
+      zoneList.removeChild(loadMore);
       page = await articleLine(url);
+      zoneList.appendChild(loadMore);
       url = updateUrl(item, page);
       if (page) {
       } else {
