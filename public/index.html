@@ -4,30 +4,99 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" type="text/css" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap" />
-    <title>Message Board</title>
+    <link
+      rel="icon"
+      sizes="32x32"
+      href="./image/simple_plane_travel_around _Pngtree.png"
+      type="image/png" />
+    <title>首頁</title>
   </head>
+  <body>
+    <div class="navigation">
+      <div class="icon navi-left">
+        <img class="img" src="image/simple_plane_travel_around _Pngtree.png" />
+        <span class="name" id="home">Trip Pals</span>
+      </div>
+      <div class="navi-middle">
+        <input
+          type="text"
+          placeholder="搜尋關鍵字、地點或景點"
+          class="input_frame search-input"
+          id="search" /><button type="button" class="searchbtn">
+          <i class="fa fa-search" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="navi-right">
+        <span class="showName" style="display: none"></span>
+        <button class="btn" id="articlepage">
+          <i class="fa fa-pencil" aria-hidden="true" style="padding: 0 3px 0 0"></i>發文
+        </button>
+        <button class="btn" id="signpage">註冊</button>
+        <button class="btn" id="signoutBtn" style="display: none">登出</button>
+      </div>
+    </div>
+    <div class="navi-placeholder"></div>
+    <div class="main">
+      <div class="left">
+        <div class="zone-setting" style="height: max-content" id="zoneList">
+          <div class="zone-title">網站總覽</div>
+        </div>
+      </div>
+      <div class="middle">
+        <div class="zone-setting" style="height: max-content" id="popularArticle">
+          <div class="zone-title link" id="popularArticle_link">人氣瀏覽文章</div>
+        </div>
+        <div class="zone-setting" style="height: max-content" id="latestArticle">
+          <div class="zone-title link" id="latestArticle_link">最新發表文章</div>
+        </div>
+      </div>
+      <div class="right">
+        <div
+          class="zone-setting"
+          style="display: none; height: max-content"
+          id="memberFunction">
+          <div class="zone-title">會員中心</div>
+          <div class="link" id="memberPage" style="margin: 15px 0">會員資料</div>
+          <div class="link" id="myArticles" style="margin: 15px 0">我的文章</div>
+          <div class="link" id="commentArticles" style="margin: 15px 0">
+            我留言過的文章
+          </div>
+          <div class="link" id="savedArticles" style="margin: 15px 0">收藏的文章</div>
+          <div class="link" id="privateMsg" style="margin: 15px 0">私人訊息</div>
+        </div>
+        <div class="zone-setting" style="height: 180px" id="no-memberFunction">
+          <div class="zone-title">會員登入</div>
+          <div class="input_set" style="margin: 15px 0">
+            <input
+              type="text"
+              class="input_frame"
+              id="signinEmail"
+              placeholder="電子郵件"
+              style="width: 95%" />
+          </div>
+          <div class="input_set" style="margin: 15px 0">
+            <input
+              type="password"
+              class="input_frame"
+              id="signinPassword"
+              placeholder="密碼"
+              style="width: 95%" />
+          </div>
+          <button class="btn" id="signinBtn">登入</button>
+          <div class="signinResult text"></div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">COPYRIGHT © 2024 TripPals 旅伴</div>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+    <script type="module" src="/javascript/home.js"></script>
+  </body>
 </html>
-<body>
-  <!-- 留言板 -->
-  <h3>圖文留言版</h3>
-
-  <div class="inputContainer">
-    <span>請留言</span><input type="text" id="message" />
-    <img id="photo" />
-    <input
-      type="file"
-      id="photoInput"
-      name="image"
-      accept="image/*"
-      style="display: block" />
-
-    <button type="submit" id="upload">送出留言</button>
-  </div>
-  <div class="separator"></div>
-  <div class="messageContainer"></div>
-  <script src="script.js"></script>
-</body>

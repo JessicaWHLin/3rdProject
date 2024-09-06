@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="../style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap" />
+    <link
+      rel="icon"
+      sizes="32x32"
+      href="./image/simple_plane_travel_around _Pngtree.png"
+      type="image/png" />
+    <title>會員中心</title>
+  </head>
+  <body>
+    <div class="navigation">
+      <div class="navi-left">
+        <img class="img" src="../image/simple_plane_travel_around _Pngtree.png" />
+        <span class="name" id="home"> Trip Pals </span>
+      </div>
+      <div class="navi-right">
+        <span class="showName" style="display: none"></span>
+        <button class="btn" id="articlepage">
+          <i class="fa fa-pencil" aria-hidden="true" style="padding: 0 3px 0 0"></i>發文
+        </button>
+        <button class="btn" id="signpage">會員登入</button>
+        <button class="btn" id="signoutBtn" style="display: none">登出</button>
+      </div>
+    </div>
+    <div class="navi-placeholder"></div>
+    <div class="main" style="display: block; width: 60%">
+      <div class="zone-setting" style="height: fit-content">
+        <div class="member-photoContainer" id="photoContainer">
+          <img id="photo" class="profilePhoto" />
+          <input
+            type="file"
+            id="profilePhoto"
+            accept="image/*"
+            style="display: none"
+            class="btn" />
+        </div>
+        <button type="submit" class="btn" id="upload">更新大頭照</button>
+        <div class="separator"></div>
+
+        <div class="zone-title">會員個人資料</div>
+        <div class="input_set">
+          <span class="input_title">會員姓名</span>
+          <input class="input_frame" type="text" id="name" />
+        </div>
+        <div class="input_set">
+          <span class="input_title">電子郵件</span>
+          <input
+            class="input_frame"
+            style="background-color: white"
+            type="text"
+            id="email"
+            readonly />
+        </div>
+        <div class="input_set">
+          <span class="input_title">會員密碼</span>
+          <input class="input_frame" type="password" id="password" />
+        </div>
+        <div class="input_set">
+          <span class="input_title">會員生日</span>
+          <input class="input_frame" type="date" id="birthday" />
+        </div>
+        <div style="margin: 10px auto; height: max-content">
+          <span class="input_title">關於我的二三事</span>
+          <textarea
+            class="textarea"
+            style="background-color: rgb(238, 239, 242); height: 100px"
+            id="aboutMe"
+            placeholder="我是一個..."></textarea>
+        </div>
+        <button class="btn" type="button" id="updateBtn">更新會員資料</button>
+      </div>
+      <div
+        class="zone-setting"
+        id="myArticleContainer"
+        style="min-height: 200px; height: max-content">
+        <div
+          id="myArticles"
+          class="zone-title"
+          style="display: inline-block; cursor: pointer; margin-right: 15px">
+          我的文章
+        </div>
+        <div
+          id="commentArticles"
+          class="zone-title"
+          style="display: inline-block; cursor: pointer; margin-right: 15px">
+          我留言過的文章
+        </div>
+        <div
+          id="savedArticles"
+          class="zone-title"
+          style="display: inline-block; cursor: pointer">
+          收藏的文章
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">COPYRIGHT © 2024 TripPals 旅伴</div>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+    <script type="module" src="/javascript/member.js"></script>
+  </body>
+</html>

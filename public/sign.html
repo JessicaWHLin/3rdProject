@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap" />
+    <link
+      rel="icon"
+      sizes="32x32"
+      href="./image/simple_plane_travel_around _Pngtree.png"
+      type="image/png" />
+    <title>註冊/登入</title>
+  </head>
+  <body>
+    <div class="navigation">
+      <div class="icon navi-left">
+        <img class="img" src="image/simple_plane_travel_around _Pngtree.png" />
+        <span class="name" id="home">Trip Pals</span>
+      </div>
+      <div class="navi-middle">
+        <input
+          type="text"
+          placeholder="搜尋關鍵字、地點或景點"
+          class="input_frame search-input"
+          id="search" /><button type="button" class="searchbtn">
+          <i class="fa fa-search" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="navi-right">
+        <span class="showName" style="display: none"></span>
+        <button class="btn" id="articlepage">
+          <i class="fa fa-pencil" aria-hidden="true" style="padding: 0 3px 0 0"></i>發文
+        </button>
+        <button class="btn" id="signpage">註冊</button>
+        <button class="btn" id="signoutBtn" style="display: none">登出</button>
+      </div>
+    </div>
+    <div class="navi-placeholder"></div>
+    <div class="main" style="display: block; width: 710px">
+      <div class="zone-setting" style="height: 200px">
+        <div class="zone-title">會員登入</div>
+        <div class="input_set">
+          <span class="input_title">電子郵件</span>
+          <input type="text" class="input_frame" id="signinEmail" />
+        </div>
+        <div class="input_set">
+          <span class="input_title">你的密碼</span>
+          <input type="password" class="input_frame" id="signinPassword" />
+        </div>
+        <button class="btn" id="signinBtn">登入</button>
+        <div class="signinResult text"></div>
+      </div>
+      <div class="zone-setting" style="height: 250px">
+        <div class="zone-title">會員註冊</div>
+        <div class="input_set">
+          <span class="input_title">你的名字</span>
+          <input
+            type="text"
+            class="input_frame"
+            id="signupUsername"
+            placeholder="你想被稱呼的名字" />
+        </div>
+        <div class="input_set">
+          <span class="input_title">電子郵件</span>
+          <input
+            type="text"
+            class="input_frame"
+            id="signupEmail"
+            placeholder="example@example.com" />
+        </div>
+        <div class="input_set">
+          <span class="input_title">建立密碼</span>
+          <input
+            type="password"
+            class="input_frame"
+            id="signupPassword"
+            placeholder="6~12英數字" />
+        </div>
+        <button class="btn" id="signupBtn">註冊</button>
+        <div class="signupResult text"></div>
+      </div>
+    </div>
+
+    <div class="footer">COPYRIGHT © 2024 TripPals 旅伴</div>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+    <script type="module" src="/javascript/sign.js"></script>
+  </body>
+</html>

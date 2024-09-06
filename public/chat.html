@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap" />
+    <link
+      rel="icon"
+      sizes="32x32"
+      href="./image/simple_plane_travel_around _Pngtree.png"
+      type="image/png" />
+    <title>聊天室</title>
+    <style>
+      #form {
+        background: rgba(0, 0, 0, 0.15);
+        padding: 0.25rem;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        height: 3rem;
+
+        backdrop-filter: blur(10px);
+      }
+      #input {
+        border: none;
+        padding: 0 1rem;
+        flex-grow: 1;
+        border-radius: 2rem;
+        margin: 0.25rem;
+      }
+      #input:focus {
+        outline: none;
+      }
+      #form > button {
+        background: rgb(88, 123, 176);
+        font-weight: 700;
+        border: none;
+        padding: 0 1rem;
+        margin: 0.25rem;
+        border-radius: 3px;
+        outline: none;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="navigation">
+      <div class="icon navi-left">
+        <img class="img" src="image/simple_plane_travel_around _Pngtree.png" />
+        <span class="name" id="home">Trip Pals</span>
+      </div>
+      <div class="navi-right">
+        <span class="showName" style="display: none"></span>
+        <button class="btn" id="articlepage">發文</button>
+        <button class="btn" id="signpage">會員登入</button>
+        <button class="btn" id="signoutBtn" style="display: none">登出</button>
+      </div>
+    </div>
+    <div class="navi-placeholder"></div>
+    <div class="main">
+      <div class="left">
+        <div class="zone-setting" style="height: 400px" id="roomContainer"></div>
+      </div>
+      <div class="middle" style="padding: 5px 0; width: 100%">
+        <div class="zone-setting privateMessage" id="messages"></div>
+        <form id="form" action="">
+          <input id="input" autocomplete="off" /><button>送出</button>
+        </form>
+      </div>
+      <div class="right"></div>
+    </div>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script type="module" src="/javascript/chat.js"></script>
+  </body>
+</html>

@@ -1,26 +1,14 @@
-# Comments are provided throughout this file to help you get started.
-# If you need more help, visit the Docker Compose reference guide at
-# https://docs.docker.com/go/compose-spec-reference/
-
-# Here the instructions define your application as a service called "server".
-# This service is built from the Dockerfile in the current directory.
-# You can add other services your application may depend on here, such as a
-# database or a cache. For examples, see the Awesome Compose repository:
-# https://github.com/docker/awesome-compose
 services:
   backend:
-    # build:
-    # context: .
-    image:
-      jessicalin1205/my-app:latest
-      # args:
-      #   - NODE_ENV=development
+    build:
+      context: .
+    image: jessicalin1205/my-app:latest
     environment:
       - NODE_ENV=development
       - DATABASE_DB=${database}
       - DATABASE_USER=${user}
       - DATABASE_PASSWORD=${password}
-      - DATABASE_HOST=db
+      - DATABASE_HOST=${host}
 
     ports:
       - 3000:3000
@@ -28,17 +16,27 @@ services:
       - .env
     depends_on:
       - db
+    volumes:
+      - .:/usr/src
+      - /usr/src/node_modules
+
   db:
     image: mysql:8.0
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     restart: always
     command: --default-authentication-plugin=caching_sha2_password
     volumes:
       - db-data:/var/lib/mysql
+      - ./mysql:/etc/mysql/mysql.cnf
     environment:
-      - MYSQL_DATABASE=${database}
-      - MYSQL_USER=${user}
-      - MYSQL_ROOT_PASSWORD=${password}
-    expose:
-      - 3306
+      - DATABASE_DB=${database}
+      - DATABASE_USER=${user}
+      - DATABASE_PASSWORD=${password}
+    ports:
+      - ${db_port}:3306
 volumes:
   db-data:
