@@ -12,6 +12,9 @@ const redis_password = process.env.redis_password;
 const TOP5Popular = process.env.popular;
 const TOP5Latest = process.env.latest;
 const update_require = process.env.update_require;
+const update_require_all = process.env.update_require_all;
+const popularAll = process.env.popularAll;
+const latestAll = process.env.latestAll;
 
 const pool = mysql.createPool({
   host: host,
@@ -77,9 +80,11 @@ class ArticleModel {
             }
           }
           await client.set(update_require, "true");
+          await client.set(update_require_all, "true");
           return { ok: true, articleID: article_id, imageURL: filePath };
         } else {
           await client.set(update_require, "true");
+          await client.set(update_require_all, "true");
           return { ok: true, articleID: article_id };
         }
       } catch (error) {
@@ -116,7 +121,7 @@ class ArticleModel {
           const val = [zone, 8, page * 8];
           const [result] = await connection2.query(sql, val);
           const nextPage = await findNextPage(sql, page, connection2, keyword, zone);
-          return { ok: true, result, nextPage: nextPage };
+          return { ok: true, result: { result, nextPage } };
         } catch (error) {
           return { error: true, message: error.message + "query zone" };
         } finally {
@@ -138,8 +143,10 @@ class ArticleModel {
           offset ?;`;
           const val = [`%${keyword}%`, `%${keyword}%`, 8, page * 8];
           const [result] = await connection2.query(sql, val);
+          // console.log({ result });
           const nextPage = await findNextPage(sql, page, connection2, keyword, zone);
-          return { ok: true, result, nextPage: nextPage };
+
+          return { ok: true, result: { result, nextPage } };
         } catch (error) {
           return { error: true, message: error.message + " query keyword" };
         } finally {
@@ -147,47 +154,105 @@ class ArticleModel {
         }
       } else if (item) {
         try {
-          if (item === "popularAll") {
-            const sql = `select article.id,article.title,article.zones,article.class,article.created_at,
-              count(distinct comment.id)as commentQty,
-              count(distinct article_like.id)as likeQty,
+          const popular_redisKey = `${popularAll}:page:${page}`;
+          const latest_redisKey = `${latestAll}:page:${page}`;
+          const redisPopularAll = await client.get(popular_redisKey);
+          const redisLatestAll = await client.get(latest_redisKey);
+          const needToUpdateAll = await client.get(update_require_all);
+          try {
+            if (item === "popularAll") {
+              if (redisPopularAll) {
+                return { ok: true, result: JSON.parse(redisPopularAll), redis: true };
+              } else {
+                const sql = `select article.id,article.title,article.zones,article.class,article.created_at,
+                  count(distinct comment.id)as commentQty,
+                  count(distinct article_like.id)as likeQty,
+                  count(distinct views.id)as viewQty
+                  from article
+                  left join comment on article.id=comment.article_id
+                  left join article_like on article.id=article_like.article_id
+                  left join views on article.id=views.article_id
+                  group by article.id
+                  order by viewQty desc
+                  limit ?
+                  offset ?`;
+                const val = [8, page * 8];
+                const [result] = await connection2.query(sql, val);
+                const nextPage = await findNextPage(
+                  sql,
+                  page,
+                  connection2,
+                  keyword,
+                  zone
+                );
+                await client.setEx(
+                  popular_redisKey,
+                  60 * 60 * 24,
+                  JSON.stringify({ result, nextPage })
+                );
+                return { ok: true, result: { result, nextPage } };
+              }
+            }
+            if (item === "latestAll") {
+              const sql = `select article.id, article.title,article.zones,article.class,article.created_at,
+              count(distinct comment.id) as commentQty,
+              count(distinct article_like.id) as likeQty,
               count(distinct views.id)as viewQty
               from article
               left join comment on article.id=comment.article_id
               left join article_like on article.id=article_like.article_id
               left join views on article.id=views.article_id
               group by article.id
-              order by viewQty desc
+              order by created_at desc
               limit ?
-              offset ?`;
-            const val = [8, page * 8];
-            const [result] = await connection2.query(sql, val);
-            const nextPage = await findNextPage(sql, page, connection2, keyword, zone);
-            return { ok: true, result, nextPage: nextPage };
-          }
-          if (item === "latestAll") {
-            const sql = `select article.id, article.title,article.zones,article.class,article.created_at,
-            count(distinct comment.id) as commentQty,
-            count(distinct article_like.id) as likeQty,
-            count(distinct views.id)as viewQty
-            from article
-            left join comment on article.id=comment.article_id
-            left join article_like on article.id=article_like.article_id
-            left join views on article.id=views.article_id
-            group by article.id
-            order by created_at desc
-            limit ?
-            offset ?;
-            `;
-            const val = [8, page * 8];
-            const [result] = await connection2.query(sql, val);
-            const nextPage = await findNextPage(sql, page, connection2, keyword, zone);
-            return { ok: true, result, nextPage: nextPage };
+              offset ?;
+              `;
+              const val = [8, page * 8];
+              if (!redisLatestAll) {
+                const [result] = await connection2.query(sql, val);
+                const nextPage = await findNextPage(
+                  sql,
+                  page,
+                  connection2,
+                  keyword,
+                  zone
+                );
+                await client.setEx(
+                  latest_redisKey,
+                  60 * 60 * 12,
+                  JSON.stringify({ result, nextPage })
+                );
+                return { ok: true, result: { result, nextPage } };
+              } else {
+                if (needToUpdateAll) {
+                  await deleteKeys().catch(console.error);
+                  await client.del(update_require_all);
+                  const [result] = await connection2.query(sql, val);
+                  const nextPage = await findNextPage(
+                    sql,
+                    page,
+                    connection2,
+                    keyword,
+                    zone
+                  );
+                  await client.setEx(
+                    latest_redisKey,
+                    60 * 60 * 12,
+                    JSON.stringify({ result, nextPage })
+                  );
+                  return { ok: true, result: { result, nextPage } };
+                } else {
+                  return { ok: true, result: JSON.parse(redisLatestAll), redis: true };
+                }
+              }
+            }
+          } catch (error) {
+            return { error: true, message: error.message + " find ranking all" };
+          } finally {
+            connection2.release();
           }
         } catch (error) {
-          return { error: true, message: error.message + " find ranking all" };
-        } finally {
-          connection2.release();
+          console.log("redis error");
         }
       }
     } catch (error) {
@@ -360,7 +425,7 @@ class ArticleModel {
               limit 5;
               `;
             const [result] = await connection9.query(sql);
-            await client.set(TOP5Latest, JSON.stringify(result));
+            await client.setEx(TOP5Latest, 43200, JSON.stringify(result)); //TTL:12hr
             if (!redisArticles) {
               await client.set(TOP5Latest, JSON.stringify(result));
             }
@@ -574,6 +639,28 @@ async function findNextPage(sql, page, connection, keyword, zone) {
   } else {
     return parseInt(page) + 1;
   }
+}
+async function deleteKeys() {
+  //刪除redis
+  console.log("deleteKeys function start");
+  const pattern = "localhost_latestAll:page:*";
+  const keys = await client.keys(pattern);
+  if (keys.length > 0) {
+    await client.unlink(...keys);
+  }
+  // let cursor = "0";
+  // do {
+  //   const res = await client.scan(cursor, { MATCH: pattern });
+  //   cursor = res.cursor;
+  //   const keys = res.keys;
+  //   console.log(res);
+  //   if (keys.length > 0) {
+  //     await client.unlink(...keys);
+  //   } else {
+  //     break;
+  //   }
+  // } while (cursor !== "0");
+  console.log("deleteKeys function end");
 }
 
 export default ArticleModel;

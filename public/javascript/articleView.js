@@ -104,7 +104,6 @@ imageContainer.createImage(imageURL);
 const oldComments = await fetchData(`/api/article/comment?article_id=${article_id}`, {
   method: "GET",
 });
-// console.log("oldComment:", oldComments);
 const comments = oldComments.result.result;
 const createComment = new Comment("#comment-container");
 createComment.renderComment(comments, "old");
