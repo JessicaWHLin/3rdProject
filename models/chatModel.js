@@ -74,7 +74,7 @@ class ChatModel {
       const connection3 = await pool.getConnection();
       try {
         const sql = `
-        select DISTINCT room_id from privateMsg where room_id like ? or room_id like?`;
+        select DISTINCT room_id from privateMsg where room_id like ? or room_id like ?`;
         const val = [`${member_id}-%`, `%-${member_id}`];
         const [result] = await connection3.query(sql, val);
         return { ok: true, result };

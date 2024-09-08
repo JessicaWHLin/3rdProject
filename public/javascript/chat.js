@@ -41,15 +41,22 @@ if (token) {
         chat_member_id.push(temp[0]);
       }
     }
+
     class SendersList {
       constructor(container) {
         this.container = document.querySelector(container);
       }
       listSenders(socket, nameLists, roomIds) {
         const rooms = roomIds.result;
+        console.log("rooms:", rooms);
         for (let i = 0; i < rooms.length; i++) {
           for (let j = 0; j < nameLists.length; j++) {
-            if (rooms[i].room_id.includes(nameLists[j].id.toString())) {
+            let temp = rooms[i].room_id.split("-");
+            console.log("temp:", temp);
+            if (
+              temp[0] == nameLists[j].id.toString() ||
+              temp[1] == nameLists[j].id.toString()
+            ) {
               Object.assign(nameLists[j], { room_id: rooms[i].room_id });
             }
           }
