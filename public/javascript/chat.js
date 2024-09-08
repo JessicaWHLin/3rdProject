@@ -12,8 +12,9 @@ back_Homepage();
 go_signpage();
 
 //取得roomId
-const path = window.location.search.split("=");
-const roomId = decodeURIComponent(path[1]);
+// const path = window.location.search.split("=");
+let roomId = Cookies.get("room_id");
+console.log("一開始roomId:", roomId);
 const token = localStorage.getItem("token");
 if (token) {
   const authResult = await CheckAuth_WithToken(token);
@@ -23,14 +24,14 @@ if (token) {
   if (authResult.user) {
     showName(authResult.user.name);
 
-    //socket.io
     const isMemberInRoom = roomId.includes(authResult.user.id.toString());
     console.log("isMemberInRoom", isMemberInRoom);
+    const messages = document.getElementById("messages");
     //左邊聊天室選項
     const url = `/api/chat/roomId?member_id=${authResult.user.id}`;
     const options = { method: "GET", "Content-Type": "application/json" };
     const roomIds = await fetchData(url, options);
-    console.log("roomIds:", roomIds);
+
     let chat_member_id = [];
     for (let i = 0; i < roomIds.result.length; i++) {
       let temp = roomIds.result[i].room_id.split("-");
@@ -44,10 +45,8 @@ if (token) {
       constructor(container) {
         this.container = document.querySelector(container);
       }
-      listSenders(nameLists, roomIds) {
+      listSenders(socket, nameLists, roomIds) {
         const rooms = roomIds.result;
-        // console.log(rooms);
-        // console.log(nameLists);
         for (let i = 0; i < rooms.length; i++) {
           for (let j = 0; j < nameLists.length; j++) {
             if (rooms[i].room_id.includes(nameLists[j].id.toString())) {
@@ -55,90 +54,62 @@ if (token) {
             }
           }
         }
+        console.log("nameLists:", nameLists);
         nameLists.forEach((item) => {
           const list = document.createElement("div");
           list.classList.add("chat-leftLink");
           list.classList.add("link");
           list.textContent = item.name;
+          if (item.room_id == roomId) {
+            console.log("item:", item, "roomId:", roomId);
+            list.style = "color:green;font-weight:700;";
+          }
+
           list.addEventListener("click", () => {
-            location.href = `/chat?roomId=${item.room_id}`;
+            socket.emit("leaveRoom", roomId);
+            Cookies.set("room_id", item.room_id);
+            roomId = item.room_id;
+            socket.emit("joinRoom", roomId);
+            while (messages.firstChild) {
+              messages.removeChild(messages.firstChild);
+            }
+            const allLists = document.querySelectorAll(".link");
+            allLists.forEach((list) => {
+              list.style = "color:black;font-weight:500;";
+            });
+            list.style = "color:green;font-weight:700;";
           });
           this.container.appendChild(list);
         });
       }
     }
 
-    //找所有的私訊sender
-    if (chat_member_id.length > 0) {
-      const url = `/api/chat/sender?member_ids=${chat_member_id}`;
-      const options = { method: "GET", "Content-Type": "application/json" };
-      const senders = await fetchData(url, options);
-
-      const senderNameList = senders.result.result;
-      // console.log("senders:", senderNameList);
-      const roomContainer = new SendersList("#roomContainer");
-      roomContainer.listSenders(senderNameList, roomIds);
-    }
-
+    //socket.io
     //避免非room_id上的member_id會員進入該私訊空間
+
     if (isMemberInRoom === false) {
       alert("Oops...這不是你的私訊空間");
       location.href = "/";
     } else {
-      const socket = io({
+      let socket = io({
         path: "/chat/socket.io/",
-        query: {
-          room: roomId,
-        },
         transports: ["websocket"],
       });
 
-      const form = document.getElementById("form");
-      const input = document.getElementById("input");
-      const messages = document.getElementById("messages");
+      //找所有的私訊sender
+      if (chat_member_id.length > 0) {
+        const url = `/api/chat/sender?member_ids=${chat_member_id}`;
+        const options = { method: "GET", "Content-Type": "application/json" };
+        const senders = await fetchData(url, options);
+        const senderNameList = senders.result.result;
+        const roomContainer = new SendersList("#roomContainer");
+        roomContainer.listSenders(socket, senderNameList, roomIds);
+      }
+      socket.emit("joinRoom", roomId);
+      msg(socket, authResult, token, roomId); //及時私訊
+      loadingHistoryMsg(socket, authResult); //接收歷史訊息
 
-      // 接收歷史訊息;
-      socket.on("history", (history) => {
-        // console.log(history);
-        load_history_msg(history, authResult);
-      });
-      socket.off("history", (history) => {
-        // console.log(history);
-        load_history_msg(history, authResult);
-      });
-      form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        if (input.value) {
-          socket.emit("joinRoom", roomId);
-          socket.emit("chat message", { msg: input.value, token: `Bearer ${token}` });
-          input.value = "";
-        }
-      });
-
-      socket.on("chat message", (msg) => {
-        // console.log(msg);
-        const subcontainer = document.createElement("div");
-        const item = document.createElement("div");
-        const datetime = document.createElement("span");
-        datetime.style = "font-size:10px; color:rgb(170, 175, 194);";
-        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        const isotime = new Date(msg.localtime);
-        const localtime = isotime.toLocaleString(undefined, {
-          timeZone: userTimeZone,
-          hour12: false,
-        });
-        datetime.textContent = localtime;
-        if (msg.memberId == authResult.user.id) {
-          subcontainer.style = "text-align:right;";
-          item.textContent = msg.msg;
-        } else {
-          item.textContent = msg.name + " : " + msg.msg;
-        }
-        subcontainer.appendChild(item);
-        subcontainer.appendChild(datetime);
-        messages.appendChild(subcontainer);
-        window.scrollTo(0, document.body.scrollHeight);
-      });
+      console.log("test");
     }
   }
 } else {
@@ -149,6 +120,61 @@ if (token) {
 }
 
 //---------------------------------------------
+async function fetchData(url, options) {
+  let data = await fetch(url, options)
+    .then((response) => {
+      return response.json();
+    })
+    .catch((error) => {
+      console.log("error:", error);
+    });
+  return data;
+}
+
+function loadingHistoryMsg(socket, authResult) {
+  socket.on("history", (history) => {
+    load_history_msg(history, authResult);
+  });
+  socket.off("history", (history) => {
+    load_history_msg(history, authResult);
+  });
+}
+
+function msg(socket, authResult, token, roomId) {
+  const form = document.getElementById("form");
+  const input = document.getElementById("input");
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (input.value) {
+      socket.emit("chat message", { msg: input.value, token: `Bearer ${token}` });
+      input.value = "";
+    }
+  });
+  socket.on("chat message", (msg) => {
+    const subcontainer = document.createElement("div");
+    const item = document.createElement("div");
+    const datetime = document.createElement("span");
+    datetime.style = "font-size:10px; color:rgb(170, 175, 194);";
+    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const isotime = new Date(msg.localtime);
+    const localtime = isotime.toLocaleString(undefined, {
+      timeZone: userTimeZone,
+      hour12: false,
+    });
+    datetime.textContent = localtime;
+    if (msg.memberId == authResult.user.id) {
+      subcontainer.style = "text-align:right;";
+      item.textContent = msg.msg;
+    } else {
+      item.textContent = msg.name + " : " + msg.msg;
+    }
+    subcontainer.appendChild(item);
+    subcontainer.appendChild(datetime);
+    messages.appendChild(subcontainer);
+    window.scrollTo(0, document.body.scrollHeight);
+  });
+}
+
 function load_history_msg(history, authResult) {
   for (let i = 0; i < history.length; i++) {
     const localtime = new Date(history[i].created_at);
@@ -179,15 +205,4 @@ function load_history_msg(history, authResult) {
     messages.appendChild(subcontainer);
     window.scrollTo(0, document.body.scrollHeight);
   }
-}
-
-async function fetchData(url, options) {
-  let data = await fetch(url, options)
-    .then((response) => {
-      return response.json();
-    })
-    .catch((error) => {
-      console.log("error:", error);
-    });
-  return data;
 }

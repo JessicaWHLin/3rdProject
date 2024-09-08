@@ -257,7 +257,8 @@ if (token) {
     //私訊
     privateMessage.addEventListener("click", () => {
       const roomId = createRoomId(writer_id, authResult.user.id);
-      location.href = `/chat?roomId=${roomId}`;
+      Cookies.set("room_id", roomId);
+      location.href = "/chat";
     });
     //收藏文章
     saveClick.addEventListener("click", async () => {
