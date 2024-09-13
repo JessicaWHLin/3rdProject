@@ -2,7 +2,7 @@
 
 ### https://www.trippals.site
 
-Trippals is a forum website which meber can post with photos and comment/like. All topics are about traveling.
+Trippals is a forum website which member can post with photos and comment/like. All topics are about traveling.
 
 ![homePage](/public/image/homepage.png)
 
