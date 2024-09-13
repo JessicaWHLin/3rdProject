@@ -54,7 +54,8 @@ if (token) {
           alert("目前無個人私訊");
         } else {
           const room_id = result.result[0].room_id;
-          location.href = `/chat?roomId=${room_id}`;
+          location.href = "/chat";
+          Cookies.set("room_id", room_id);
         }
       }
     });

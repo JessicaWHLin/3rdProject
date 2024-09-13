@@ -104,7 +104,6 @@ imageContainer.createImage(imageURL);
 const oldComments = await fetchData(`/api/article/comment?article_id=${article_id}`, {
   method: "GET",
 });
-// console.log("oldComment:", oldComments);
 const comments = oldComments.result.result;
 const createComment = new Comment("#comment-container");
 createComment.renderComment(comments, "old");
@@ -258,7 +257,8 @@ if (token) {
     //私訊
     privateMessage.addEventListener("click", () => {
       const roomId = createRoomId(writer_id, authResult.user.id);
-      location.href = `/chat?roomId=${roomId}`;
+      Cookies.set("room_id", roomId);
+      location.href = "/chat";
     });
     //收藏文章
     saveClick.addEventListener("click", async () => {

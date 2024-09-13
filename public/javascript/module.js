@@ -211,6 +211,13 @@ export function search() {
     const keyword = document.querySelector("#search").value;
     location.href = `/articleList?keyword=${keyword}`;
   });
+  document.querySelector("#search").addEventListener("keydown", (event) => {
+    //按鍵盤Enter=click
+    if (event.key === "Enter") {
+      event.preventDefault();
+      searchbtn.click();
+    }
+  });
 }
 
 // -------------------------------------

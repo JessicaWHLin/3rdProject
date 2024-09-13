@@ -1,7 +1,64 @@
-## WeHelp 3rd Stage Project: Trippals
+## Trippals
 
-## https://www.trippals.site
+### https://www.trippals.site
 
-## 專案簡介
+Trippals is a forum website which member can post with photos and comment/like. All topics are about traveling.
 
-## Trippals 是一個可以分享旅遊經驗與認識同好的平台，成為網站會員後，會員可以在網站上發佈圖文、留言按讚甚至進一步私訊網站會員，得到更多的旅遊協助，讓下趟旅程有更美好的規劃。
+![homePage](/public/image/homepage.png)
+
+### Test Account and Password
+
+```
+帳號1:test@test.com
+密碼1:123456
+
+帳號2:test2@test2.com
+密碼:123456
+```
+
+## Website Feature
+
+### Post new article
+
+![post article](/public/image/post_new_article.gif)
+
+### Commet &Like
+
+![comment&like](/public/image/comment.gif)
+
+### Search Article
+
+![search article](/public/image/searchArticle.gif)
+
+### Message member
+
+![privateMessage](/public/image/privateMessage.gif)
+
+## Tech Stack
+
+### Frontend
+
+- JavaScript
+- CSS
+- HTML5
+
+### Backend
+
+- Node.js
+- Express.js
+- Socket.IO
+- Docker
+- AWS EC2, Load Balancer, S3, CloudFront,RDS
+- JSON Web Token(JWT)
+- Nginx
+- Redis
+- MySQL
+
+## Backend Architecture
+
+![architecture](/public/image/trippalsAfterFinal.drawio.png)
+
+## Contact
+
+- Developer: 林宛嫻 Jessica Lin
+- Email: kittensealin@gmail.com

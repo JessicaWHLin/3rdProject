@@ -33,15 +33,15 @@ if (path[0].includes("zone")) {
   titleName.textContent = zone;
   url = `/api/article/articleList?zone=${zone}&page=${page}`;
   page = await articleLine(url);
-  url = updateUrl(zone, page);
-  loadingmore(zone);
+  url = `/api/article/articleList?zone=${zone}&page=${page}`;
+  loadingmore("zone", zone, page);
 } else if (path[0].includes("keyword")) {
   const keyword = decodeURIComponent(path[1]);
   titleName.textContent = keyword;
   url = `/api/article/articleList?keyword=${keyword}&page=${page}`;
   page = await articleLine(url);
-  url = updateUrl(keyword, page);
-  loadingmore(keyword);
+  url = `/api/article/articleList?keyword=${keyword}&page=${page}`;
+  loadingmore("keyword", keyword, page);
 } else if (path[0].includes("item")) {
   const item = decodeURIComponent(path[1]);
   if (item == "popularAll") {
@@ -52,8 +52,8 @@ if (path[0].includes("zone")) {
   }
   url = `/api/article/articleList?item=${item}&page=${page}`;
   page = await articleLine(url);
-  url = updateUrl(item, page);
-  loadingmore(item);
+  url = `/api/article/articleList?item=${item}&page=${page}`;
+  loadingmore("item", item, page);
 }
 
 if (token) {
@@ -88,10 +88,11 @@ async function articleLine(url) {
     headers: { "Content-Type": "application/json" },
   };
   const result = await fetchData(url, options);
-  const articles = result.result;
-  const nextPage = result.nextPage;
+  const articles = result.result.result;
+  const nextPage = result.result.nextPage;
+  console.log(result);
   console.log("nextPage:", nextPage);
-  console.log(articles);
+
   if (articles.length > 0) {
     const zoneList = new CreateArticleLine("#zoneList");
     articles.forEach((article) => {
@@ -107,10 +108,7 @@ async function articleLine(url) {
   return nextPage;
 }
 
-function updateUrl(item, page) {
-  return `/api/article/articleList?item=${item}&page=${page}`;
-}
-function loadingmore(item) {
+function loadingmore(item, searchinput, page) {
   if (page) {
     const zoneList = document.querySelector("#zoneList");
     zoneList.appendChild(loadMore);
@@ -119,9 +117,14 @@ function loadingmore(item) {
       zoneList.removeChild(loadMore);
       page = await articleLine(url);
       zoneList.appendChild(loadMore);
-      url = updateUrl(item, page);
-      if (page) {
+      if (item == "zone") {
+        url = `/api/article/articleList?zone=${searchinput}&page=${page}`;
+      } else if (item == "keyword") {
+        url = `/api/article/articleList?keyword=${searchinput}&page=${page}`;
       } else {
+        url = `/api/article/articleList?item=${searchinput}&page=${page}`;
+      }
+      if (!page) {
         loadMore.style = "display:none";
       }
     });
