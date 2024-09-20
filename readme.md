@@ -9,11 +9,11 @@ Trippals is a forum website which member can post with photos and comment/like. 
 ### Test Account and Password
 
 ```
-帳號1:test@test.com
-密碼1:123456
+user1:test@test.com
+password1:123456
 
-帳號2:test2@test2.com
-密碼:123456
+user2:test2@test2.com
+password:123456
 ```
 
 ## Website Feature
@@ -44,11 +44,10 @@ Trippals is a forum website which member can post with photos and comment/like. 
 
 ### Backend
 
-- Node.js
-- Express.js
+- Node.js Express.js
 - Socket.IO
 - Docker
-- AWS EC2, Load Balancer, S3, CloudFront,RDS
+- AWS EC2, Load Balancer, S3, CloudFront, RDS
 - JSON Web Token(JWT)
 - Nginx
 - Redis
