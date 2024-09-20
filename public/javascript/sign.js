@@ -12,6 +12,8 @@ import {
 back_Homepage();
 go_signpage();
 search();
+document.querySelector("#signinEmail").value = "test@test.com";
+document.querySelector("#signinPassword").value = "123456";
 
 const token = localStorage.getItem("token");
 if (token) {
