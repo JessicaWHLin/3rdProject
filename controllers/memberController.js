@@ -47,7 +47,6 @@ const memberController = {
           }
         }
         const result = await MemberModel.profilePhoto(auth.user.id, filePath);
-        console.log("上傳圖片=", result);
         if (result.ok) {
           res.status(200).json(result);
         } else {
@@ -78,7 +77,6 @@ const memberController = {
       const fullToken = req.headers.authorization;
       const auth = await AuthModel.checkAuth(fullToken);
       if (auth.ok) {
-        console.log({ name, password, birthday, aboutMe, updated_at });
         const result = await MemberModel.updateProfile(
           auth.user.id,
           name,

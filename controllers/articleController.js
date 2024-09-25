@@ -28,7 +28,6 @@ const articleController = {
       let filePath = [];
       let params = [];
       let command = [];
-      console.log("article auth:", auth);
       if (auth.ok) {
         const { zone, Class, title, content } = req.body;
         if (req.files) {

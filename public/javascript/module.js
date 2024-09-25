@@ -52,7 +52,6 @@ export async function CheckAuth_WithToken(token) {
     },
   };
   const result = await fetchData(url, options);
-  // console.log("check_auth:", result);
   return result;
 }
 
@@ -79,7 +78,7 @@ export async function signin() {
       body: JSON.stringify(signinData),
     };
     const result = await fetchData(urlSignin, options);
-    console.log("signin-result:", result);
+
     if (result.ok == true) {
       localStorage.setItem("token", result.token);
       location.href = "/";
@@ -106,14 +105,14 @@ export function signout(url) {
     signPageBtn.style.display = "inline-block";
     signoutBtn.style.display = "none";
     showName.style.display = "none";
-    console.log("status:signout");
+
     fetch(url)
       .then((response) => response)
       .then(() => {
         location.href = url;
       })
       .catch((error) => {
-        console.log({ error: error });
+        console.log("error:", error);
       });
   });
 }

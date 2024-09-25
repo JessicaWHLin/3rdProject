@@ -90,8 +90,6 @@ async function articleLine(url) {
   const result = await fetchData(url, options);
   const articles = result.result.result;
   const nextPage = result.result.nextPage;
-  console.log(result);
-  console.log("nextPage:", nextPage);
 
   if (articles.length > 0) {
     const zoneList = new CreateArticleLine("#zoneList");

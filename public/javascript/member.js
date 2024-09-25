@@ -52,7 +52,6 @@ if (token) {
     });
     photoInput.addEventListener("change", async (e) => {
       const file = e.target.files[0];
-      console.log("file=", file);
       if (file) {
         const formdata = new FormData();
         formdata.append("images", file);
@@ -84,7 +83,6 @@ if (token) {
         body: JSON.stringify(updateProfile),
       };
       const result = await fetchData(url, options);
-      console.log({ result });
       if (result.ok) {
         location.href = "/member";
       }

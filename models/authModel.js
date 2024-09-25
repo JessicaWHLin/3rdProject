@@ -112,7 +112,6 @@ class AuthModel {
           if (queryResult.length < 1) {
             return { error: true, message: "Invalid email" };
           } else {
-            // console.log("auth query result:", result);
             return {
               ok: true,
               user: {

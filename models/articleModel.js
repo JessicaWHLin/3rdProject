@@ -101,7 +101,6 @@ class ArticleModel {
   }
 
   static async findArticle(zone, keyword, item, page) {
-    console.log({ zone, keyword, item, page });
     try {
       const connection2 = await pool.getConnection();
       if (zone) {
@@ -143,7 +142,6 @@ class ArticleModel {
           offset ?;`;
           const val = [`%${keyword}%`, `%${keyword}%`, 8, page * 8];
           const [result] = await connection2.query(sql, val);
-          // console.log({ result });
           const nextPage = await findNextPage(sql, page, connection2, keyword, zone);
 
           return { ok: true, result: { result, nextPage } };
@@ -406,7 +404,6 @@ class ArticleModel {
     try {
       const needToUpdate = await client.get(update_require);
       const redisArticles = await client.get(TOP5Latest);
-      console.log("Need to update:", needToUpdate);
 
       if (needToUpdate || !redisArticles) {
         try {
@@ -495,7 +492,6 @@ class ArticleModel {
         where article_id=?and member_id=?`;
         const val_query = [article_id, member_id];
         const [result] = await connection10.query(sql_query, val_query);
-        console.log({ result });
         if (result.length < 1) {
           try {
             const sql_save = `insert into save_article(member_id,article_id)
@@ -634,7 +630,6 @@ async function findNextPage(sql, page, connection, keyword, zone) {
   }
   const [result] = await connection.query(sql, val);
   if (result.length < 9) {
-    console.log("result=null");
     return null;
   } else {
     return parseInt(page) + 1;
@@ -642,25 +637,11 @@ async function findNextPage(sql, page, connection, keyword, zone) {
 }
 async function deleteKeys() {
   //刪除redis
-  console.log("deleteKeys function start");
   const pattern = "localhost_latestAll:page:*";
   const keys = await client.keys(pattern);
   if (keys.length > 0) {
     await client.unlink(...keys);
   }
-  // let cursor = "0";
-  // do {
-  //   const res = await client.scan(cursor, { MATCH: pattern });
-  //   cursor = res.cursor;
-  //   const keys = res.keys;
-  //   console.log(res);
-  //   if (keys.length > 0) {
-  //     await client.unlink(...keys);
-  //   } else {
-  //     break;
-  //   }
-  // } while (cursor !== "0");
-  console.log("deleteKeys function end");
 }
 
 export default ArticleModel;

@@ -57,6 +57,10 @@ password:123456
 
 ![architecture](/public/image/trippalsAfterFinal.drawio.png)
 
+## ERD
+
+![ERD](/public/image/trippals-ERD-final.png)
+
 ## Contact
 
 - Developer: 林宛嫻 Jessica Lin

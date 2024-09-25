@@ -60,7 +60,7 @@ signupBtn.addEventListener("click", async (e) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(signupData),
     };
-    console.log(signupData);
+
     const result_signup = await fetchData(urlSignup, options);
 
     if (result_signup.ok === true) {

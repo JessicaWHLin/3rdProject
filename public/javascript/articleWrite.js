@@ -60,7 +60,6 @@ postBtn.addEventListener("click", async (e) => {
     formdata.append("Class", classSelect.value);
     formdata.append("title", title.value);
     formdata.append("content", textContent.value);
-    console.log("input.files.length:", input.files.length);
     if (input.files.length > 0) {
       for (let i = 0; i < input.files.length; i++) {
         formdata.append("images", input.files[i]);
@@ -76,7 +75,6 @@ postBtn.addEventListener("click", async (e) => {
       body: formdata,
     };
     const result = await fetchData(url, options);
-    console.log("write result:", result);
     freeURLMemory();
     if (result.ok) {
       alert("文章發佈成功!");
