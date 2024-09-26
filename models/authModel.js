@@ -24,18 +24,6 @@ const pool = mysql.createPool({
   timezone: "Z",
 });
 
-// //檢查連線
-// async function connect() {
-//   try {
-//     const connection0 = await pool.getConnection();
-//     console.log("authModel DB connection OK");
-//     connection0.release();
-//   } catch (error) {
-//     console.log("error:", error.message + "authModel DB failed");
-//   }
-// }
-// connect();
-
 class AuthModel {
   //註冊
   static async signup(username, email, password) {

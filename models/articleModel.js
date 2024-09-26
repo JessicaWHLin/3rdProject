@@ -28,15 +28,6 @@ const pool = mysql.createPool({
   timezone: "Z",
 });
 
-//檢查連線(DB)
-// try {
-//   const connection0 = await pool.getConnection();
-//   console.log("articleModel DB connection OK");
-//   connection0.release();
-// } catch (error) {
-//   console.log("error:", error.message + "articleModel DB failed");
-// }
-
 const client = createClient({
   connectTimeout: 10000,
   password: redis_password,
@@ -45,14 +36,17 @@ const client = createClient({
     port: 11323,
   },
 });
-//檢查連線(Redis)
-// client.on("error", (err) => console.log("Redis Client Error", err));
-// try {
-//   await client.connect();
-//   console.log("Redis connection OK ");
-// } catch (error) {
-//   console.log("Error:", error);
-// }
+// 檢查連線(Redis);
+client.on("error", (err) => console.log("Redis Client Error", err));
+async function redisConnect() {
+  try {
+    await client.connect();
+    // console.log("Redis connection OK ");
+  } catch (error) {
+    console.log("Error:", error);
+  }
+}
+redisConnect();
 
 class ArticleModel {
   //發表

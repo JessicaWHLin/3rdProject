@@ -34,6 +34,6 @@ describe("articleController.favorite", () => {
   });
 });
 
-afterAll(() => {
-  pool.end();
+afterAll(async () => {
+  await pool.end();
 });
