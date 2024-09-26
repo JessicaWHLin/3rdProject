@@ -29,13 +29,13 @@ const pool = mysql.createPool({
 });
 
 //檢查連線(DB)
-try {
-  const connection0 = await pool.getConnection();
-  console.log("articleModel DB connection OK");
-  connection0.release();
-} catch (error) {
-  console.log("error:", error.message + "articleModel DB failed");
-}
+// try {
+//   const connection0 = await pool.getConnection();
+//   console.log("articleModel DB connection OK");
+//   connection0.release();
+// } catch (error) {
+//   console.log("error:", error.message + "articleModel DB failed");
+// }
 
 const client = createClient({
   connectTimeout: 10000,
@@ -46,13 +46,13 @@ const client = createClient({
   },
 });
 //檢查連線(Redis)
-client.on("error", (err) => console.log("Redis Client Error", err));
-try {
-  await client.connect();
-  console.log("Redis connection OK ");
-} catch (error) {
-  console.log("Error:", error);
-}
+// client.on("error", (err) => console.log("Redis Client Error", err));
+// try {
+//   await client.connect();
+//   console.log("Redis connection OK ");
+// } catch (error) {
+//   console.log("Error:", error);
+// }
 
 class ArticleModel {
   //發表
@@ -645,3 +645,4 @@ async function deleteKeys() {
 }
 
 export default ArticleModel;
+export { pool };
