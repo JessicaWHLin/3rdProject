@@ -4,7 +4,6 @@ const authController = {
   signup: async (req, res) => {
     try {
       const { username, email, password } = req.body;
-      console.log("req=", { username, email, password });
       const result = await AuthModel.signup(username, email, password);
       if (result.ok) {
         res.status(200).json(result);
@@ -19,9 +18,7 @@ const authController = {
   signin: async (req, res) => {
     try {
       const { email, password } = req.body;
-      console.log({ email, password });
       const result = await AuthModel.signin(email, password);
-      console.log("authController.signin-result:", result);
       if (result.ok === true) {
         res.status(200).json(result);
       }

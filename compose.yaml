@@ -36,6 +36,7 @@ services:
       - DATABASE_DB=${database}
       - DATABASE_USER=${user}
       - DATABASE_PASSWORD=${password}
+      - MYSQL_ROOT_PASSWORD=4321
     ports:
       - ${db_port}:3306
 volumes:

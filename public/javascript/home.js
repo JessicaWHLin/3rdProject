@@ -16,6 +16,9 @@ go_signpage();
 setCookie();
 search();
 
+document.querySelector("#signinEmail").value = "test@test.com";
+document.querySelector("#signinPassword").value = "123456";
+
 const token = localStorage.getItem("token");
 if (token) {
   const authResult = await CheckAuth_WithToken(token);

@@ -23,14 +23,7 @@ const pool = mysql.createPool({
   connectionLimit: 25,
   timezone: "Z",
 });
-//檢查連線
-try {
-  const connection0 = await pool.getConnection();
-  console.log("authModel DB connection OK");
-  connection0.release();
-} catch (error) {
-  console.log("error:", error.message + "authModel DB failed");
-}
+
 class AuthModel {
   //註冊
   static async signup(username, email, password) {
@@ -112,7 +105,6 @@ class AuthModel {
           if (queryResult.length < 1) {
             return { error: true, message: "Invalid email" };
           } else {
-            // console.log("auth query result:", result);
             return {
               ok: true,
               user: {
@@ -149,6 +141,7 @@ function createToken(email) {
   const token = jsonwebtoken.sign(payload, secretKey, options);
   return token;
 }
+
 async function verify_password(originalPassword, hashedPassword) {
   const result = await bcrypt.compare(originalPassword, hashedPassword);
   if (result) {
@@ -173,3 +166,4 @@ function validateToken(fullToken) {
   });
   return result;
 }
+export { pool, verify_password };

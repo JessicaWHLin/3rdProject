@@ -2,13 +2,11 @@ import AuthModel from "../models/authModel.js";
 import ChatModel from "../models/chatModel.js";
 export function setupSocket(io) {
   io.on("connection", (socket) => {
-    console.log(`User ${socket.id}`);
     //開啟房間
     socket.on("joinRoom", async (roomId) => {
-      console.log("roomId:", roomId);
       socket.join(roomId);
       socket.roomId = roomId;
-      console.log(`User ${socket.id} join room ${roomId}`);
+
       //loading歷史訊息:只有在一開始連線時
       try {
         const result = await ChatModel.queryHistoryMsg(roomId);

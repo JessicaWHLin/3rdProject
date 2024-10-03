@@ -11,8 +11,6 @@ const db_port = process.env.db_port;
 const redis_password = process.env.redis_password;
 const TOP5Popular = process.env.popular;
 const TOP5Latest = process.env.latest;
-const update_require = process.env.update_require;
-const update_require_all = process.env.update_require_all;
 const popularAll = process.env.popularAll;
 const latestAll = process.env.latestAll;
 
@@ -28,15 +26,6 @@ const pool = mysql.createPool({
   timezone: "Z",
 });
 
-//檢查連線(DB)
-try {
-  const connection0 = await pool.getConnection();
-  console.log("articleModel DB connection OK");
-  connection0.release();
-} catch (error) {
-  console.log("error:", error.message + "articleModel DB failed");
-}
-
 const client = createClient({
   connectTimeout: 10000,
   password: redis_password,
@@ -45,14 +34,16 @@ const client = createClient({
     port: 11323,
   },
 });
-//檢查連線(Redis)
+// 檢查連線(Redis);
 client.on("error", (err) => console.log("Redis Client Error", err));
-try {
-  await client.connect();
-  console.log("Redis connection OK ");
-} catch (error) {
-  console.log("Error:", error);
+async function redisConnect() {
+  try {
+    await client.connect();
+  } catch (error) {
+    console.log("Error:", error);
+  }
 }
+redisConnect();
 
 class ArticleModel {
   //發表
@@ -79,12 +70,12 @@ class ArticleModel {
               };
             }
           }
-          await client.set(update_require, "true");
-          await client.set(update_require_all, "true");
+          await client.del(TOP5Latest);
+          await deleteKeys().catch(console.error);
           return { ok: true, articleID: article_id, imageURL: filePath };
         } else {
-          await client.set(update_require, "true");
-          await client.set(update_require_all, "true");
+          await client.del(TOP5Latest);
+          await deleteKeys().catch(console.error);
           return { ok: true, articleID: article_id };
         }
       } catch (error) {
@@ -101,7 +92,6 @@ class ArticleModel {
   }
 
   static async findArticle(zone, keyword, item, page) {
-    console.log({ zone, keyword, item, page });
     try {
       const connection2 = await pool.getConnection();
       if (zone) {
@@ -143,7 +133,6 @@ class ArticleModel {
           offset ?;`;
           const val = [`%${keyword}%`, `%${keyword}%`, 8, page * 8];
           const [result] = await connection2.query(sql, val);
-          // console.log({ result });
           const nextPage = await findNextPage(sql, page, connection2, keyword, zone);
 
           return { ok: true, result: { result, nextPage } };
@@ -158,7 +147,7 @@ class ArticleModel {
           const latest_redisKey = `${latestAll}:page:${page}`;
           const redisPopularAll = await client.get(popular_redisKey);
           const redisLatestAll = await client.get(latest_redisKey);
-          const needToUpdateAll = await client.get(update_require_all);
+
           try {
             if (item === "popularAll") {
               if (redisPopularAll) {
@@ -224,26 +213,7 @@ class ArticleModel {
                 );
                 return { ok: true, result: { result, nextPage } };
               } else {
-                if (needToUpdateAll) {
-                  await deleteKeys().catch(console.error);
-                  await client.del(update_require_all);
-                  const [result] = await connection2.query(sql, val);
-                  const nextPage = await findNextPage(
-                    sql,
-                    page,
-                    connection2,
-                    keyword,
-                    zone
-                  );
-                  await client.setEx(
-                    latest_redisKey,
-                    60 * 60 * 12,
-                    JSON.stringify({ result, nextPage })
-                  );
-                  return { ok: true, result: { result, nextPage } };
-                } else {
-                  return { ok: true, result: JSON.parse(redisLatestAll), redis: true };
-                }
+                return { ok: true, result: JSON.parse(redisLatestAll), redis: true };
               }
             }
           } catch (error) {
@@ -404,11 +374,9 @@ class ArticleModel {
 
   static async latest() {
     try {
-      const needToUpdate = await client.get(update_require);
       const redisArticles = await client.get(TOP5Latest);
-      console.log("Need to update:", needToUpdate);
 
-      if (needToUpdate || !redisArticles) {
+      if (!redisArticles) {
         try {
           const connection9 = await pool.getConnection();
           try {
@@ -428,9 +396,6 @@ class ArticleModel {
             await client.setEx(TOP5Latest, 43200, JSON.stringify(result)); //TTL:12hr
             if (!redisArticles) {
               await client.set(TOP5Latest, JSON.stringify(result));
-            }
-            if (update_require) {
-              await client.del(update_require);
             }
 
             return { ok: true, result };
@@ -495,7 +460,6 @@ class ArticleModel {
         where article_id=?and member_id=?`;
         const val_query = [article_id, member_id];
         const [result] = await connection10.query(sql_query, val_query);
-        console.log({ result });
         if (result.length < 1) {
           try {
             const sql_save = `insert into save_article(member_id,article_id)
@@ -634,7 +598,6 @@ async function findNextPage(sql, page, connection, keyword, zone) {
   }
   const [result] = await connection.query(sql, val);
   if (result.length < 9) {
-    console.log("result=null");
     return null;
   } else {
     return parseInt(page) + 1;
@@ -642,25 +605,12 @@ async function findNextPage(sql, page, connection, keyword, zone) {
 }
 async function deleteKeys() {
   //刪除redis
-  console.log("deleteKeys function start");
   const pattern = "localhost_latestAll:page:*";
   const keys = await client.keys(pattern);
   if (keys.length > 0) {
     await client.unlink(...keys);
   }
-  // let cursor = "0";
-  // do {
-  //   const res = await client.scan(cursor, { MATCH: pattern });
-  //   cursor = res.cursor;
-  //   const keys = res.keys;
-  //   console.log(res);
-  //   if (keys.length > 0) {
-  //     await client.unlink(...keys);
-  //   } else {
-  //     break;
-  //   }
-  // } while (cursor !== "0");
-  console.log("deleteKeys function end");
 }
 
 export default ArticleModel;
+export { pool };

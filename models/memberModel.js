@@ -57,7 +57,6 @@ class MemberModel {
         const [result] = await connection2.query(sql, val);
         const birthday = new Date(result[0].birthday);
         const formatedBirthday = format(birthday, "yyyy-MM-dd");
-        // console.log("format=", formatedBirthday);
         const profileData = {
           name: result[0].name,
           email: result[0].email,

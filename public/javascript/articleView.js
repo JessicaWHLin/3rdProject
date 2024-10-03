@@ -16,7 +16,6 @@ search();
 //取得article_id
 const path = window.location.search.split("=");
 const article_id = decodeURIComponent(path[1]);
-console.log("article_id:", article_id);
 class Image {
   constructor(container) {
     this.container = document.querySelector(container);
@@ -84,7 +83,6 @@ const saveClick = document.querySelector("#saveClick");
 const url = `/api/article?article_id=${article_id}`;
 const options = { method: "GET", "Content-Type": "application/json" };
 const result = await fetchData(url, options);
-console.log("文章細節:", result);
 const articles = result.content.articles[0];
 const imageURL = result.images.images;
 const writer_id = articles.member_id;
@@ -124,13 +122,11 @@ thumbup.addEventListener("click", (e) => {
   }
 });
 //views-紀錄trackingId
-const tracking_id = Cookies.get("trackingId");
-console.log("tracking_id:", tracking_id);
 const url_viewCount = "/api/article/views";
 const options_viewCount = {
   method: "POST",
   headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ tracking_id: tracking_id, article_id: article_id }),
+  body: JSON.stringify({ article_id: article_id }),
 };
 await fetchData(url_viewCount, options_viewCount);
 //views-統計-render
@@ -140,7 +136,6 @@ const options_viewQty = {
   headers: { "Content-Type": "application/json" },
 };
 const result_viewQty = await fetchData(url_viewQty, options_viewQty);
-console.log("result_viewQty=", result_viewQty);
 if (result_viewQty) {
   document.querySelector("#viewQty").textContent = result_viewQty.viewQty;
 }
@@ -149,7 +144,6 @@ if (token) {
   const authResult = await CheckAuth_WithToken(token);
   post_article();
   signout(`/articleView?article_id=${article_id}`);
-  console.log("authResult:", authResult);
   if (authResult.user) {
     showName(authResult.user.name);
 
@@ -189,8 +183,6 @@ if (token) {
           snackbar.className = snackbar.className.replace("show", "");
         }, 3000);
       } else {
-        console.log("comment:", comment.value);
-
         const url = "/api/article/comment";
         const options = {
           method: "POST",
@@ -204,7 +196,6 @@ if (token) {
         if (result.result.ok === true) {
           comment.value = "";
           const comments = result.result.result;
-          console.log("latest comment:", comments);
           const createComment = new Comment("#comment-container");
           createComment.renderComment(comments, "new");
         } else {
@@ -214,7 +205,6 @@ if (token) {
     });
     //按讚
     thumbup.addEventListener("click", async () => {
-      console.log("按讚");
       const url = "/api/article/like";
       const options = {
         method: "POST",
@@ -227,7 +217,6 @@ if (token) {
         }),
       };
       const result = await fetchData(url, options);
-      console.log("article_like result:", result);
       let likeQty = parseInt(document.querySelector("#article_like").textContent);
       const showLikeQty = document.querySelector("#article_like");
       const alertLikeQty = document.createElement("span");

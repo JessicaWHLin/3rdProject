@@ -14,13 +14,11 @@ go_signpage();
 //取得roomId
 // const path = window.location.search.split("=");
 let roomId = Cookies.get("room_id");
-console.log("一開始roomId:", roomId);
 const token = localStorage.getItem("token");
 if (token) {
   const authResult = await CheckAuth_WithToken(token);
   post_article();
   signout("/");
-  console.log("authResult:", authResult);
   if (authResult.user) {
     showName(authResult.user.name);
 
@@ -48,11 +46,11 @@ if (token) {
       }
       listSenders(socket, nameLists, roomIds) {
         const rooms = roomIds.result;
-        console.log("rooms:", rooms);
+
         for (let i = 0; i < rooms.length; i++) {
           for (let j = 0; j < nameLists.length; j++) {
             let temp = rooms[i].room_id.split("-");
-            console.log("temp:", temp);
+
             if (
               temp[0] == nameLists[j].id.toString() ||
               temp[1] == nameLists[j].id.toString()
@@ -61,14 +59,13 @@ if (token) {
             }
           }
         }
-        console.log("nameLists:", nameLists);
+
         nameLists.forEach((item) => {
           const list = document.createElement("div");
           list.classList.add("chat-leftLink");
           list.classList.add("link");
           list.textContent = item.name;
           if (item.room_id == roomId) {
-            console.log("item:", item, "roomId:", roomId);
             list.style = "color:green;font-weight:700;";
           }
 
@@ -115,8 +112,6 @@ if (token) {
       socket.emit("joinRoom", roomId);
       msg(socket, authResult, token, roomId); //及時私訊
       loadingHistoryMsg(socket, authResult); //接收歷史訊息
-
-      console.log("test");
     }
   }
 } else {
@@ -185,7 +180,6 @@ function msg(socket, authResult, token, roomId) {
 function load_history_msg(history, authResult) {
   for (let i = 0; i < history.length; i++) {
     const localtime = new Date(history[i].created_at);
-    // console.log("localtime:", localtime, "傳入:", history[i].created_at);
     const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const subcontainer = document.createElement("div");
     const item = document.createElement("div");
