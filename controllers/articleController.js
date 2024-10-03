@@ -209,7 +209,8 @@ const articleController = {
   },
   viewCount: async (req, res) => {
     try {
-      const { article_id, tracking_id } = req.body;
+      const { article_id } = req.body;
+      const tracking_id = req.headers.cookie.split("=")[1];
       const result = await ArticleModel.view(article_id, tracking_id);
       if (result.ok) {
         res.status(200).json({ ok: true });

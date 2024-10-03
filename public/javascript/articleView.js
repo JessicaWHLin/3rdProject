@@ -122,12 +122,11 @@ thumbup.addEventListener("click", (e) => {
   }
 });
 //views-紀錄trackingId
-const tracking_id = Cookies.get("trackingId");
 const url_viewCount = "/api/article/views";
 const options_viewCount = {
   method: "POST",
   headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ tracking_id: tracking_id, article_id: article_id }),
+  body: JSON.stringify({ article_id: article_id }),
 };
 await fetchData(url_viewCount, options_viewCount);
 //views-統計-render
