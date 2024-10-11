@@ -394,10 +394,6 @@ class ArticleModel {
               `;
             const [result] = await connection9.query(sql);
             await client.setEx(TOP5Latest, 43200, JSON.stringify(result)); //TTL:12hr
-            if (!redisArticles) {
-              await client.set(TOP5Latest, JSON.stringify(result));
-            }
-
             return { ok: true, result };
           } catch (error) {
             return { error: true, message: error.message + " find latest article" };
