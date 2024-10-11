@@ -94,7 +94,7 @@ class AuthModel {
   }
   //user state
   static async checkAuth(fullToken) {
-    const result = validateToken(fullToken);
+    const result = await validateToken(fullToken);
     if (result.ok === true) {
       try {
         const connection3 = await pool.getConnection();
@@ -153,17 +153,18 @@ async function verify_password(originalPassword, hashedPassword) {
 
 function validateToken(fullToken) {
   const token = fullToken.split(" ")[1];
-  const result = jsonwebtoken.verify(token, secretKey, (error, payload) => {
-    if (error) {
-      if (error.name === TokenExpiredError) {
-        return { ok: false, message: "Token expired" };
+  return new Promise((resolve, reject) => {
+    result = jsonwebtoken.verify(token, secretKey, (error, payload) => {
+      if (error) {
+        if (error.name === TokenExpiredError) {
+          resolve({ ok: false, message: "Token expired" });
+        } else {
+          resolve({ ok: false, message: error.name });
+        }
       } else {
-        return { ok: false, message: error.name };
+        resolve({ ok: true, email: payload.email });
       }
-    } else {
-      return { ok: true, email: payload.email };
-    }
+    });
   });
-  return result;
 }
 export { pool, verify_password };
